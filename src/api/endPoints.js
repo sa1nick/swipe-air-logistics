@@ -1,0 +1,31 @@
+export const BASE_URL = 'https://api.swipeairdev.com/';
+
+const v1 = 'v1/LogisticsUserAPI/';
+
+export const Logistics_User_Types = `${v1}LogisticsUserTypes`;
+export const Login = `${v1}LogisticsUserLogin`;
+export const Get_All_Warehouse = `${v1}GetAllWarehouse`;
+export const Get_All_Product_By_Warehouse_Id = `${v1}GetAllProductByWarehouseId`;
+export const Move_WareHouse = `${v1}MoveWareHouse`;
+export const Get_All_Product_By_Pickup_Dropoff_Warehouse = `${v1}GetAllProductByPickup_Dropoff_Warehouse`;
+export const Update_Product_Tracking_Details_Status = `${v1}UpdateProductTrackingDetailsStatus`;
+export const Add_Box_Detail = `${v1}AddBoxDetail`;
+export const Get_Box_List = `${v1}GetBoxList`;
+export const Get_Product_List_By_BoxId = `${v1}GetProductListByBoxId`;
+export const Add_Box_To_Pallet_Detail = `${v1}AddBoxToPalletDetail`;
+export const Get_Pallet_List = `${v1}GetPalletList`;
+export const Get_Box_List_By_PalletId = `${v1}GetBoxListByPalletId`;
+export const Add_Box_To_Container_Detail = `${v1}AddBoxToContainerDetail`;
+export const Add_Pallet_To_Container_Detail = `${v1}AddPalletToContainerDetail`;
+export const Add_Container_Detail = `${v1}AddContainerDetail`;
+export const Get_All_Container_List = `${v1}GetAllContainerList`;
+export const Get_All_Logistic_Drivers = `${v1}GetAllLogisticDrivers`;
+export const Add_Assignmentof_Box = `${v1}AddAssignmentofBox`;
+export const Add_Assignmentof_Pallet = `${v1}AddAssignmentofPallet`;
+export const Add_Assignmentof_Container = `${v1}AddAssignmentofContainer`;
+export const Get_Assign_Driver_Item_List = `${v1}GetAssignDriverItemList`;
+export const Get_Container_Type = `${v1}GetContainerType`;
+export const Get_Container_Type_Dimension_By_Id = `${v1}GetContainerTypeDimensionById`;
+export const Get_Driver_Assignment_List = `${v1}GetDriverAssignmentList`;
+export const Get_Consignment_List = `${v1}GetConsignmentList`;
+export const Get_Assignment_Detail = `${v1}GetAssignmentDetail`;
