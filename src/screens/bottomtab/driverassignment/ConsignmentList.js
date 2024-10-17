@@ -12,14 +12,15 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 
 import SAL from '../../../SAL';
-import { showAlert } from '../../../utils/Utils';
+import {showAlert} from '../../../utils/Utils';
 import ActivityIndicator from '../../../components/ActivityIndicator';
 
-import {getConsignmentListApi, clearConsignmentList} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
-
+import {
+  getConsignmentListApi,
+  clearConsignmentList,
+} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
 
 const ConsignmentList = props => {
-
   const {item} = props.route.params;
 
   const [loading, setLoading] = useState(false);
@@ -38,7 +39,6 @@ const ConsignmentList = props => {
     getAssignmentData();
 
     return () => dispatch(clearConsignmentList());
-
   }, []);
 
   const getAssignmentData = () => {
@@ -51,7 +51,6 @@ const ConsignmentList = props => {
       console.log('consignmentListData: ', consignmentListData);
       setLoading(false);
       if (consignmentListData.code === SAL.codeEnum.code200) {
-
         setConsignmentData(consignmentListData.data);
       } else {
         showAlert(consignmentListData.message);
@@ -66,20 +65,22 @@ const ConsignmentList = props => {
     }
   }, [consignmentApiError]);
 
-  const onPressCell = (index) => {
-    props.navigation.navigate("ConsignmentDetailScreen", {
+  const onPressCell = index => {
+    props.navigation.navigate('ConsignmentDetailScreen', {
       item: item,
       consignmentData: consignmentData[index],
-      selectedIndex: index - 1
-    })
-  }
+      selectedIndex: index - 1,
+    });
+  };
 
   const renderItem = ({item, index}) => {
     return (
       <View style={styles.cellContainer}>
-        <Pressable style={styles.itemContainer} onPress={() => {
-          onPressCell(index)
-        }}>
+        <Pressable
+          style={styles.itemContainer}
+          onPress={() => {
+            onPressCell(index);
+          }}>
           <View style={styles.subItemContainer}>
             <Text style={styles.itemQuantityText}>{item.itmeType}</Text>
             <Text style={styles.itemQuantityText}>{item.totalItem}</Text>
@@ -107,10 +108,7 @@ const ConsignmentList = props => {
           </Pressable>
         </View>
       </SafeAreaView>
-      <FlatList
-        data={consignmentData}
-        renderItem={renderItem}
-      />
+      <FlatList data={consignmentData} renderItem={renderItem} />
       {loading && <ActivityIndicator />}
     </View>
   );
@@ -123,7 +121,7 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     flexDirection: 'row',
-    marginBottom: 50
+    marginBottom: 50,
   },
   closeButton: {
     marginLeft: 16,

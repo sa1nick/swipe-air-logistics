@@ -27,6 +27,9 @@ const BSAssignToDriver = props => {
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
+  const [selectedValue, setSelectedValue] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null); // State to store the selected driver's data (name, etc.)
+
   const [isDCSelected, setIsDCSelected] = useState(true);
   const [driverInfo, setDriverInfo] = useState(null);
   const [driverList, setDriverList] = useState(null);
@@ -47,6 +50,18 @@ const BSAssignToDriver = props => {
 
   const assignDriverData = useSelector(state => state.warehouse.assignDriver);
   const warehouseApiError = useSelector(state => state.warehouse.error);
+
+  // const handleValueChange = (value, index) => {
+  //   setSelectedValue(value); // Update selected value (driver ID)
+  //   setSelectedItem(driverList[index]); // Update selected item based on index
+
+  //   console.log('Selected Driver ID:', value); // Log the selected value (driver ID)
+  //   console.log('Selected Driver Details:', driverList[index]); // Log the selected driver object
+  // };
+
+  // useEffect(() => {
+  //   console.log('selectedItem ', selectedItem);
+  // }, [selectedItem]);
 
   useEffect(() => {
     return () => dispatch(clearAssignDriver());
@@ -72,11 +87,16 @@ const BSAssignToDriver = props => {
   }, [warehouseApiError]);
 
   useEffect(() => {
-    console.log('driverListData: ', driverListData);
+    // console.log('driverListData: ', driverListData);
     if (driverListData) {
       setLoading(false);
       if (driverListData.code === SAL.codeEnum.code200) {
-        setDriverList(driverListData.data);
+        setDriverList(
+          driverListData.data.map(driver => ({
+            label: driver.name,
+            value: driver.id.toString(), // Assuming IDs need to be strings
+          })),
+        );
       } else {
         showAlert(driverListData.message);
       }
@@ -84,10 +104,14 @@ const BSAssignToDriver = props => {
   }, [driverListData]);
 
   useEffect(() => {
+    console.log('driverList', driverList);
+  }, [driverList]);
+
+  useEffect(() => {
     dispatch(
       getAllDriverListApi({
-        pickUpDate: props.route.pickUpDate,
-        pickUpTime: props.route.pickUpTime,
+        pickUpDate: props.pickUpDate,
+        pickUpTime: props.pickUpTime,
         dropoffWarehouseId: dropoffWarehouse.value,
         pickupWarehouseId: pickupWarehouse.value,
       }),
@@ -286,14 +310,33 @@ const BSAssignToDriver = props => {
             {/* <Image
               style={{position: 'absolute', right: 20}}
               source={SAL.image.downArrow}></Image> */}
-            <RNPickerSelect
+            {/* <RNPickerSelect
               placeholder={{label: 'Select Driver', value: null}}
-              onValueChange={value => console.log(value)}
+              // onValueChange={handleValueChange}
+              // itemKey={selectedValue} // Set the currently selected value as the key
+              // value={selectedValue} // Ensure the picker displays the selected value
               items={[
                 {label: 'Football', value: 'football'},
                 {label: 'Baseball', value: 'baseball'},
                 {label: 'Hockey', value: 'hockey'},
               ]}
+              // items={driverList}
+              onValueChange={value => console.log(value)}
+              useNativeAndroidPickerStyle={false}
+              Icon={ArrowDownIcon}
+              style={pickerSelectStyles}
+            /> */}
+
+            <RNPickerSelect
+              placeholder={{label: 'Select Driver', value: null}}
+              // items={[
+              //   {label: 'rahul(0% Filled)', value: '1'},
+              //   {label: 'Kanika(0% Filled)', value: '2'},
+              //   {label: 'Pankaj(0% Filled)', value: '7'},
+              // ]}
+              // items={driverList}
+              items={driverList == null ? [] : driverList}
+              onValueChange={value => console.log(value)}
               useNativeAndroidPickerStyle={false}
               Icon={ArrowDownIcon}
               style={pickerSelectStyles}

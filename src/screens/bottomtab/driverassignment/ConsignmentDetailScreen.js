@@ -129,19 +129,18 @@ function ConsignmentDetailScreen(props) {
   };
 
   const onPressDetailCell = index => {
-    
     const item = assignmentData[index];
 
-    let screenName = "";
+    let screenName = '';
     if (selectedIndex === 0) {
-      screenName = "BoxDetailScreenConsignment"
+      screenName = 'BoxDetailScreenConsignment';
     } else if (selectedIndex === 1) {
-      screenName = "PalletDetailScreenConsignment"
+      screenName = 'PalletDetailScreenConsignment';
     }
 
     props.navigation.navigate(screenName, {
       item: item,
-      isFromConsignment: true
+      isFromConsignment: true,
     });
   };
 

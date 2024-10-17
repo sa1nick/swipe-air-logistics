@@ -26,7 +26,7 @@ import {getAllPendingProductWarehouseApi} from '../../../api/slice/warehouseSlic
 function PendingScreen(props) {
   const [loading, setLoading] = useState(false);
   const [movedBy, setMovedBy] = useState('');
-  const [productList, setProductList] = useState(null);
+  const [productList, setProductList] = useState([]); // Initialize as empty array
   const [refreshing, setRefreshing] = useState(false);
 
   const {hasPermission, requestPermission} = useCameraPermission();
@@ -53,7 +53,9 @@ function PendingScreen(props) {
   useEffect(() => {
     const getUserData = async () => {
       const userData = await getData(StorageKey.userData);
-      setMovedBy(userData.firstName + ' ' + userData.lastName);
+      if (userData) {
+        setMovedBy(`${userData.firstName} ${userData.lastName}`);
+      }
     };
 
     getUserData();
@@ -62,7 +64,7 @@ function PendingScreen(props) {
   useEffect(() => {
     if (validate) {
       setLoading(true);
-      setProductList(null);
+      setProductList([]); // Reset productList to an empty array
       pageNumber.current = 0;
       getWarehouseMovedData();
     }
@@ -72,23 +74,22 @@ function PendingScreen(props) {
     if (pendingListData) {
       console.log(pendingListData);
       if (pendingListData.code === SAL.codeEnum.code200) {
-        if (productList) {
-          setProductList(prevArray => [...prevArray, ...pendingListData.data]);
-        } else {
-          setProductList(pendingListData.data);
-        }
+        setProductList(prevArray => [
+          ...prevArray,
+          ...(pendingListData.data || []), // Safely access data
+        ]);
       } else {
         showAlert(pendingListData.message);
       }
       setTimeout(() => {
         setLoading(false);
-      }, 1000)
+      }, 1000);
     }
   }, [pendingListData]);
 
   const getWarehouseMovedData = () => {
     if (pickupWarehouse && dropoffWarehouse && isFocused) {
-      pageNumber.current = pageNumber.current + 1;
+      pageNumber.current += 1;
       setLoading(true);
       dispatch(
         getAllPendingProductWarehouseApi({
@@ -108,7 +109,7 @@ function PendingScreen(props) {
 
   const downloadPdf = async item => {
     setLoading(true);
-    await downloadFile(item.qrCodeFileNamePath,item.qrCodeFilePath);
+    await downloadFile(item.qrCodeFileNamePath, item.qrCodeFilePath);
     setLoading(false);
   };
 
@@ -137,7 +138,7 @@ function PendingScreen(props) {
   );
 
   const onRefresh = () => {
-    setProductList(null);
+    setProductList([]); // Reset productList to an empty array
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
@@ -163,14 +164,8 @@ function PendingScreen(props) {
   const boxListButton = () => {
     if (pickupWarehouse && dropoffWarehouse) {
       if (pickupWarehouse === dropoffWarehouse) {
-        showAlert("Select From and Select To can't be same");
+        showAlert("Select From and Select To can't be the same");
       } else {
-        // const params = {
-        //   dropOffWareHouseId: selectTo,
-        //   pickUpWarehouseId: selectFrom,
-        //   pickupWarehoueName: pickupWarehoueName.current,
-        //   dropOffWarehoueName: dropOffWarehoueName.current,
-        // };
         props.navigation.navigate('BoxListScreen');
       }
     } else {
@@ -192,7 +187,7 @@ function PendingScreen(props) {
         }
         onEndReached={({distanceFromEnd}) => {
           if (distanceFromEnd < 0) return;
-          if (productList?.length === pageNumber.current * pageSize) {
+          if (productList.length === pageNumber.current * pageSize) {
             getWarehouseMovedData();
           }
         }}

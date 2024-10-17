@@ -105,6 +105,7 @@ function ContainerCreatedScreen(props) {
   const renderItem = ({item, index}) => {
     return (
       <BoxCell
+        key={`${item.productPackagingDetailId}-${index}`}
         selectedIndex={2}
         item={item}
         index={index}
@@ -216,6 +217,9 @@ function ContainerCreatedScreen(props) {
         data={containerCreatedList}
         contentContainerStyle={{gap: 15, paddingBottom: 20}}
         renderItem={renderItem}
+        keyExtractor={(item, index) =>
+          `${item.productPackagingDetailId}-${index}`
+        } // Unique key for each item
         ListHeaderComponent={() => <View style={{height: 25}} />}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

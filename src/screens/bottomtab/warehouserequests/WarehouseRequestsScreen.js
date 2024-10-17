@@ -85,6 +85,8 @@ function WarehouseRequestsScreen(props) {
             value: item.id.toString(),
           };
         });
+        console.log('arrayWarehouseList in wr', arrayWarehouseList);
+
         setPickerWarehouseList(arrayWarehouseList);
       }
     }
