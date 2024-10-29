@@ -8,6 +8,8 @@ import moment from 'moment';
 import SAL from '../SAL';
 
 const BSSuccessfullyAssigned = props => {
+  console.log('Data in success', props.data);
+
   return (
     <View style={styles.container}>
       <View style={styles.blackContainer}></View>
@@ -22,8 +24,10 @@ const BSSuccessfullyAssigned = props => {
           <Text style={styles.orderText}>
             Shipment Successfully assigned to Driver
           </Text>
-          <Text style={styles.nameText}>{props.data?.driverName}</Text>
-          <Text style={styles.vehicleText}>Vehicle No: {props.data?.vehicleNo}</Text>
+          <Text style={styles.nameText}>"{props.data?.driverName}"</Text>
+          <Text style={styles.vehicleText}>
+            Vehicle No: {props.data?.vehicleNo}
+          </Text>
           <View style={styles.buttonContainer}>
             <Pressable onPress={props.close}>
               <LinearGradient
@@ -34,9 +38,7 @@ const BSSuccessfullyAssigned = props => {
                 <Text style={styles.assignText}>Assign More Items</Text>
               </LinearGradient>
             </Pressable>
-            <Pressable
-              style={styles.trackButton}
-              onPress={props.trackShipment}>
+            <Pressable style={styles.trackButton} onPress={props.trackShipment}>
               <Text style={styles.trackText}>Track Shipment</Text>
             </Pressable>
           </View>
@@ -100,7 +102,7 @@ const styles = StyleSheet.create({
     height: 45,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 62
+    marginTop: 62,
   },
   assignButton: {
     width: 150,
@@ -124,13 +126,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   trackText: {
     color: '#FF6D09',
     fontSize: 12,
     fontFamily: 'Rubik-Medium',
-    marginLeft: 10
+    marginLeft: 10,
   },
 });
 

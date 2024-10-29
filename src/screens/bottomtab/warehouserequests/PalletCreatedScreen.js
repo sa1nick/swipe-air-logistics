@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, useCallback} from 'react';
 import {
   View,
   Text,
@@ -23,6 +23,7 @@ import BSAssignToDriver from '../../../components/BSAssignToDriver';
 import BSSuccessfullyAssigned from '../../../components/BSSuccessfullyAssigned';
 
 import {getPalletListApi} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
+import {useFocusEffect} from '@react-navigation/native';
 
 function PalletCreatedScreen(props) {
   const [palletCreatedList, setPalletCreatedList] = useState(null);
@@ -50,10 +51,14 @@ function PalletCreatedScreen(props) {
   const palletListData = useSelector(state => state.warehouse.palletList);
   const warehouseApiError = useSelector(state => state.warehouse.error);
 
-  useEffect(() => {
-    getPalletCreated();
-  }, []);
-
+  useFocusEffect(
+    useCallback(() => {
+      // Reset data and page number when the screen gains focus
+      pageNumber.current = 0;
+      setPalletCreatedList([]);
+      getPalletCreated();
+    }, []),
+  );
   useEffect(() => {
     if (palletListData) {
       console.log('palletListData: ', palletListData);
@@ -92,6 +97,8 @@ function PalletCreatedScreen(props) {
       pageNumber: pageNumber.current,
       pageSize: pageSize,
     };
+
+    console.log('Params in pallet list api', params);
 
     dispatch(getPalletListApi(params));
   };

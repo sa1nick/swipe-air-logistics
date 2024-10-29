@@ -35,15 +35,14 @@ const OrderCreateBoxCell = props => {
         </View>
         <Text style={styles.requestText}>Request Date: 23/5/2023</Text>
         <View style={styles.statusContainer}>
-            <View style={styles.divider}></View>
-            <Text style={styles.quantityText}>Status </Text>
-            <Text style={styles.orderStatusText}>Yet to assign</Text>
+          <View style={styles.divider}></View>
+          <Text style={styles.quantityText}>Status </Text>
+          <Text style={styles.orderStatusText}>Yet to assign</Text>
         </View>
         <View style={styles.pdfContainer}>
-          <Image source={SAL.image.pdfBigIcon}/>
+          <Image source={SAL.image.pdfBigIcon} />
           <Text style={styles.pdfNameText}>PROD_PUN_MUM.pdf</Text>
         </View>
-        
       </LinearGradient>
     </View>
   );
@@ -113,13 +112,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: SAL.constant.screenWidth - 32,
     height: 20,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   divider: {
     width: '50%',
     height: 0.5,
     backgroundColor: '#B1B1B1',
-    marginRight: 20
+    marginRight: 20,
   },
   orderStatusText: {
     color: '#FF6D09',
@@ -130,13 +129,13 @@ const styles = StyleSheet.create({
     color: SAL.colors.black,
     fontSize: 13,
     fontFamily: 'Rubik-Medium',
-    marginLeft: 10
+    marginLeft: 10,
   },
   pdfContainer: {
     flexDirection: 'row',
     marginLeft: 16,
-    alignItems: 'center'
-  }
+    alignItems: 'center',
+  },
 });
 
 export default OrderCreateBoxCell;

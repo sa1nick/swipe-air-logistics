@@ -25,6 +25,7 @@ import BSSuccessfullyAssigned from '../../../components/BSSuccessfullyAssigned';
 
 import {getAllContainerListApi} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
 import {opacity} from 'react-native-reanimated/lib/typescript/Colors';
+import {useFocusEffect} from '@react-navigation/native';
 
 function ContainerCreatedScreen(props) {
   const [containerCreatedList, setContainerCreatedList] = useState(null);
@@ -51,9 +52,14 @@ function ContainerCreatedScreen(props) {
 
   const containerListData = useSelector(state => state.warehouse.containerList);
 
-  useEffect(() => {
-    getContainerCreated();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      // Reset data and page number when the screen gains focus
+      pageNumber.current = 0;
+      setContainerCreatedList([]);
+      getContainerCreated();
+    }, []),
+  );
 
   useEffect(() => {
     if (containerListData) {

@@ -76,13 +76,17 @@ function CreateBoxScreen(props) {
         </View>
       </View>
       <View style={styles.flatlistContainer}>
-        <Text style={styles.noteText}>Note: Select warehouse movement to create box/pallet/container</Text>
+        <Text style={styles.noteText}>
+          Note: Select warehouse movement to create box/pallet/container
+        </Text>
         <FlatList data={['1', '2', '3']} renderItem={renderItem} />
       </View>
-      <Pressable style={styles.createBoxButton} onPress={() => {
-        props.navigation.navigate('Parcel')
-      }}>
-        <Image source={SAL.image.createBox}/>
+      <Pressable
+        style={styles.createBoxButton}
+        onPress={() => {
+          props.navigation.navigate('Parcel');
+        }}>
+        <Image source={SAL.image.createBox} />
         <Text style={styles.createBoxText}>Create Box</Text>
       </Pressable>
     </View>

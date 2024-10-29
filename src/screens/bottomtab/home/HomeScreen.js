@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, useCallback} from 'react';
 import {
   View,
   Text,
@@ -33,6 +33,7 @@ import {
   getAllProductByWarehouseIdApi,
   moveToWarehouseApi,
 } from '../../../api/slice/warehouseSlice/warehouseApiSlice';
+import {useFocusEffect} from '@react-navigation/native';
 
 function HomeScreen(props) {
   const [selectedValue, setSelectedValue] = useState(null);
@@ -40,7 +41,7 @@ function HomeScreen(props) {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showBS, setShowBS] = useState(false);
   const [showMovedWarehouseBS, setShowMovedWarehouseBS] = useState(false);
-  const [warehouseProductList, setWarehouseProductList] = useState(null);
+  const [warehouseProductList, setWarehouseProductList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [orderData, setOrderData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -59,6 +60,20 @@ function HomeScreen(props) {
     state => state.warehouse.moveToWarehouse,
   );
   const warehouseApiError = useSelector(state => state.warehouse.error);
+
+  // This effect will run whenever the screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      setTimeout(() => {
+        dispatch(getAllWarehouseApi({}));
+        fetchProductList(pageNumber.current);
+      }, 500);
+      // Cleanup function if needed
+      return () => {
+        // Optionally reset state here if needed
+      };
+    }, [dispatch]),
+  );
 
   useEffect(() => {
     setTimeout(() => {
@@ -86,6 +101,7 @@ function HomeScreen(props) {
           }, 1000);
         } else {
           setPickerWarehouseList(arrayWarehouseList);
+          // setPickerWarehouseList([]); // Reset if there's an error
         }
       }
     }
@@ -182,6 +198,7 @@ function HomeScreen(props) {
   };
 
   const renderItem = ({item, index}) => {
+    if (!item) return null; // Add a null check
     const categoryArray = item.categoryHierarchicalName.split('/');
 
     return (

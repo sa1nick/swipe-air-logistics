@@ -14,6 +14,7 @@ import ActivityIndicator from '../../../components/ActivityIndicator';
 import {showAlert} from '../../../utils/Utils';
 
 import {getDriverAssignmentListApi} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
+import {scaleFactor} from '../../../utils/ViewScaleUtil';
 
 function DriverAssignmentScreen(props) {
   const [loading, setLoading] = useState(false);
@@ -188,6 +189,9 @@ function DriverAssignmentScreen(props) {
         <View style={{height: 25}} />
         {selectedValue ? (
           <FlatList
+            contentContainerStyle={{gap: scaleFactor(39), paddingBottom: 40}}
+            showsVerticalScrollIndicator={false}
+            keyExtractor={(item, index) => index.toString()}
             data={assignmentList}
             renderItem={renderItem}
             refreshControl={

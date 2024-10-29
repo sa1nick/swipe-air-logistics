@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, useCallback} from 'react';
 import {
   View,
   Text,
@@ -23,6 +23,7 @@ import BSAssignToDriver from '../../../components/BSAssignToDriver';
 import BSSuccessfullyAssigned from '../../../components/BSSuccessfullyAssigned';
 
 import {getBoxListApi} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
+import {useFocusEffect} from '@react-navigation/native';
 
 function BoxCreatedScreen(props) {
   const [boxCreatedList, setBoxCreatedList] = useState(null);
@@ -50,9 +51,15 @@ function BoxCreatedScreen(props) {
   const boxListData = useSelector(state => state.warehouse.boxList);
   const warehouseApiError = useSelector(state => state.warehouse.error);
 
-  useEffect(() => {
-    getBoxCreated();
-  }, []);
+  // Refresh data on screen focus
+  useFocusEffect(
+    useCallback(() => {
+      // Reset page number and data on screen focus
+      pageNumber.current = 0;
+      setBoxCreatedList([]);
+      getBoxCreated();
+    }, []),
+  );
 
   useEffect(() => {
     if (boxListData) {
@@ -185,6 +192,8 @@ function BoxCreatedScreen(props) {
     let screenName =
       title === 'Container' ? 'MoveToContainerScreen' : 'BoxDimensionScreen';
 
+    console.log('createPalletContainer params', params);
+
     props.navigation.push(screenName, {
       data: params,
       from: 0,
@@ -256,6 +265,7 @@ function BoxCreatedScreen(props) {
         data={boxCreatedList}
         renderItem={renderItem}
         ListHeaderComponent={() => <View style={{height: 25}} />}
+        keyExtractor={(item, index) => index.toString()}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }

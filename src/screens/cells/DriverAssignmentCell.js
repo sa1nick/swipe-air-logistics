@@ -11,6 +11,29 @@ import {scaleFactor} from '../../utils/ViewScaleUtil';
 const DriverAssignmentCell = props => {
   const {item} = props;
 
+  const formatPickUpDate = dateStr => {
+    const [month, day, year] = dateStr.split('/');
+    const dateObj = new Date(year, month - 1, day);
+    if (isNaN(dateObj.getTime())) {
+      throw new Error('Invalid date format');
+    }
+    return new Intl.DateTimeFormat('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    }).format(dateObj);
+  };
+
+  const formatPickUpTime = timeStr => {
+    let [hours, minutes] = timeStr.split(':').map(Number);
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+
+    return `${hours.toString().padStart(2, '0')}:${minutes
+      .toString()
+      .padStart(2, '0')} ${ampm}`;
+  };
+
   const HeaderContainer = ({title, value}) => {
     return (
       <View
@@ -59,7 +82,9 @@ const DriverAssignmentCell = props => {
       <View style={styles.dateCapacityContainer}>
         <HeaderContainer
           title={'Date & Time'}
-          value={`${item.pickUpDate}, ${item.pickUpTime}`}
+          value={`${formatPickUpDate(item.pickUpDate)}, ${formatPickUpTime(
+            item.pickUpTime,
+          )}`}
         />
         <HeaderContainer
           title={'Capacity Filled'}
@@ -141,7 +166,8 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   dateCapacityContainer: {
-    marginHorizontal: 16,
+    // borderWidth: 1,
+    marginHorizontal: scaleFactor(25),
     height: 37,
     flexDirection: 'row',
   },
@@ -159,6 +185,7 @@ const styles = StyleSheet.create({
     color: SAL.colors.black,
     fontSize: 16,
     fontFamily: 'Rubik-Medium',
+    marginTop: -5,
   },
   driverInfoContainer: {
     marginHorizontal: 18,

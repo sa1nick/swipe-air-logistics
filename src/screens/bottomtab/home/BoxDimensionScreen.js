@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {View, Text, Image, Keyboard, StyleSheet} from 'react-native';
+import {View, Text, Image, Keyboard, StyleSheet, Platform} from 'react-native';
 
 import {useDispatch, useSelector} from 'react-redux';
 import RNPickerSelect from 'react-native-picker-select';
@@ -133,6 +133,9 @@ function BoxDimensionScreen(props) {
       console.log('createBoxStatus: ', createBoxStatus);
       setLoading(false);
       if (createBoxStatus.code === SAL.codeEnum.code200) {
+        console.log('CreatedBox', createBoxStatus.data);
+        console.log('CreatedBox data', data);
+
         props.navigation.replace('SealBoxSuccessfullyScreen', {
           boxData: createBoxStatus.data,
           data: data,
@@ -231,6 +234,16 @@ function BoxDimensionScreen(props) {
           }),
         );
       } else if (data.title === 'Pallet') {
+        console.log('createPalletApi params', params);
+        console.log(
+          'createPalletApi boxIdList',
+          data.productTrackingDetailIdList,
+        );
+        console.log(
+          'createPalletApi boxQuantity',
+          data.productTrackingDetailIdList.length,
+        );
+
         dispatch(
           createPalletApi({
             ...params,

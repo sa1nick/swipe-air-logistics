@@ -25,13 +25,15 @@ import {getAllScannedProductWarehouseApi} from '../../../api/slice/warehouseSlic
 function ScannedScreen(props) {
   const [loading, setLoading] = useState(false);
   const [movedBy, setMovedBy] = useState('');
-  const [productList, setProductList] = useState(null);
+  const [productList, setProductList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [itemCount, setItemCount] = useState(0);
+  const [error, setError] = useState(null);
 
   const isFocused = useIsFocused();
 
   const pageNumber = useRef(0);
+  const loadingRef = useRef(false);
   const pageSize = 15;
 
   const dispatch = useDispatch();
@@ -43,84 +45,130 @@ function ScannedScreen(props) {
     state => state.storeDataGlobally.dropoffWarehouse,
   );
   const validate = useSelector(state => state.storeDataGlobally.validate);
-
   const scannedListData = useSelector(
     state => state.warehouse.scannedProductByPickupDropoffWarehouse,
   );
 
   useEffect(() => {
     const getUserData = async () => {
-      const userData = await getData(StorageKey.userData);
-      setMovedBy(userData.firstName + ' ' + userData.lastName);
+      try {
+        const userData = await getData(StorageKey.userData);
+        if (userData?.firstName && userData?.lastName) {
+          setMovedBy(`${userData.firstName} ${userData.lastName}`);
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        setError('Failed to load user data');
+      }
     };
 
     getUserData();
   }, []);
 
+  const refreshData = async () => {
+    if (loadingRef.current) return;
+    // setProductList([]);
+    setItemCount(0);
+    pageNumber.current = 0;
+    await getWarehouseMovedData();
+  };
+
+  useEffect(() => {
+    if (isFocused) {
+      refreshData();
+    }
+  }, [isFocused]);
+
   useEffect(() => {
     if (validate) {
-      setLoading(true);
-      pageNumber.current = 0;
-      getWarehouseMovedData();
+      refreshData();
     }
   }, [validate]);
 
-  useEffect(() => {
-    if (scannedListData) {
-      if (scannedListData.code === SAL.codeEnum.code200) {
-        const updatedArray = scannedListData.data.map(item => ({
-          ...item,
-          isSelected: false,
-        }));
-        if (productList) {
-          setProductList(prevArray => [...prevArray, ...updatedArray]);
-        } else {
-          setItemCount(0);
-          setProductList(updatedArray);
-        }
-      } else {
-        showAlert(scannedListData.message);
-      }
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
+  const getWarehouseMovedData = async () => {
+    if (
+      !pickupWarehouse ||
+      !dropoffWarehouse ||
+      !isFocused ||
+      loadingRef.current
+    ) {
+      return;
     }
-  }, [scannedListData]);
 
-  const getWarehouseMovedData = () => {
-    if (pickupWarehouse && dropoffWarehouse && isFocused) {
-      pageNumber.current = pageNumber.current + 1;
+    try {
+      loadingRef.current = true;
       setLoading(true);
-      dispatch(
+      setError(null);
+
+      const response = await dispatch(
         getAllScannedProductWarehouseApi({
           warehouseId: dropoffWarehouse.value,
           pickupWarehouseId: pickupWarehouse.value,
           status: 3,
-          pageNumber: pageNumber.current,
+          pageNumber: pageNumber.current + 1,
           pageSize: pageSize,
         }),
-      );
+      ).unwrap();
+
+      if (response?.code === SAL.codeEnum.code200) {
+        const updatedArray = (response.data || []).map(item => ({
+          ...item,
+          isSelected: false,
+        }));
+
+        const existingIds = new Set(
+          productList.map(item => item.qrCodeFileNamePath),
+        );
+
+        const newItems = updatedArray.filter(
+          item => !existingIds.has(item.qrCodeFileNamePath),
+        );
+
+        if (newItems.length > 0) {
+          pageNumber.current += 1;
+          setProductList(prevArray => [...prevArray, ...newItems]);
+        }
+      } else {
+        setError(response?.message || 'Failed to load data');
+        showAlert(response?.message);
+      }
+    } catch (error) {
+      console.error('API Error:', error);
+      setError('Failed to load data. Please try again.');
+      showAlert('Failed to load data. Please try again.');
+    } finally {
+      setLoading(false);
+      loadingRef.current = false;
     }
   };
 
   const onPressOrderCell = index => {
-    const updatedArray = productList.map((item, i) => ({
-      ...item,
-      isSelected: i === index ? !item.isSelected : item.isSelected,
-    }));
+    setProductList(prevList => {
+      const updatedArray = prevList.map((item, i) => ({
+        ...item,
+        isSelected: i === index ? !item.isSelected : item.isSelected,
+      }));
 
-    const numberOfSelectedItems = updatedArray.reduce((count, item) => {
-      return count + (item.isSelected ? 1 : 0);
-    }, 0);
+      const numberOfSelectedItems = updatedArray.reduce(
+        (count, item) => count + (item.isSelected ? 1 : 0),
+        0,
+      );
 
-    setItemCount(numberOfSelectedItems);
-    setProductList(updatedArray);
+      setItemCount(numberOfSelectedItems);
+      return updatedArray;
+    });
   };
 
   const downloadPdf = async item => {
-    setLoading(true);
-    await downloadFile(item.qrCodeFileNamePath, item.qrCodeFilePath);
-    setLoading(false);
+    try {
+      setLoading(true);
+      await downloadFile(item.qrCodeFileNamePath, item.qrCodeFilePath);
+    } catch (error) {
+      console.error('Download error:', error);
+      showAlert('Failed to download PDF');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderItem = ({item, index}) => {
@@ -141,67 +189,68 @@ function ScannedScreen(props) {
 
   const renderListEmptyComponent = () => (
     <View style={styles.emptyListContainer}>
-      {!loading ? (
-        <Text style={styles.noDataFoundText}>No data found</Text>
-      ) : null}
+      {!loading && (
+        <Text style={styles.noDataFoundText}>{error || 'No data found'}</Text>
+      )}
     </View>
   );
 
-  const onRefresh = () => {
-    setProductList(null);
+  const onRefresh = async () => {
     setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 500);
-    pageNumber.current = 0;
-    getWarehouseMovedData();
+    await refreshData();
+    setRefreshing(false);
   };
 
   const onPressCreateBoxButton = () => {
-    if (itemCount) {
-      const selectedItemsIds = productList
-        .filter(item => item.isSelected)
-        .map(item => item.productTrackingDetailId);
-      const params = {
-        productTrackingDetailIdList: selectedItemsIds,
-        title: 'Box',
-        image: SAL.image.boxDimension,
-      };
-      props.navigation.navigate('BoxDimensionScreen', {
-        data: params,
-      });
-    } else {
+    if (!itemCount) {
       showAlert('Please select product');
+      return;
     }
+
+    const selectedItemsIds = productList
+      .filter(item => item.isSelected)
+      .map(item => item.productTrackingDetailId);
+
+    const params = {
+      productTrackingDetailIdList: selectedItemsIds,
+      title: 'Box',
+      image: SAL.image.boxDimension,
+    };
+
+    props.navigation.navigate('BoxDimensionScreen', {
+      data: params,
+    });
   };
 
   const boxListButton = () => {
-    if (pickupWarehouse && dropoffWarehouse) {
-      if (pickupWarehouse === dropoffWarehouse) {
-        showAlert("Select From and Select To can't be same");
-      } else {
-        props.navigation.navigate('BoxListScreen');
-      }
-    } else {
+    if (!pickupWarehouse || !dropoffWarehouse) {
       showAlert('Please select Select From and Select To warehouse');
+      return;
     }
+
+    if (pickupWarehouse === dropoffWarehouse) {
+      showAlert("Select From and Select To can't be same");
+      return;
+    }
+
+    props.navigation.navigate('BoxListScreen');
   };
 
   return (
     <View style={styles.container}>
-      {itemCount ? (
+      {itemCount > 0 && (
         <View style={styles.countContainer}>
           <ImageBackground style={styles.checkbox} source={SAL.image.checkBox}>
-            <Image source={SAL.image.checkboxTick}></Image>
+            <Image source={SAL.image.checkboxTick} />
           </ImageBackground>
           <Text style={styles.selectedText}>
             {itemCount} {itemCount > 1 ? 'Products' : 'Product'} selected
           </Text>
         </View>
-      ) : null}
+      )}
       <FlatList
-        keyExtractor={(item, index) => index.toString()}
-        extraData={loading}
+        keyExtractor={(item, index) => `${item.qrCodeFileNamePath}-${index}`}
+        extraData={[loading, itemCount]}
         data={productList}
         renderItem={renderItem}
         ListEmptyComponent={renderListEmptyComponent}
@@ -211,11 +260,14 @@ function ScannedScreen(props) {
         }
         onEndReached={({distanceFromEnd}) => {
           if (distanceFromEnd < 0) return;
-
-          if (productList?.length === pageNumber.current * pageSize) {
+          if (
+            !loading &&
+            productList.length === pageNumber.current * pageSize
+          ) {
             getWarehouseMovedData();
           }
         }}
+        onEndReachedThreshold={0.5}
       />
       <View style={styles.buttonContainer}>
         <Pressable
@@ -234,6 +286,7 @@ function ScannedScreen(props) {
   );
 }
 
+// Styles remain unchanged
 const styles = StyleSheet.create({
   container: {
     flex: 1,

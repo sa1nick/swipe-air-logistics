@@ -26,14 +26,15 @@ import {getAllPendingProductWarehouseApi} from '../../../api/slice/warehouseSlic
 function PendingScreen(props) {
   const [loading, setLoading] = useState(false);
   const [movedBy, setMovedBy] = useState('');
-  const [productList, setProductList] = useState([]); // Initialize as empty array
+  const [productList, setProductList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState(null);
 
   const {hasPermission, requestPermission} = useCameraPermission();
-
   const isFocused = useIsFocused();
 
   const pageNumber = useRef(0);
+  const loadingRef = useRef(false); // Add this to prevent concurrent API calls
   const pageSize = 15;
 
   const dispatch = useDispatch();
@@ -45,61 +46,95 @@ function PendingScreen(props) {
     state => state.storeDataGlobally.dropoffWarehouse,
   );
   const validate = useSelector(state => state.storeDataGlobally.validate);
-
   const pendingListData = useSelector(
     state => state.warehouse.pendingProductByPickupDropoffWarehouse,
   );
 
   useEffect(() => {
     const getUserData = async () => {
-      const userData = await getData(StorageKey.userData);
-      if (userData) {
-        setMovedBy(`${userData.firstName} ${userData.lastName}`);
+      try {
+        const userData = await getData(StorageKey.userData);
+        if (userData) {
+          setMovedBy(`${userData.firstName} ${userData.lastName}`);
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        setError('Failed to load user data');
       }
     };
 
     getUserData();
   }, []);
 
+  const refreshData = async () => {
+    if (loadingRef.current) return; // Prevent concurrent refreshes
+
+    // setProductList([]);
+    pageNumber.current = 0;
+    await getWarehouseMovedData();
+  };
+
+  useEffect(() => {
+    if (isFocused) {
+      refreshData();
+    }
+  }, [isFocused]);
+
   useEffect(() => {
     if (validate) {
-      setLoading(true);
-      setProductList([]); // Reset productList to an empty array
-      pageNumber.current = 0;
-      getWarehouseMovedData();
+      refreshData();
     }
   }, [validate]);
 
-  useEffect(() => {
-    if (pendingListData) {
-      console.log(pendingListData);
-      if (pendingListData.code === SAL.codeEnum.code200) {
-        setProductList(prevArray => [
-          ...prevArray,
-          ...(pendingListData.data || []), // Safely access data
-        ]);
-      } else {
-        showAlert(pendingListData.message);
-      }
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
+  const getWarehouseMovedData = async () => {
+    if (
+      !pickupWarehouse ||
+      !dropoffWarehouse ||
+      !isFocused ||
+      loadingRef.current
+    ) {
+      return;
     }
-  }, [pendingListData]);
 
-  const getWarehouseMovedData = () => {
-    if (pickupWarehouse && dropoffWarehouse && isFocused) {
-      pageNumber.current += 1;
+    try {
+      loadingRef.current = true;
       setLoading(true);
-      dispatch(
+      setError(null);
+
+      const response = await dispatch(
         getAllPendingProductWarehouseApi({
           warehouseId: dropoffWarehouse.value,
           pickupWarehouseId: pickupWarehouse.value,
           status: 0,
-          pageNumber: pageNumber.current,
+          pageNumber: pageNumber.current + 1,
           pageSize: pageSize,
         }),
-      );
+      ).unwrap();
+
+      if (response?.code === SAL.codeEnum.code200) {
+        const existingIds = new Set(
+          productList.map(item => item.qrCodeFileNamePath),
+        );
+
+        const newItems = (response.data || []).filter(
+          item => !existingIds.has(item.qrCodeFileNamePath),
+        );
+
+        if (newItems.length > 0) {
+          pageNumber.current += 1;
+          setProductList(prevArray => [...prevArray, ...newItems]);
+        }
+      } else {
+        setError(response?.message || 'Failed to load data');
+        showAlert(response?.message);
+      }
+    } catch (error) {
+      console.error('API Error:', error);
+      setError('Failed to load data. Please try again.');
+      showAlert('Failed to load data. Please try again.');
+    } finally {
+      setLoading(false);
+      loadingRef.current = false;
     }
   };
 
@@ -108,9 +143,15 @@ function PendingScreen(props) {
   };
 
   const downloadPdf = async item => {
-    setLoading(true);
-    await downloadFile(item.qrCodeFileNamePath, item.qrCodeFilePath);
-    setLoading(false);
+    try {
+      setLoading(true);
+      await downloadFile(item.qrCodeFileNamePath, item.qrCodeFilePath);
+    } catch (error) {
+      console.error('Download error:', error);
+      showAlert('Failed to download PDF');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderItem = ({item, index}) => {
@@ -131,20 +172,16 @@ function PendingScreen(props) {
 
   const renderListEmptyComponent = () => (
     <View style={styles.emptyListContainer}>
-      {!loading ? (
-        <Text style={styles.noDataFoundText}>No data found</Text>
-      ) : null}
+      {!loading && (
+        <Text style={styles.noDataFoundText}>{error || 'No data found'}</Text>
+      )}
     </View>
   );
 
-  const onRefresh = () => {
-    setProductList([]); // Reset productList to an empty array
+  const onRefresh = async () => {
     setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 500);
-    pageNumber.current = 0;
-    getWarehouseMovedData();
+    await refreshData();
+    setRefreshing(false);
   };
 
   const onPressScanButton = () => {
@@ -153,7 +190,7 @@ function PendingScreen(props) {
     } else {
       if (Camera.getCameraPermissionStatus() === 'denied') {
         showAlert(
-          'Please grant permission in your device settings under "Privacy & Security" > "Camera',
+          'Please grant permission in your device settings under "Privacy & Security" > "Camera"',
         );
       } else {
         requestPermission();
@@ -162,21 +199,23 @@ function PendingScreen(props) {
   };
 
   const boxListButton = () => {
-    if (pickupWarehouse && dropoffWarehouse) {
-      if (pickupWarehouse === dropoffWarehouse) {
-        showAlert("Select From and Select To can't be the same");
-      } else {
-        props.navigation.navigate('BoxListScreen');
-      }
-    } else {
+    if (!pickupWarehouse || !dropoffWarehouse) {
       showAlert('Please select Select From and Select To warehouse');
+      return;
     }
+
+    if (pickupWarehouse === dropoffWarehouse) {
+      showAlert("Select From and Select To can't be the same");
+      return;
+    }
+
+    props.navigation.navigate('BoxListScreen');
   };
 
   return (
     <View style={styles.container}>
       <FlatList
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item, index) => `${item.qrCodeFileNamePath}-${index}`}
         extraData={loading}
         data={productList}
         renderItem={renderItem}
@@ -187,10 +226,14 @@ function PendingScreen(props) {
         }
         onEndReached={({distanceFromEnd}) => {
           if (distanceFromEnd < 0) return;
-          if (productList.length === pageNumber.current * pageSize) {
+          if (
+            !loading &&
+            productList.length === pageNumber.current * pageSize
+          ) {
             getWarehouseMovedData();
           }
         }}
+        onEndReachedThreshold={0.5}
       />
       <View style={styles.buttonContainer}>
         <Pressable style={styles.createBoxButton} onPress={onPressScanButton}>
@@ -207,6 +250,7 @@ function PendingScreen(props) {
   );
 }
 
+// Styles remain unchanged
 const styles = StyleSheet.create({
   container: {
     flex: 1,

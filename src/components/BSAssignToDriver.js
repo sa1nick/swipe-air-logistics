@@ -87,7 +87,7 @@ const BSAssignToDriver = props => {
   }, [warehouseApiError]);
 
   useEffect(() => {
-    // console.log('driverListData: ', driverListData);
+    console.log('driverListData: ', driverListData);
     if (driverListData) {
       setLoading(false);
       if (driverListData.code === SAL.codeEnum.code200) {
@@ -240,7 +240,7 @@ const BSAssignToDriver = props => {
     // setLoading(true);
 
     const commonParams = {
-      assignedDriverId: driverInfo.id,
+      assignedDriverId: driverInfo,
       assignedCompanyId: 0,
       pickUpDate: selectedDate,
       pickUpTime: selectedTime,
@@ -305,38 +305,11 @@ const BSAssignToDriver = props => {
           <View style={styles.commonContainer}>
             <Text style={styles.commonText}>Driver</Text>
             <View style={styles.separator} />
-            {/* <Text style={styles.dropdownText}>Select Driver</Text> */}
-
-            {/* <Image
-              style={{position: 'absolute', right: 20}}
-              source={SAL.image.downArrow}></Image> */}
-            {/* <RNPickerSelect
-              placeholder={{label: 'Select Driver', value: null}}
-              // onValueChange={handleValueChange}
-              // itemKey={selectedValue} // Set the currently selected value as the key
-              // value={selectedValue} // Ensure the picker displays the selected value
-              items={[
-                {label: 'Football', value: 'football'},
-                {label: 'Baseball', value: 'baseball'},
-                {label: 'Hockey', value: 'hockey'},
-              ]}
-              // items={driverList}
-              onValueChange={value => console.log(value)}
-              useNativeAndroidPickerStyle={false}
-              Icon={ArrowDownIcon}
-              style={pickerSelectStyles}
-            /> */}
 
             <RNPickerSelect
               placeholder={{label: 'Select Driver', value: null}}
-              // items={[
-              //   {label: 'rahul(0% Filled)', value: '1'},
-              //   {label: 'Kanika(0% Filled)', value: '2'},
-              //   {label: 'Pankaj(0% Filled)', value: '7'},
-              // ]}
-              // items={driverList}
               items={driverList == null ? [] : driverList}
-              onValueChange={value => console.log(value)}
+              onValueChange={selectedDriver}
               useNativeAndroidPickerStyle={false}
               Icon={ArrowDownIcon}
               style={pickerSelectStyles}

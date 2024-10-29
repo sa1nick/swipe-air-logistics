@@ -43,12 +43,16 @@ function AssignToDriverLoosePackingScreen(props) {
   const warehouseApiError = useSelector(state => state.warehouse.error);
 
   useEffect(() => {
-    if (pickupWarehouse && dropoffWarehouse && assignedDriverData)
-      getAssignedParcel();
+    if (pickupWarehouse && dropoffWarehouse && assignedDriverData) {
+      setAssignedList([]);
+    }
+    getAssignedParcel();
   }, []);
 
   useEffect(() => {
+    // setLoading(true);
     if (assignedDriverData) {
+      setLoading(false);
       console.log('assignedDriverData: ', assignedDriverData);
       if (assignedDriverData.code === SAL.codeEnum.code200) {
         if (assignedList) {
@@ -79,8 +83,8 @@ function AssignToDriverLoosePackingScreen(props) {
     setLoading(true);
     pageNumber.current = pageNumber?.current + 1;
     const params = {
-      dropoffWarehouseId: dropoffWarehouse.value,
-      pickupWarehouseId: pickupWarehouse.value,
+      dropoffWarehouseId: dropoffWarehouse?.value,
+      pickupWarehouseId: pickupWarehouse?.value,
       pageNumber: pageNumber.current,
       pageSize: pageSize,
     };
@@ -98,7 +102,7 @@ function AssignToDriverLoosePackingScreen(props) {
   );
 
   const onRefresh = () => {
-    setAssignedList(null);
+    // setAssignedList([]);
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
