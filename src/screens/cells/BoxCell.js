@@ -36,6 +36,7 @@ const BoxCell = props => {
       }}
       style={[
         styles.container,
+        props.boxStyles,
         // {
         //   height: Platform.OS === 'ios' ? 245 : 255,
         // },

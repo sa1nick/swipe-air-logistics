@@ -10,8 +10,8 @@ import {
   RefreshControl,
   SafeAreaView,
 } from 'react-native';
-
 import {useDispatch, useSelector} from 'react-redux';
+import {useFocusEffect} from '@react-navigation/native';
 
 import SAL from '../../../SAL';
 import ActivityIndicator from '../../../components/ActivityIndicator';
@@ -42,18 +42,36 @@ function AssignToDriverLoosePackingScreen(props) {
   );
   const warehouseApiError = useSelector(state => state.warehouse.error);
 
+  // Reset and refresh data on screen focus
+  useFocusEffect(
+    React.useCallback(() => {
+      if (pickupWarehouse && dropoffWarehouse) {
+        setLoading(true);
+        setAssignedList([]); // Clear existing data
+        pageNumber.current = 0; // Reset page number
+        getAssignedParcel(); // Fetch new data
+      }
+
+      // Optional cleanup function
+      return () => {
+        // Clean up any subscriptions or pending operations
+        setLoading(false);
+      };
+    }, [pickupWarehouse?.value, dropoffWarehouse?.value]),
+  );
+
+  // Reset and fetch data when warehouses change
   useEffect(() => {
-    if (pickupWarehouse && dropoffWarehouse && assignedDriverData) {
-      setAssignedList([]);
+    if (pickupWarehouse && dropoffWarehouse) {
+      setLoading(true);
+      setAssignedList([]); // Clear existing data
+      pageNumber.current = 0; // Reset page number
+      getAssignedParcel(); // Fetch new data
     }
-    getAssignedParcel();
-  }, []);
+  }, [pickupWarehouse?.value, dropoffWarehouse?.value]);
 
   useEffect(() => {
-    // setLoading(true);
     if (assignedDriverData) {
-      setLoading(false);
-      console.log('assignedDriverData: ', assignedDriverData);
       if (assignedDriverData.code === SAL.codeEnum.code200) {
         if (assignedList) {
           setAssignedList(prevArray => [
@@ -66,9 +84,8 @@ function AssignToDriverLoosePackingScreen(props) {
       } else {
         showAlert(assignedDriverData.message);
       }
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
+      // Remove the setTimeout and directly set loading to false
+      setLoading(false);
     }
   }, [assignedDriverData]);
 
@@ -80,19 +97,22 @@ function AssignToDriverLoosePackingScreen(props) {
   }, [warehouseApiError]);
 
   const getAssignedParcel = () => {
-    setLoading(true);
-    pageNumber.current = pageNumber?.current + 1;
+    if (!pickupWarehouse?.value || !dropoffWarehouse?.value) {
+      setLoading(false);
+      return; // Don't fetch if warehouse values are missing
+    }
+
     const params = {
-      dropoffWarehouseId: dropoffWarehouse?.value,
-      pickupWarehouseId: pickupWarehouse?.value,
-      pageNumber: pageNumber.current,
+      dropoffWarehouseId: dropoffWarehouse.value,
+      pickupWarehouseId: pickupWarehouse.value,
+      pageNumber: pageNumber.current + 1,
       pageSize: pageSize,
     };
 
+    pageNumber.current = params.pageNumber;
     dispatch(getAssignedItemToDriver(params));
   };
 
-  // eslint-disable-next-line react/no-unstable-nested-components
   const RenderListEmptyComponent = () => (
     <View style={styles.emptyListContainer}>
       {!loading ? (
@@ -102,13 +122,13 @@ function AssignToDriverLoosePackingScreen(props) {
   );
 
   const onRefresh = () => {
-    // setAssignedList([]);
     setRefreshing(true);
+    pageNumber.current = 0;
+    setAssignedList([]); // Clear existing data
+    getAssignedParcel();
     setTimeout(() => {
       setRefreshing(false);
     }, 500);
-    pageNumber.current = 0;
-    getAssignedParcel();
   };
 
   const renderItem = ({item, index}) => {
@@ -118,7 +138,7 @@ function AssignToDriverLoosePackingScreen(props) {
         item={item}
         index={index}
         isDriver={true}
-        // onPressDetailCell={onPressDetailCell}
+        boxStyles={{marginBottom: 20}}
       />
     );
   };
@@ -127,6 +147,7 @@ function AssignToDriverLoosePackingScreen(props) {
     <View style={styles.container}>
       {assignedList?.length ? null : <RenderListEmptyComponent />}
       <FlatList
+        keyExtractor={(item, index) => index.toString()}
         data={assignedList}
         renderItem={renderItem}
         ListHeaderComponent={() => <View style={{height: 25}} />}
@@ -140,6 +161,7 @@ function AssignToDriverLoosePackingScreen(props) {
             getAssignedParcel();
           }
         }}
+        onEndReachedThreshold={0.5}
       />
       {loading && <ActivityIndicator />}
     </View>
@@ -149,6 +171,7 @@ function AssignToDriverLoosePackingScreen(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: SAL.colors.white,
   },
   emptyListContainer: {
     height: 200,

@@ -219,6 +219,7 @@ function PendingScreen(props) {
         extraData={loading}
         data={productList}
         renderItem={renderItem}
+        // contentContainerStyle={{gap: 20}}
         ListEmptyComponent={renderListEmptyComponent}
         ListHeaderComponent={() => <View style={{height: 25}} />}
         refreshControl={
