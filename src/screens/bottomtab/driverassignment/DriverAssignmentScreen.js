@@ -23,7 +23,7 @@ function DriverAssignmentScreen(props) {
   const [showAssignmentRejected, setShowAssignmentRejected] = useState(false);
   const [selectedValue, setSelectedValue] = useState('1');
   const [selectedLabel, setSelectedLabel] = useState('Yet to Freeze');
-  const [assignmentList, setAssignmentList] = useState(null);
+  const [assignmentList, setAssignmentList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
   const pickerWidth = SAL.constant.screenWidth - 32 - 100;
@@ -58,7 +58,7 @@ function DriverAssignmentScreen(props) {
 
   useEffect(() => {
     getAssignmentData();
-  }, []);
+  }, [selectedValue]);
 
   useEffect(() => {
     if (driverAssignmentListData) {
@@ -93,7 +93,6 @@ function DriverAssignmentScreen(props) {
   const onClosePicker = () => {
     if (selectedValue) {
       getAssignmentData();
-    } else {
     }
   };
 
@@ -134,21 +133,17 @@ function DriverAssignmentScreen(props) {
     setShowAssignmentRejected(false);
   };
 
-  const renderItem = ({item, index}) => {
-    return (
-      <DriverAssignmentCell
-        item={item}
-        showConsignmentButton={() => {
-          showConsignmentButton(index);
-        }}
-        remindDriverButton={remindDriverButton}
-        assignmentRejectedButton={assignmentRejectedButton}
-        selectedValue={selectedValue}
-        selectedLabel={selectedLabel}
-        color={statusColor[parseInt(selectedValue)]}
-      />
-    );
-  };
+  const renderItem = ({item, index}) => (
+    <DriverAssignmentCell
+      item={item}
+      showConsignmentButton={() => showConsignmentButton(index)}
+      remindDriverButton={remindDriverButton}
+      assignmentRejectedButton={assignmentRejectedButton}
+      selectedValue={selectedValue}
+      selectedLabel={selectedLabel}
+      color={statusColor[parseInt(selectedValue)]}
+    />
+  );
 
   return (
     <View style={styles.container}>
@@ -188,16 +183,29 @@ function DriverAssignmentScreen(props) {
       <View style={styles.flatlistContainer}>
         <View style={{height: 25}} />
         {selectedValue ? (
-          <FlatList
-            contentContainerStyle={{gap: scaleFactor(39), paddingBottom: 40}}
-            showsVerticalScrollIndicator={false}
-            keyExtractor={(item, index) => index.toString()}
-            data={assignmentList}
-            renderItem={renderItem}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-          />
+          assignmentList && assignmentList.length > 0 ? (
+            <FlatList
+              contentContainerStyle={{gap: scaleFactor(39), paddingBottom: 40}}
+              showsVerticalScrollIndicator={false}
+              keyExtractor={(item, index) => index.toString()}
+              data={assignmentList}
+              renderItem={renderItem}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+            />
+          ) : (
+            <View
+              style={{
+                position: 'absolute',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '100%',
+                height: 200,
+              }}>
+              <Text style={styles.noDataText}>No assignments available</Text>
+            </View>
+          )
         ) : (
           <View
             style={{

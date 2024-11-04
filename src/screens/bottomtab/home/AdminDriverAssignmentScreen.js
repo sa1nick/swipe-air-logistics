@@ -28,11 +28,19 @@ function AdminDriverAssignmentScreen(props) {
     {label: 'Rejected', value: '5'},
   ];
 
-  const statusColor = ['#0DBC93', '#15AEF2', '#0DBC93', '#9E8F05', '#0DBC93', '#FF3333']
+  const statusColor = [
+    '#0DBC93',
+    '#15AEF2',
+    '#0DBC93',
+    '#9E8F05',
+    '#0DBC93',
+    '#FF3333',
+  ];
 
   const handleValueChange = (value, index) => {
     setSelectedLabel(index ? pickerItems[index - 1].label : null);
     setSelectedValue(value);
+    console.log('setSelectedValue0', value);
   };
 
   const arrowDownIcon = () => (
@@ -56,7 +64,7 @@ function AdminDriverAssignmentScreen(props) {
   const closeModalButton = () => {
     setShowBS(false);
     setShowRemindDriver(false);
-    setShowAssignmentRejected(false)
+    setShowAssignmentRejected(false);
   };
 
   const renderItem = ({item, index}) => {
@@ -107,7 +115,7 @@ function AdminDriverAssignmentScreen(props) {
             items={pickerItems}
             onValueChange={handleValueChange}
             value={selectedValue}
-            useNativeAndroidPickerStyle={false}
+            useNativeAndroidPickerStyle={true}
             Icon={arrowDownIcon}
             style={{
               inputIOS: {

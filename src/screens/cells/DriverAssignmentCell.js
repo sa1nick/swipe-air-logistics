@@ -232,6 +232,7 @@ const styles = StyleSheet.create({
     color: '#919191',
     fontSize: 8,
     fontFamily: 'Rubik-Regular',
+    marginBottom: Platform.OS === 'ios' ? scaleFactor(5) : scaleFactor(0),
   },
   buttonContainer: {
     // height: scaleFactor(67),
