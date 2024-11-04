@@ -138,7 +138,6 @@ function AssignToDriverLoosePackingScreen(props) {
         item={item}
         index={index}
         isDriver={true}
-        boxStyles={{marginBottom: 20}}
       />
     );
   };
@@ -147,6 +146,7 @@ function AssignToDriverLoosePackingScreen(props) {
     <View style={styles.container}>
       {assignedList?.length ? null : <RenderListEmptyComponent />}
       <FlatList
+        ItemSeparatorComponent={() => <View style={{height: 20}} />} // Global spacing between items
         keyExtractor={(item, index) => index.toString()}
         data={assignedList}
         renderItem={renderItem}
