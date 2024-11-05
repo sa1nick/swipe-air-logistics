@@ -6,8 +6,12 @@ import {scaleFactor} from '../../../utils/ViewScaleUtil';
 export default styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingBottom: 10,
+    justifyContent: 'space-between',
     backgroundColor: SAL.colors.white,
+    // opacity: 0.7,
   },
+
   topGradientContainer: {
     position: 'absolute',
     width: '100%',
@@ -24,7 +28,7 @@ export default styles = StyleSheet.create({
   },
   warehouseStaticText: {
     color: SAL.colors.purple,
-    fontSize: scaleFactor(14),
+    fontSize: 14,
     fontFamily: 'Rubik-Medium',
     marginLeft: 25,
     width: scaleFactor(75),
@@ -35,16 +39,17 @@ export default styles = StyleSheet.create({
   },
   flatlistContainer: {
     width: '100%',
-    height:
-      SAL.constant.screenHeight -
-      (Platform.OS === 'ios'
-        ? SAL.constant.screenHeight * 0.45
-        : SAL.constant.screenHeight * 0.42),
+    // height:
+    //   SAL.constant.screenHeight -
+    //   (Platform.OS === 'ios'
+    //     ? SAL.constant.screenHeight * 0.45
+    //     : SAL.constant.screenHeight * 0.42),
     borderTopLeftRadius: 35,
     borderTopRightRadius: 35,
     marginTop: 37,
     backgroundColor: SAL.colors.white,
     justifyContent: 'center',
+    flex: 1,
   },
   emptyListContainer: {
     height: 200,

@@ -184,7 +184,7 @@ function BoxListScreen(props) {
   }, []);
 
   const navigationLeftButton = () => {
-    props.navigation.navigate("Warehouse Requests");
+    props.navigation.navigate('Warehouse Requests');
   };
 
   return (

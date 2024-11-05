@@ -138,6 +138,12 @@ function AssignToDriverLoosePackingScreen(props) {
         item={item}
         index={index}
         isDriver={true}
+        onPressDetailCell={() =>
+          console.log('Assigned to driver Box, onPressDetailCell')
+        }
+        onPressOrderCell={() =>
+          console.log('Assigned to driver Box, onPressOrderCell')
+        }
       />
     );
   };

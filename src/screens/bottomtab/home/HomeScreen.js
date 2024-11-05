@@ -8,6 +8,7 @@ import {
   Modal,
   Platform,
   Alert,
+  SafeAreaView,
 } from 'react-native';
 
 import RNPickerSelect from 'react-native-picker-select';
@@ -321,7 +322,7 @@ function HomeScreen(props) {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['bottom']}>
       <Modal
         animationType="slide"
         transparent={true}
@@ -353,7 +354,12 @@ function HomeScreen(props) {
         source={SAL.image.gradientBg}></Image>
       <NavigationBar navigationLeftButton={navigationLeftButton} />
       <View style={styles.dropdownContainer}>
-        <Text style={styles.warehouseStaticText}>Warehouse</Text>
+        <Text
+          style={styles.warehouseStaticText}
+          adjustsFontSizeToFit={true}
+          numberOfLines={1}>
+          Warehouse
+        </Text>
         <View style={styles.subDDContainer}>
           <RNPickerSelect
             placeholder={{label: 'Select warehouse', value: null}}
@@ -397,9 +403,13 @@ function HomeScreen(props) {
         buttonTitle={'Move to Warehouse'}
         image={SAL.image.warehouseButton}
         buttonPressed={moveToWarehouseButton}
+        style={{
+          backgroundColor: SAL.colors.white,
+        }}
       />
+
       {loading && <ActivityIndicator />}
-    </View>
+    </SafeAreaView>
   );
 }
 

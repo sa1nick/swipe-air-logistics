@@ -24,6 +24,7 @@ import BSSuccessfullyAssigned from '../../../components/BSSuccessfullyAssigned';
 
 import {getBoxListApi} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
 import {useFocusEffect} from '@react-navigation/native';
+import {scaleFactor} from '../../../utils/ViewScaleUtil';
 
 function BoxCreatedScreen(props) {
   const [boxCreatedList, setBoxCreatedList] = useState(null);
@@ -295,6 +296,7 @@ function BoxCreatedScreen(props) {
         image={SAL.image.truckDriverWhite}
         buttonTitle={'Assign to Driver'}
         buttonPressed={moveToDriverAssignButton}
+        style={{marginBottom: scaleFactor(10)}}
       />
       {loading && <ActivityIndicator />}
     </SafeAreaView>

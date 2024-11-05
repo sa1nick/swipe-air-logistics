@@ -195,27 +195,19 @@ function DriverAssignmentScreen(props) {
               }
             />
           ) : (
-            <View
-              style={{
-                position: 'absolute',
-                justifyContent: 'center',
-                alignItems: 'center',
-                width: '100%',
-                height: 200,
-              }}>
-              <Text style={styles.noDataText}>No assignments available</Text>
+            <View style={styles.emptyListContainer}>
+              {!loading && (
+                <Text style={styles.noDataFoundText}>
+                  {driverAssignmentApiError?.message || 'No data found'}
+                </Text>
+              )}
             </View>
           )
         ) : (
-          <View
-            style={{
-              position: 'absolute',
-              justifyContent: 'center',
-              alignItems: 'center',
-              width: '100%',
-              height: 200,
-            }}>
-            <Text style={styles.selectStatus}>Please select status</Text>
+          <View style={styles.emptyListContainer}>
+            {!loading && (
+              <Text style={styles.noDataFoundText}>Please select status</Text>
+            )}
           </View>
         )}
       </View>

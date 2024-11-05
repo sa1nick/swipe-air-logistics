@@ -63,13 +63,13 @@ export default styles = StyleSheet.create({
     borderRadius: 30,
     flexDirection: 'row',
     marginTop: 20,
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   createButton: {
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
-    width: '48%'
+    width: '48%',
   },
   createButtonText: {
     color: SAL.colors.orange,
@@ -80,7 +80,7 @@ export default styles = StyleSheet.create({
   buttonSeparator: {
     width: 1,
     marginVertical: 12,
-    backgroundColor: SAL.colors.orange
+    backgroundColor: SAL.colors.orange,
   },
   emptyListContainer: {
     height: 200,

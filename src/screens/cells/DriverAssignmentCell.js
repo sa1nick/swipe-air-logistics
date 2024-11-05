@@ -42,7 +42,12 @@ const DriverAssignmentCell = props => {
           {alignItems: title === 'Date & Time' ? 'flex-start' : 'flex-end'},
         ]}>
         <Text style={styles.headingText}>{title}</Text>
-        <Text style={styles.dateText}>{value}</Text>
+        <Text
+          style={styles.dateText}
+          adjustsFontSizeToFit={true}
+          numberOfLines={1}>
+          {value}
+        </Text>
       </View>
     );
   };
@@ -168,7 +173,7 @@ const styles = StyleSheet.create({
   dateCapacityContainer: {
     // borderWidth: 1,
     marginHorizontal: scaleFactor(25),
-    height: 37,
+    height: 30,
     flexDirection: 'row',
   },
   subContainer: {
@@ -183,7 +188,7 @@ const styles = StyleSheet.create({
   },
   dateText: {
     color: SAL.colors.black,
-    fontSize: 16,
+    // fontSize: 16,
     fontFamily: 'Rubik-Medium',
     marginTop: -5,
   },

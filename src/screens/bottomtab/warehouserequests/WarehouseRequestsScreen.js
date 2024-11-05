@@ -33,7 +33,7 @@ const TopTabStack = ({screenProps}) => {
         tabBarActiveTintColor: '#7A2783',
         tabBarInactiveTintColor: '#8A8A8A',
         tabBarLabelStyle: {
-          fontSize: 14,
+          fontSize: 13,
           fontFamily: 'Rubik-Medium',
         },
         tabBarIndicatorStyle: {

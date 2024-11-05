@@ -24,6 +24,7 @@ import BSSuccessfullyAssigned from '../../../components/BSSuccessfullyAssigned';
 
 import {getPalletListApi} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
 import {useFocusEffect} from '@react-navigation/native';
+import {scaleFactor} from '../../../utils/ViewScaleUtil';
 
 function PalletCreatedScreen(props) {
   const [palletCreatedList, setPalletCreatedList] = useState(null);
@@ -273,6 +274,7 @@ function PalletCreatedScreen(props) {
         image={SAL.image.truckDriverWhite}
         buttonTitle={'Assign to Driver'}
         buttonPressed={moveToDriverAssignButton}
+        style={{marginBottom: scaleFactor(10)}}
       />
       {loading && <ActivityIndicator />}
     </SafeAreaView>

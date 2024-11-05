@@ -1,20 +1,29 @@
 /* eslint-disable react/react-in-jsx-scope */
-import {Image, StyleSheet, Platform} from 'react-native';
+import {Image, StyleSheet, Platform, Text} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 import SAL from '../SAL';
 import HomeScreen from '../screens/bottomtab/home/HomeScreen';
 import WarehouseRequestsScreen from '../screens/bottomtab/warehouserequests/WarehouseRequestsScreen';
 import DriverAssignmentScreen from '../screens/bottomtab/driverassignment/DriverAssignmentScreen';
+import {scaleFactor} from '../utils/ViewScaleUtil';
 
 const Tab = createBottomTabNavigator();
+
+const TabLabel = ({focused, label}) => (
+  <Text
+    style={styles.tabBarLabel}
+    adjustsFontSizeToFit={true}
+    numberOfLines={1}>
+    {label}
+  </Text>
+);
 
 function BottomTabBar(props) {
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
         header: () => null,
-        // eslint-disable-next-line react/no-unstable-nested-components
         tabBarIcon: ({focused}) => {
           let iconName;
 
@@ -26,12 +35,14 @@ function BottomTabBar(props) {
             iconName = focused ? SAL.image.daSelectedTab : SAL.image.daTab;
           }
 
-          // You can return any component that you like here!
           return <Image source={iconName} />;
         },
         tabBarActiveTintColor: SAL.colors.purple,
         tabBarInactiveTintColor: '#8A8A8A',
         tabBarStyle: styles.tabBarStyle,
+        tabBarLabel: ({focused}) => (
+          <TabLabel focused={focused} label={route.name} />
+        ),
       })}>
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen
@@ -44,15 +55,16 @@ function BottomTabBar(props) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   tabBarLabel: {
-    fontSize: 16,
+    fontSize: scaleFactor(11),
+    marginTop: -10,
   },
   tabBarStyle: {
+    height: scaleFactor(81),
+    paddingBottom: 10,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 0,
     backgroundColor: 'white', // Set the background color of the tab bar
     ...Platform.select({
       ios: {

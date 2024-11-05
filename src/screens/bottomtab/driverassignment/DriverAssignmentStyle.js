@@ -45,6 +45,16 @@ export default styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Rubik-Medium',
   },
+  emptyListContainer: {
+    height: SAL.constant.screenHeight * 0.7,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  noDataFoundText: {
+    color: SAL.colors.black,
+    fontSize: 16,
+    fontFamily: 'Rubik-Medium',
+  },
 });
 
 const pickerWidth = SAL.constant.screenWidth - 32 - 100;
