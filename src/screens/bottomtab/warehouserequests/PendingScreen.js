@@ -100,6 +100,15 @@ function PendingScreen(props) {
       loadingRef.current = true;
       setLoading(true);
       setError(null);
+      const payload = {
+        warehouseId: dropoffWarehouse.value,
+        pickupWarehouseId: pickupWarehouse.value,
+        status: 0,
+        pageNumber: pageNumber.current + 1,
+        pageSize: pageSize,
+      };
+
+      console.log('pending payload', payload);
 
       const response = await dispatch(
         getAllPendingProductWarehouseApi({
@@ -173,7 +182,12 @@ function PendingScreen(props) {
   const renderListEmptyComponent = () => (
     <View style={styles.emptyListContainer}>
       {!loading && (
-        <Text style={styles.noDataFoundText}>{error || 'No data found'}</Text>
+        <Text
+          style={styles.noDataFoundText}
+          adjustsFontSizeToFit={true}
+          numberOfLines={1}>
+          {error || 'No data found'}
+        </Text>
       )}
     </View>
   );
@@ -264,7 +278,7 @@ const styles = StyleSheet.create({
   },
   noDataFoundText: {
     color: SAL.colors.black,
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Rubik-Medium',
   },
   buttonContainer: {

@@ -265,6 +265,7 @@ function BoxCreatedScreen(props) {
       <FlatList
         data={boxCreatedList}
         renderItem={renderItem}
+        ItemSeparatorComponent={() => <View style={{height: 20}} />} // Global spacing between items
         ListHeaderComponent={() => <View style={{height: 25}} />}
         keyExtractor={(item, index) => index.toString()}
         refreshControl={
@@ -277,19 +278,30 @@ function BoxCreatedScreen(props) {
           }
         }}
       />
+
       <View style={[styles.createContainer, {width: '80%'}]}>
         <>
           <Pressable style={styles.createButton} onPress={createPalletButton}>
             <Image source={SAL.image.createPalletIcon} />
-            <Text style={styles.createButtonText}>Create Pallet</Text>
+            <Text
+              style={styles.createButtonText}
+              adjustsFontSizeToFit={true}
+              numberOfLines={1}>
+              Create Pallet
+            </Text>
           </Pressable>
           <View style={styles.buttonSeparator} />
         </>
         <Pressable
-          style={[styles.createButton, {width: '48%'}]}
+          style={[styles.createButton, {width: '50%'}]}
           onPress={createContainerButton}>
           <Image source={SAL.image.createContainerIcon} />
-          <Text style={styles.createButtonText}>Move To Container</Text>
+          <Text
+            style={styles.createButtonText}
+            adjustsFontSizeToFit={true}
+            numberOfLines={1}>
+            Move To Container
+          </Text>
         </Pressable>
       </View>
       <SALGradientButton
@@ -306,6 +318,7 @@ function BoxCreatedScreen(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    // height: SAL.constant.screenHeight * 1.5,
     backgroundColor: SAL.colors.white,
   },
   emptyListContainer: {

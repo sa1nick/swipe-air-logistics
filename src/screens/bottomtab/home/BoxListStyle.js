@@ -1,6 +1,7 @@
 import {StyleSheet} from 'react-native';
 
 import SAL from '../../../SAL';
+import {scaleFactor} from '../../../utils/ViewScaleUtil';
 
 export default styles = StyleSheet.create({
   container: {
@@ -27,7 +28,7 @@ export default styles = StyleSheet.create({
   },
   fromText: {
     color: SAL.colors.white,
-    fontSize: 16,
+    fontSize: scaleFactor(16),
     fontFamily: 'Rubik-Medium',
     marginTop: 5,
   },
@@ -35,7 +36,7 @@ export default styles = StyleSheet.create({
     marginHorizontal: 16,
     height: 92,
     borderRadius: 10,
-    marginTop: 21,
+    marginTop: scaleFactor(15),
     flexDirection: 'row',
     marginBottom: 10,
   },

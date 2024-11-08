@@ -32,12 +32,12 @@ export default styles = StyleSheet.create({
     marginTop: 5,
   },
   boxContainer: {
+    flex: 1,
     width: '100%',
     borderTopLeftRadius: 35,
     borderTopRightRadius: 35,
     marginTop: 30,
     backgroundColor: SAL.colors.white,
-    justifyContent: 'space-between',
   },
   dimensionContainer: {
     marginHorizontal: 16,

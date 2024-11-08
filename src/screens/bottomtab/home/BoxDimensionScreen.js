@@ -1,5 +1,13 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {View, Text, Image, Keyboard, StyleSheet, Platform} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  Keyboard,
+  StyleSheet,
+  Platform,
+  ScrollView,
+} from 'react-native';
 
 import {useDispatch, useSelector} from 'react-redux';
 import RNPickerSelect from 'react-native-picker-select';
@@ -357,7 +365,13 @@ function BoxDimensionScreen(props) {
           <Text style={styles.fromText}>{dropoffWarehouse.label}</Text>
         </View>
       </View>
-      <View style={styles.boxContainer}>
+      <ScrollView
+        style={styles.boxContainer}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          justifyContent: 'space-between',
+          paddingBottom: 50,
+        }}>
         <View style={styles.dimensionContainer}>
           <Image source={data.image} />
           <View>
@@ -420,7 +434,7 @@ function BoxDimensionScreen(props) {
           buttonTitle={'Generate ID & QR Code'}
           buttonPressed={generateIdQrCodeButton}
         />
-      </View>
+      </ScrollView>
       {loading && <ActivityIndicator />}
     </View>
   );

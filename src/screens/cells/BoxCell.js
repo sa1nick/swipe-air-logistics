@@ -12,6 +12,7 @@ import {
 import moment from 'moment';
 
 import SAL from '../../SAL';
+import {scaleFactor} from '../../utils/ViewScaleUtil';
 
 const BoxCell = props => {
   const downloadPdf = () => {
@@ -61,7 +62,10 @@ const BoxCell = props => {
               ? SAL.image.palletTickIcon
               : SAL.image.containerTickIcon
           }></Image>
-        <Text style={styles.orderText}>
+        <Text
+          style={styles.orderText}
+          adjustsFontSizeToFit={true}
+          numberOfLines={1}>
           {props.item.packageQRCodeFile.split('.')[0]}
         </Text>
         <View style={styles.infoContainer}>
@@ -100,7 +104,10 @@ const BoxCell = props => {
             onPress={() => {
               props.onPressDetailCell(props.index);
             }}>
-            <Text style={styles.itemInsideText}>
+            <Text
+              style={styles.itemInsideText}
+              adjustsFontSizeToFit={true}
+              numberOfLines={1}>
               {props.selectedIndex === 0 ? 'Item ' : 'Box '} Inside
             </Text>
             <Text style={styles.quantityText}>{props.item.totalItem}</Text>
@@ -117,7 +124,12 @@ const BoxCell = props => {
                 width: '50%',
                 justifyContent: 'space-between',
               }}>
-              <Text style={styles.itemInsideText}>Box Inside</Text>
+              <Text
+                style={styles.itemInsideText}
+                adjustsFontSizeToFit={true}
+                numberOfLines={1}>
+                Box Inside
+              </Text>
               <Text style={styles.quantityText}>{props.item.total_Box}</Text>
             </View>
             <View
@@ -131,17 +143,23 @@ const BoxCell = props => {
             </View>
           </Pressable>
         )}
-        <Text style={[styles.orderText, {fontSize: 14, marginTop: 10}]}>
+        <Text
+          style={[styles.orderText, {fontSize: 12, marginTop: 10}]}
+          adjustsFontSizeToFit={true}
+          numberOfLines={1}>
           Created By: {props.item.createdByName}
         </Text>
-        <Text style={[styles.orderText, {fontSize: 14, marginTop: 10}]}>
+        <Text
+          style={[styles.orderText, {fontSize: 12, marginTop: 10}]}
+          adjustsFontSizeToFit={true}
+          numberOfLines={1}>
           Date & Time:{' '}
           {moment(props.item.createdDateUtc).format('YYYY/MM/DD HH:mm')}
         </Text>
         {!props.isRemainingWeight && !props.isDriver ? (
           <Pressable style={styles.pdfContainer} onPress={downloadPdf}>
             <Image source={SAL.image.pdfIcon} />
-            <Text style={[styles.orderText, {fontSize: 14, marginTop: 0}]}>
+            <Text style={[styles.orderText, {fontSize: 12, marginTop: 0}]}>
               {props.item.packageQRCodeFile}
             </Text>
           </Pressable>
@@ -192,7 +210,7 @@ const styles = StyleSheet.create({
   },
   orderText: {
     color: SAL.colors.black,
-    fontSize: 16,
+    fontSize: scaleFactor(14),
     fontFamily: 'Rubik-Medium',
     marginLeft: 15,
     marginTop: 15,

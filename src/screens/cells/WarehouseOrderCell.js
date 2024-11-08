@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 
 import SAL from '../../SAL';
+import {scaleFactor} from '../../utils/ViewScaleUtil';
 
 const WarehouseOrderCell = props => {
   const downloadPdf = () => {
@@ -38,7 +39,12 @@ const WarehouseOrderCell = props => {
               : null
           }
         />
-        <Text style={styles.orderText}>{props.item.name}</Text>
+        <Text
+          style={styles.orderText}
+          adjustsFontSizeToFit={true}
+          numberOfLines={1}>
+          {props.item.name}
+        </Text>
         {!props.isPdf ? (
           <Text style={styles.quantityText}>
             Quantity: {props.item.stockQuantityRemaining}
@@ -49,7 +55,12 @@ const WarehouseOrderCell = props => {
             Added By: {props.item.sellerName}
           </Text>
         ) : (
-          <Text style={styles.quantityText}>Moved By: {props.movedBy}</Text>
+          <Text
+            style={styles.quantityText}
+            adjustsFontSizeToFit={true}
+            numberOfLines={1}>
+            Moved By: {props.movedBy}
+          </Text>
         )}
         {!props.isPdf ? (
           <Text style={styles.quantityText}>
@@ -96,14 +107,14 @@ const styles = StyleSheet.create({
   },
   orderText: {
     color: SAL.colors.black,
-    fontSize: 16,
+    fontSize: scaleFactor(14),
     fontFamily: 'Rubik-Medium',
     marginLeft: 15,
     marginTop: 10,
   },
   quantityText: {
     color: SAL.colors.black,
-    fontSize: 14,
+    fontSize: scaleFactor(13),
     fontFamily: 'Rubik-Regular',
     marginLeft: 15,
     marginTop: 7,
@@ -121,12 +132,12 @@ const styles = StyleSheet.create({
   },
   orderTypeText: {
     color: SAL.colors.purple,
-    fontSize: 12,
+    fontSize: scaleFactor(12),
     fontFamily: 'Rubik-Regular',
   },
   pdfNameText: {
     color: SAL.colors.black,
-    fontSize: 13,
+    fontSize: scaleFactor(13),
     fontFamily: 'Rubik-Medium',
     marginLeft: 10,
   },

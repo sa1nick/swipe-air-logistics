@@ -124,15 +124,33 @@ function BoxDetailScreen(props) {
           <View style={{flexDirection: 'row', height: 50}}>
             <Image style={styles.boxIcon} source={SAL.image.boxDimension} />
             <View style={{marginLeft: 10}}>
-              <Text style={styles.boxTitle}>Box ID</Text>
-              <Text style={styles.boxIdText}>
+              <Text
+                style={styles.boxTitle}
+                adjustsFontSizeToFit={true}
+                numberOfLines={1}>
+                Box ID
+              </Text>
+              <Text
+                style={styles.boxIdText}
+                adjustsFontSizeToFit={true}
+                numberOfLines={1}>
                 {item.packageQRCodeFile.split('.')[0]}
               </Text>
             </View>
           </View>
           <View style={{alignItems: 'flex-end'}}>
-            <Text style={styles.boxTitle}>Item Inside</Text>
-            <Text style={styles.boxIdText}>{item.totalItem}</Text>
+            <Text
+              style={styles.boxTitle}
+              adjustsFontSizeToFit={true}
+              numberOfLines={1}>
+              Item Inside
+            </Text>
+            <Text
+              style={styles.boxIdText}
+              adjustsFontSizeToFit={true}
+              numberOfLines={1}>
+              {item.totalItem}
+            </Text>
           </View>
         </View>
       </View>
@@ -151,19 +169,30 @@ function BoxDetailScreen(props) {
       <View style={styles.locationContainer}>
         <View style={styles.fromToContainer}>
           <Image source={SAL.image.fromWarehouseWhite}></Image>
-          <Text style={styles.fromText}>{pickupWarehouse.label}</Text>
+          <Text
+            style={styles.fromText}
+            adjustsFontSizeToFit={true}
+            numberOfLines={1}>
+            {pickupWarehouse.label}
+          </Text>
         </View>
         <Image source={SAL.image.tripleArrow} />
         <View style={styles.fromToContainer}>
           <Image source={SAL.image.toWarehouseWhite}></Image>
-          <Text style={styles.fromText}>{dropoffWarehouse.label}</Text>
+          <Text
+            style={styles.fromText}
+            adjustsFontSizeToFit={true}
+            numberOfLines={1}>
+            {dropoffWarehouse.label}
+          </Text>
         </View>
       </View>
       <BoxHeaderRenderItem />
       <FlatList
+        contentContainerStyle={{backgroundColor: SAL.colors.white}}
         data={productList}
         renderItem={renderItem}
-        ListFooterComponent={() => <View style={{height: 50}} />}
+        // ListFooterComponent={() => <View style={{height: 10}} />}
         onEndReached={({distanceFromEnd}) => {
           if (distanceFromEnd < 0) return;
           if (productList?.length === pageNumber.current * pageSize) {

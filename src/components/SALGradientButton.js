@@ -17,7 +17,12 @@ const SALGradientButton = props => {
         {props.image ? (
           <Image style={styles.buttonImage} source={props.image} />
         ) : null}
-        <Text style={styles.buttonText}>{props.buttonTitle}</Text>
+        <Text
+          style={styles.buttonText}
+          adjustsFontSizeToFit={true}
+          numberOfLines={1}>
+          {props.buttonTitle}
+        </Text>
       </LinearGradient>
     </Pressable>
   );

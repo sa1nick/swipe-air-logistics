@@ -100,6 +100,14 @@ function ScannedScreen(props) {
       setLoading(true);
       setError(null);
 
+      const payload = {
+        warehouseId: dropoffWarehouse.value,
+        pickupWarehouseId: pickupWarehouse.value,
+        status: 3,
+        pageNumber: pageNumber.current + 1,
+        pageSize: pageSize,
+      };
+
       const response = await dispatch(
         getAllScannedProductWarehouseApi({
           warehouseId: dropoffWarehouse.value,
@@ -115,6 +123,8 @@ function ScannedScreen(props) {
           ...item,
           isSelected: false,
         }));
+
+        console.log('scanned payload');
 
         const existingIds = new Set(
           productList.map(item => item.qrCodeFileNamePath),

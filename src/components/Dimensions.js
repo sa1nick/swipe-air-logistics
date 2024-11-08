@@ -1,5 +1,12 @@
 import React, {useMemo, useRef, useEffect, useState} from 'react';
-import {TextInput, StyleSheet, Text, View, Image} from 'react-native';
+import {
+  TextInput,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ScrollView,
+} from 'react-native';
 
 import RNPickerSelect from 'react-native-picker-select';
 
@@ -13,7 +20,9 @@ const Dimensions = props => {
   );
 
   return (
-    <View style={styles.commonContainer}>
+    <ScrollView
+      style={styles.commonContainer}
+      contentContainerStyle={{flexDirection: 'row', alignItems: 'center'}}>
       <View style={{width: 70, justifyContent: 'space-evenly'}}>
         <Text style={styles.titleText}>{props.title}</Text>
         <Text style={styles.unitText}>{props.unit}</Text>
@@ -26,7 +35,6 @@ const Dimensions = props => {
           Icon={arrowDownIcon}
           style={pickerSelectStyles}
         /> */}
-
       </View>
       <View style={styles.separator} />
       <TextInput
@@ -38,12 +46,13 @@ const Dimensions = props => {
         onChangeText={props.onChangeText}
         editable={props.enabled ? true : false}
       />
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   commonContainer: {
+    // flex:1,
     width: SAL.constant.screenWidth - 32,
     height: 50,
     backgroundColor: SAL.colors.white,
@@ -53,7 +62,6 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#B5B5B5',
     flexDirection: 'row',
-    alignItems: 'center',
   },
   titleText: {
     marginLeft: 15,

@@ -46,10 +46,24 @@ const CreatedTabStack = ({onChange}) => {
         },
         tabBarStyle: {
           backgroundColor: 'transparent',
-          height: 50,
+          // height: 50,
         },
-        tabBarGap: 16,
-        tabBarItemStyle: {width: 'auto'},
+        tabBarItemStyle: {
+          width: 'auto',
+          paddingHorizontal: 8, // Adjust padding for spacing
+        },
+        tabBarLabel: ({focused}) => (
+          <Text
+            adjustsFontSizeToFit={true}
+            numberOfLines={1}
+            style={{
+              fontSize: 14,
+              fontFamily: 'Rubik-Medium',
+              color: focused ? '#7A2783' : '#8A8A8A',
+            }}>
+            {route.name}
+          </Text>
+        ),
       })}
       screenListeners={{
         state: e => {
@@ -199,12 +213,22 @@ function BoxListScreen(props) {
       <View style={styles.locationContainer}>
         <View style={styles.fromToContainer}>
           <Image source={SAL.image.fromWarehouseWhite}></Image>
-          <Text style={styles.fromText}>{pickupWarehouse.label}</Text>
+          <Text
+            style={styles.fromText}
+            adjustsFontSizeToFit={true}
+            numberOfLines={1}>
+            {pickupWarehouse.label}
+          </Text>
         </View>
         <Image source={SAL.image.tripleArrow} />
         <View style={styles.fromToContainer}>
           <Image source={SAL.image.toWarehouseWhite}></Image>
-          <Text style={styles.fromText}>{dropoffWarehouse.label}</Text>
+          <Text
+            style={styles.fromText}
+            adjustsFontSizeToFit={true}
+            numberOfLines={1}>
+            {dropoffWarehouse.label}
+          </Text>
         </View>
       </View>
       <LinearGradient

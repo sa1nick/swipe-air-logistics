@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {View, Image, StyleSheet, Platform} from 'react-native';
+import {View, Image, StyleSheet, Platform, Text} from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import {useDispatch, useSelector} from 'react-redux';
 import {Camera, useCameraPermission} from 'react-native-vision-camera';
@@ -20,6 +20,7 @@ import {
   dropoffWarehouse,
   validate,
 } from '../../../api/slice/storeDataGloballySlice/storeDataGloballySlice';
+import {scaleFactor} from '../../../utils/ViewScaleUtil';
 
 const TopTabBar = createMaterialTopTabNavigator();
 
@@ -33,7 +34,7 @@ const TopTabStack = ({screenProps}) => {
         tabBarActiveTintColor: '#7A2783',
         tabBarInactiveTintColor: '#8A8A8A',
         tabBarLabelStyle: {
-          fontSize: 13,
+          fontSize: scaleFactor(14),
           fontFamily: 'Rubik-Medium',
         },
         tabBarIndicatorStyle: {
@@ -85,7 +86,6 @@ function WarehouseRequestsScreen(props) {
             value: item.id.toString(),
           };
         });
-        console.log('arrayWarehouseList in wr', arrayWarehouseList);
 
         setPickerWarehouseList(arrayWarehouseList);
       }
@@ -245,7 +245,7 @@ const pickerSelectStyles = StyleSheet.create({
     width: '100%',
     height: 50,
     color: SAL.colors.purple,
-    fontSize: 14,
+    fontSize: scaleFactor(14),
     fontFamily: 'Rubik-Medium',
     paddingLeft: 20,
     paddingVertical: 5,

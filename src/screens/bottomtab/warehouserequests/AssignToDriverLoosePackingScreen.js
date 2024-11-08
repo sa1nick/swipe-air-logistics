@@ -116,7 +116,12 @@ function AssignToDriverLoosePackingScreen(props) {
   const RenderListEmptyComponent = () => (
     <View style={styles.emptyListContainer}>
       {!loading ? (
-        <Text style={styles.noDataFoundText}>No data found</Text>
+        <Text
+          style={styles.noDataFoundText}
+          adjustsFontSizeToFit={true}
+          numberOfLines={1}>
+          No data found
+        </Text>
       ) : null}
     </View>
   );
