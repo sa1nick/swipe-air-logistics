@@ -41,8 +41,9 @@ const WarehouseOrderCell = props => {
         />
         <Text
           style={styles.orderText}
-          adjustsFontSizeToFit={true}
-          numberOfLines={1}>
+          // adjustsFontSizeToFit={true}
+          // numberOfLines={2}
+        >
           {props.item.name}
         </Text>
         {!props.isPdf ? (
@@ -95,6 +96,7 @@ const styles = StyleSheet.create({
   },
   subContainer: {
     marginHorizontal: 16,
+    paddingRight: 10,
     // height: Platform.OS === 'ios' ? 165 : 175,
   },
   orderImage: {
@@ -111,6 +113,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Rubik-Medium',
     marginLeft: 15,
     marginTop: 10,
+    flexWrap: 'wrap',
+    // borderWidth: 1,
   },
   quantityText: {
     color: SAL.colors.black,

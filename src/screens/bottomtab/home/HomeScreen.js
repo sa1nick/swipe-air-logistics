@@ -49,6 +49,7 @@ function HomeScreen(props) {
   const [pickerWarehouseList, setPickerWarehouseList] = useState([]);
   const [dropOffList, setDropOffList] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [initialLoad, setInitialLoad] = useState(true);
 
   const pageNumber = useRef(0);
   const pageSize = 15;
@@ -111,6 +112,7 @@ function HomeScreen(props) {
   useEffect(() => {
     if (warehouseApiError) {
       setLoading(false);
+      setInitialLoad(false);
       showAlert(warehouseApiError);
     }
   }, [warehouseApiError]);
@@ -291,13 +293,32 @@ function HomeScreen(props) {
     dispatch(moveToWarehouseApi(params));
   };
 
-  const renderListEmptyComponent = () => (
-    <View style={styles.emptyListContainer}>
-      {!loading ? (
-        <Text style={styles.noDataFoundText}>No data found</Text>
-      ) : null}
-    </View>
-  );
+  const renderListEmptyComponent = () => {
+    // Only show empty state if we're not loading and we've completed the initial load
+    if (loading || initialLoad) return null;
+
+    // If a warehouse is selected and there's no data, show "No data found"
+    if (selectedValue && !warehouseProductList?.length) {
+      return (
+        <View style={styles.emptyListContainer}>
+          <Text style={styles.noDataFoundText}>No data found</Text>
+        </View>
+      );
+    }
+
+    // If no warehouse is selected, show a different message
+    if (!selectedValue) {
+      return (
+        <View style={styles.emptyListContainer}>
+          <Text style={styles.noDataFoundText}>
+            Please select a warehouse to view products
+          </Text>
+        </View>
+      );
+    }
+
+    return null;
+  };
 
   const navigationLeftButton = () => {
     Alert.alert(
@@ -381,7 +402,7 @@ function HomeScreen(props) {
         </View>
         <FlatList
           keyExtractor={(item, index) => index.toString()}
-          extraData={loading}
+          extraData={[loading, warehouseProductList]}
           data={warehouseProductList}
           renderItem={renderItem}
           refreshControl={

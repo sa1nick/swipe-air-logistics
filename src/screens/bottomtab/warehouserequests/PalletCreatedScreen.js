@@ -62,6 +62,7 @@ function PalletCreatedScreen(props) {
   );
   useEffect(() => {
     if (palletListData) {
+      // console.log('palletListData: ', JSON.stringify(palletListData));
       console.log('palletListData: ', palletListData);
       if (palletListData.code === SAL.codeEnum.code200) {
         const updatedArray = palletListData.data.palletList.map(item => ({
@@ -253,6 +254,8 @@ function PalletCreatedScreen(props) {
       <FlatList
         data={palletCreatedList}
         renderItem={renderItem}
+        keyExtractor={(item, index) => `${item.qrCodeFileNamePath}-${index}`}
+        ItemSeparatorComponent={() => <View style={{height: 20}} />} // Global spacing between items
         ListHeaderComponent={() => <View style={{height: 25}} />}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
