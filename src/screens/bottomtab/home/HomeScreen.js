@@ -35,6 +35,7 @@ import {
   moveToWarehouseApi,
 } from '../../../api/slice/warehouseSlice/warehouseApiSlice';
 import {useFocusEffect} from '@react-navigation/native';
+import SALInputField from '../../../components/SALInputField';
 
 function HomeScreen(props) {
   const [selectedValue, setSelectedValue] = useState(null);
@@ -50,6 +51,10 @@ function HomeScreen(props) {
   const [dropOffList, setDropOffList] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [initialLoad, setInitialLoad] = useState(true);
+  // Add these new state variables at the top of your component
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredProductList, setFilteredProductList] = useState([]);
+  const [filteredCount, setFilteredCount] = useState(0);
 
   const pageNumber = useRef(0);
   const pageSize = 15;
@@ -67,10 +72,11 @@ function HomeScreen(props) {
   useFocusEffect(
     useCallback(() => {
       setTimeout(() => {
+        // Reset totalCount before fetching
+        setTotalCount(productList?.totalCount);
         dispatch(getAllWarehouseApi({}));
         fetchProductList(pageNumber.current);
       }, 500);
-      // Cleanup function if needed
       return () => {
         // Optionally reset state here if needed
       };
@@ -121,20 +127,17 @@ function HomeScreen(props) {
     console.log('productList: ', productList);
     if (productList) {
       setLoading(false);
-      if (!productList.data.length) return;
+      setInitialLoad(false); // Add this to ensure we're not in initial load state
+
       const updatedArray = productList.data.map(item => ({
         ...item,
         isSelected: false,
       }));
-      // const filteredArray = updatedArray.filter(item => {
-      //   const stockQuantityRemaining = parseInt(item.stockQuantityRemaining);
-      //   return stockQuantityRemaining > 0;
-      // });
 
       if (pageNumber.current > 1) {
         setWarehouseProductList(prevArray => [...prevArray, ...updatedArray]);
       } else {
-        setWarehouseProductList(updatedArray);
+        setWarehouseProductList(updatedArray); // This will now set an empty array when there's no data
       }
       setTotalCount(productList.totalCount);
     }
@@ -151,6 +154,26 @@ function HomeScreen(props) {
       }
     }
   }, [moveToWarehouseResponse]);
+
+  useEffect(() => {
+    if (warehouseProductList) {
+      if (searchTerm) {
+        const filtered = warehouseProductList.filter(product =>
+          product.name.toLowerCase().includes(searchTerm.toLowerCase()),
+        );
+        setFilteredProductList(filtered);
+        setFilteredCount(filtered.length);
+      } else {
+        setFilteredProductList([]);
+        setFilteredCount(0);
+      }
+    }
+  }, [searchTerm, warehouseProductList]);
+
+  // Add this search handler function
+  const handleSearch = value => {
+    setSearchTerm(value);
+  };
 
   const onRefresh = () => {
     pageNumber.current = 0;
@@ -174,14 +197,15 @@ function HomeScreen(props) {
   };
 
   const handleValueChange = (value, index) => {
-    if (index) {
-      setPickupWarehoue(pickerWarehouseList[index - 1].label);
-    }
-    setSelectedValue(index ? value : null);
+    // Allow selection of placeholder by checking value directly
+    setPickupWarehoue(
+      value === 'default' ? '' : pickerWarehouseList[index - 1].label,
+    );
+    setSelectedValue(value);
     if (Platform.OS === 'android') {
       pageNumber.current = 0;
       setWarehouseProductList(null);
-      fetchProductList(index ? value : null);
+      fetchProductList(value);
     }
   };
 
@@ -297,8 +321,27 @@ function HomeScreen(props) {
     // Only show empty state if we're not loading and we've completed the initial load
     if (loading || initialLoad) return null;
 
+    // If searching and no results found, show search-specific message
+    if (
+      searchTerm &&
+      Array.isArray(filteredProductList) &&
+      filteredProductList.length === 0
+    ) {
+      return (
+        <View style={[styles.emptyListContainer, {top: -20}]}>
+          <Text style={styles.noDataFoundText}>
+            No results for "{searchTerm}"
+          </Text>
+        </View>
+      );
+    }
+
     // If a warehouse is selected and there's no data, show "No data found"
-    if (selectedValue && !warehouseProductList?.length) {
+    if (
+      selectedValue &&
+      Array.isArray(warehouseProductList) &&
+      warehouseProductList.length === 0
+    ) {
       return (
         <View style={styles.emptyListContainer}>
           <Text style={styles.noDataFoundText}>No data found</Text>
@@ -306,7 +349,7 @@ function HomeScreen(props) {
       );
     }
 
-    // If no warehouse is selected, show a different message
+    // If no warehouse is selected, show the selection message
     if (!selectedValue) {
       return (
         <View style={styles.emptyListContainer}>
@@ -383,7 +426,7 @@ function HomeScreen(props) {
         </Text>
         <View style={styles.subDDContainer}>
           <RNPickerSelect
-            placeholder={{label: 'Select warehouse', value: null}}
+            placeholder={{label: 'Select warehouse', value: 'default'}}
             items={pickerWarehouseList}
             onValueChange={handleValueChange}
             onClose={onClosePicker}
@@ -394,16 +437,32 @@ function HomeScreen(props) {
           />
         </View>
       </View>
+
+      <SALInputField
+        inputStyle={styles.searchContainer}
+        placeholderText={'Search Products'}
+        placeholderTextColor={'#9A9A9A'}
+        keyboardType={'default'}
+        secureTextEntry={false}
+        onChangeText={handleSearch}
+        value={searchTerm}
+      />
       <View style={styles.flatlistContainer}>
         <View style={{height: 30, marginLeft: 16, marginTop: 15}}>
-          {!loading && warehouseProductList?.length ? (
-            <Text style={styles.countText}>Total product: {totalCount}</Text>
+          {!loading &&
+          (warehouseProductList?.length || filteredProductList?.length) ? (
+            <Text style={styles.countText}>
+              Total product: {searchTerm ? filteredCount : totalCount}
+            </Text>
           ) : null}
         </View>
         <FlatList
           keyExtractor={(item, index) => index.toString()}
-          extraData={[loading, warehouseProductList]}
-          data={warehouseProductList}
+          data={searchTerm ? filteredProductList : warehouseProductList}
+          extraData={[
+            loading,
+            searchTerm ? filteredProductList : warehouseProductList,
+          ]}
           renderItem={renderItem}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

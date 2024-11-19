@@ -1,22 +1,22 @@
 import React, {useState} from 'react';
-import {
-  TextInput,
-  View,
-  Text,
-  StyleSheet,
-} from 'react-native';
+import {TextInput, View, Text, StyleSheet, useColorScheme} from 'react-native';
 import SAL from '../SAL';
 
-const SALInputField = props => {
+const SALInputField = (props, {placeholderTextColor = SAL.colors.black}) => {
+  const colorScheme = useColorScheme();
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, props.style]}>
       <Text style={styles.titleText}>{props.title}</Text>
-      <View style={styles.subContainer}>
+      <View style={[styles.subContainer, props.inputStyle]}>
         <TextInput
           ref={props.inputRef}
-          style={styles.inputField}
+          style={[
+            styles.inputField,
+            {borderBottomWidth: 0, borderBottomColor: '#1212', padding: 0},
+            props.inputStyle,
+          ]}
           placeholder={props.placeholderText}
-          placeholderTextColor={SAL.colors.black}
+          placeholderTextColor={props.placeholderTextColor}
           keyboardType={props.keyboardType}
           secureTextEntry={props.secureTextEntry}
           onChangeText={props.onChangeText}
@@ -25,6 +25,12 @@ const SALInputField = props => {
           value={props.value}
           tintColor={SAL.colors.black}
           autoCapitalize="none"
+          // underlineColorAndroid={
+          //   colorScheme === 'dark' ? '#1111' : 'transparent'
+          // }
+          // underlineColorAndroid={colorScheme === 'dark' ? '#1111' : null}
+
+          selectionColor={SAL.colors.purple}
         />
       </View>
     </View>

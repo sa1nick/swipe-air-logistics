@@ -35,8 +35,17 @@ export default styles = StyleSheet.create({
   },
   subDDContainer: {
     width: SAL.constant.screenWidth - 32 - 100,
-    height: 50,
+    // height: 50,
   },
+
+  searchContainer: {
+    height: 50,
+    width: SAL.constant.screenWidth - 32,
+    marginLeft: 15,
+    fontSize: 14,
+    fontFamily: 'Rubik-Regular',
+  },
+
   flatlistContainer: {
     width: '100%',
     // height:
