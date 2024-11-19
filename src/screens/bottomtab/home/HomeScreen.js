@@ -38,7 +38,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import SALInputField from '../../../components/SALInputField';
 
 function HomeScreen(props) {
-  const [selectedValue, setSelectedValue] = useState(null);
+  const [selectedValue, setSelectedValue] = useState('default');
   const [pickupWarehoue, setPickupWarehoue] = useState('');
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showBS, setShowBS] = useState(false);
@@ -71,16 +71,15 @@ function HomeScreen(props) {
   // This effect will run whenever the screen is focused
   useFocusEffect(
     useCallback(() => {
-      setTimeout(() => {
-        // Reset totalCount before fetching
-        setTotalCount(productList?.totalCount);
+      const timer = setTimeout(() => {
+        pageNumber.current = 0;
+        setTotalCount(0); // Reset total count
         dispatch(getAllWarehouseApi({}));
-        fetchProductList(pageNumber.current);
+        fetchProductList(selectedValue);
       }, 500);
-      return () => {
-        // Optionally reset state here if needed
-      };
-    }, [dispatch]),
+
+      return () => clearTimeout(timer);
+    }, [dispatch, selectedValue]),
   );
 
   useEffect(() => {
@@ -123,23 +122,30 @@ function HomeScreen(props) {
     }
   }, [warehouseApiError]);
 
+  // Modified productList effect to properly update totalCount
   useEffect(() => {
-    console.log('productList: ', productList);
     if (productList) {
       setLoading(false);
-      setInitialLoad(false); // Add this to ensure we're not in initial load state
+      setInitialLoad(false);
 
       const updatedArray = productList.data.map(item => ({
         ...item,
         isSelected: false,
       }));
 
-      if (pageNumber.current > 1) {
+      if (pageNumber.current > 0) {
         setWarehouseProductList(prevArray => [...prevArray, ...updatedArray]);
       } else {
-        setWarehouseProductList(updatedArray); // This will now set an empty array when there's no data
+        setWarehouseProductList(updatedArray);
       }
-      setTotalCount(productList.totalCount);
+
+      // Update total count only when we get new data
+      if (productList.totalCount !== undefined) {
+        setTotalCount(productList.totalCount);
+      }
+
+      // Increment page number after successful data fetch
+      pageNumber.current = pageNumber.current + 1;
     }
   }, [productList]);
 
@@ -196,15 +202,17 @@ function HomeScreen(props) {
     );
   };
 
+  // Modified handleValueChange to reset count when warehouse changes
   const handleValueChange = (value, index) => {
-    // Allow selection of placeholder by checking value directly
     setPickupWarehoue(
-      value === 'default' ? '' : pickerWarehouseList[index - 1].label,
+      value === 'default' ? '' : pickerWarehouseList[index - 1]?.label,
     );
     setSelectedValue(value);
+    pageNumber.current = 0;
+    setWarehouseProductList([]);
+    setTotalCount(0); // Reset total count on warehouse change
+
     if (Platform.OS === 'android') {
-      pageNumber.current = 0;
-      setWarehouseProductList(null);
       fetchProductList(value);
     }
   };
@@ -216,12 +224,16 @@ function HomeScreen(props) {
   };
 
   const onPressOrderCell = index => {
-    const updatedArray = warehouseProductList.map((item, i) => ({
-      ...item,
-      isSelected: i === index ? !item.isSelected : false,
-    }));
+    if (selectedValue !== 'default') {
+      const updatedArray = warehouseProductList.map((item, i) => ({
+        ...item,
+        isSelected: i === index ? !item.isSelected : false,
+      }));
 
-    setWarehouseProductList(updatedArray);
+      setWarehouseProductList(updatedArray);
+    } else {
+      showAlert('Please select warehouse');
+    }
   };
 
   const renderItem = ({item, index}) => {
@@ -448,21 +460,28 @@ function HomeScreen(props) {
         value={searchTerm}
       />
       <View style={styles.flatlistContainer}>
-        <View style={{height: 30, marginLeft: 16, marginTop: 15}}>
-          {!loading &&
-          (warehouseProductList?.length || filteredProductList?.length) ? (
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            height: 30,
+            // marginLeft: 16,
+            marginHorizontal: 16,
+            marginTop: 15,
+          }}>
+          {!loading && warehouseProductList?.length ? (
+            <Text style={styles.countText}>Total product: {totalCount}</Text>
+          ) : null}
+          {!loading && warehouseProductList?.length && searchTerm ? (
             <Text style={styles.countText}>
-              Total product: {searchTerm ? filteredCount : totalCount}
+              Search results: {filteredCount}
             </Text>
           ) : null}
         </View>
         <FlatList
           keyExtractor={(item, index) => index.toString()}
           data={searchTerm ? filteredProductList : warehouseProductList}
-          extraData={[
-            loading,
-            searchTerm ? filteredProductList : warehouseProductList,
-          ]}
+          extraData={[searchTerm ? filteredProductList : warehouseProductList]}
           renderItem={renderItem}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

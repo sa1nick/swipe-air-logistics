@@ -1,5 +1,12 @@
 import React, {useMemo, useRef, useEffect, useState} from 'react';
-import {Pressable, StyleSheet, Text, View, Image} from 'react-native';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ScrollView,
+} from 'react-native';
 
 import LinearGradient from 'react-native-linear-gradient';
 import DatePicker from 'react-native-date-picker';
@@ -301,7 +308,30 @@ const BSAssignToDriver = props => {
           />
           <AssignToContainer title={'Assign to'} />
           {/* <TimeDriverContainer title={'Driver'} placeholder={'Select Driver'} /> */}
+          {isDCSelected == false && (
+            <View style={styles.commonContainer}>
+              <Text style={styles.commonText}>Company</Text>
+              <View style={styles.separator} />
 
+              <RNPickerSelect
+                placeholder={{label: 'Select Company', value: null}}
+                items={driverList == null ? [] : driverList}
+                onValueChange={selectedDriver}
+                useNativeAndroidPickerStyle={false}
+                Icon={ArrowDownIcon}
+                style={pickerSelectStyles}
+              />
+              {/* <Pressable
+              style={styles.button}
+              onPress={() => {
+                navigation.push('BSChooseDriver', {
+                  selectedDriver: selectedDriver,
+                  pickUpDate: selectedDate,
+                  pickUpTime: selectedTime,
+                });
+              }}></Pressable> */}
+            </View>
+          )}
           <View style={styles.commonContainer}>
             <Text style={styles.commonText}>Driver</Text>
             <View style={styles.separator} />
@@ -324,6 +354,7 @@ const BSAssignToDriver = props => {
                 });
               }}></Pressable> */}
           </View>
+
           <Pressable onPress={assignButton}>
             <LinearGradient
               start={{x: 0, y: 0}}
@@ -372,7 +403,7 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     width: '100%',
-    height: 600,
+    height: 650,
     alignItems: 'center',
   },
   orderImage: {
@@ -383,7 +414,8 @@ const styles = StyleSheet.create({
   },
   gradientContainer: {
     width: '100%',
-    height: 470,
+    // height: 470,
+    flex: 1,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     marginTop: -32,
