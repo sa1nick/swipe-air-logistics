@@ -1,5 +1,13 @@
 import React from 'react';
-import {StyleSheet, Text, View, Pressable, Image, Platform} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+  Image,
+  Platform,
+  Appearance,
+} from 'react-native';
 
 import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment';
@@ -8,6 +16,8 @@ import SAL from '../../SAL';
 import SALGradientButton from '../../components/SALGradientButton';
 import {scaleFactor} from '../../utils/ViewScaleUtil';
 
+const colorScheme = Appearance.getColorScheme();
+const orange = '#A63D00';
 const DriverAssignmentCell = props => {
   const {item} = props;
 
@@ -97,7 +107,12 @@ const DriverAssignmentCell = props => {
         />
       </View>
       <LinearGradient
-        colors={['rgba(255,183,133, 0.2)', 'rgba(255,183,133, 0.7)']}
+        colors={[
+          colorScheme === 'dark'
+            ? 'rgba(255,183,133, 0.7)'
+            : 'rgba(255,183,133, 0.2)',
+          SAL.darkModeColors.orangeFFC8A3,
+        ]}
         style={styles.bgGradientContainer}>
         <View style={styles.driverInfoContainer}>
           <LinearGradient
@@ -125,7 +140,7 @@ const DriverAssignmentCell = props => {
             onPress={props.showConsignmentButton}>
             <Text style={styles.orangeButtonText}>Show Consignment</Text>
           </Pressable>
-          {props.selectedValue === '1' ? (
+          {props.selectedValue === '0' ? (
             <SALGradientButton buttonTitle={'Freeze & Proceed'} />
           ) : null}
           {props.selectedValue === '2' ? (
@@ -134,11 +149,17 @@ const DriverAssignmentCell = props => {
               buttonPressed={props.remindDriverButton}
             />
           ) : null}
-          {props.selectedValue === '3' ? (
+          {props.selectedValue === '1' ? (
             <Pressable
               style={[
                 styles.orangeButton,
-                {backgroundColor: '#0DBC93', borderWidth: 0},
+                {
+                  backgroundColor:
+                    colorScheme === 'dark'
+                      ? SAL.darkModeColors.green082B24
+                      : '#0DBC93',
+                  borderWidth: 0,
+                },
               ]}>
               <Text
                 style={[styles.orangeButtonText, {color: SAL.colors.white}]}>
@@ -182,12 +203,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   headingText: {
-    color: SAL.colors.grey,
+    color:
+      colorScheme === 'dark' ? SAL.darkModeColors.tabInActive : SAL.colors.grey,
+
     fontSize: 14,
     fontFamily: 'Rubik-Regular',
   },
   dateText: {
-    color: SAL.colors.black,
+    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
     // fontSize: 16,
     fontFamily: 'Rubik-Medium',
     marginTop: -5,
@@ -220,7 +243,8 @@ const styles = StyleSheet.create({
   separator: {
     width: '50%',
     height: 0.5,
-    backgroundColor: '#B1B1B1',
+    backgroundColor:
+      colorScheme === 'dark' ? SAL.darkModeColors.seperator242424 : '#B1B1B1',
     marginTop: 10,
   },
   statusText: {
@@ -234,7 +258,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   locationTitle: {
-    color: '#919191',
+    color: colorScheme === 'dark' ? SAL.darkModeColors.black1C1C1C : '#919191',
     fontSize: 8,
     fontFamily: 'Rubik-Regular',
     marginBottom: Platform.OS === 'ios' ? scaleFactor(5) : scaleFactor(0),
@@ -248,9 +272,10 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   orangeButton: {
-    width: 150,
+    width: scaleFactor(150),
     height: 45,
-    borderColor: '#FF6D09',
+    borderColor: colorScheme === 'dark' ? orange : '#FF6D09',
+
     borderWidth: 0.5,
     borderRadius: 22,
     alignItems: 'center',
@@ -258,8 +283,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   orangeButtonText: {
-    color: '#FF6D09',
-    fontSize: 12,
+    color: colorScheme === 'dark' ? orange : '#FF6D09',
+
+    fontSize: scaleFactor(12),
     fontFamily: 'Rubik-Medium',
     marginLeft: 10,
   },

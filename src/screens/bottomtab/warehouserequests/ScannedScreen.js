@@ -8,6 +8,7 @@ import {
   StyleSheet,
   RefreshControl,
   ImageBackground,
+  Appearance,
 } from 'react-native';
 
 import {useSelector, useDispatch} from 'react-redux';
@@ -21,6 +22,9 @@ import {showAlert, getData, downloadFile} from '../../../utils/Utils';
 import SALGradientButton from '../../../components/SALGradientButton';
 
 import {getAllScannedProductWarehouseApi} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
+import {scaleFactor} from '../../../utils/ViewScaleUtil';
+
+const colorScheme = Appearance.getColorScheme();
 
 function ScannedScreen(props) {
   const [loading, setLoading] = useState(false);
@@ -65,19 +69,32 @@ function ScannedScreen(props) {
     getUserData();
   }, []);
 
-  const refreshData = async () => {
-    if (loadingRef.current) return;
-    // setProductList([]);
-    setItemCount(0);
-    pageNumber.current = 0;
-    await getWarehouseMovedData();
-  };
+  // const refreshData = async () => {
+  //   if (loadingRef.current) return;
+  //   // setProductList([]);
+  //   setItemCount(0);
+  //   pageNumber.current = 0;
+  //   await getWarehouseMovedData();
+  // };
 
+  const refreshData = async () => {
+    console.log('Refresh Data Called');
+    console.log('Current Loading State:', loadingRef.current);
+
+    if (loadingRef.current) return;
+
+    // setRefreshing(true);
+    pageNumber.current = 0; // Always reset to first page
+    await getWarehouseMovedData();
+
+    setRefreshing(false);
+  };
   useEffect(() => {
-    if (isFocused) {
+    if (isFocused && pickupWarehouse && dropoffWarehouse) {
+      setItemCount(0);
       refreshData();
     }
-  }, [isFocused]);
+  }, [pickupWarehouse, dropoffWarehouse, isFocused]);
 
   useEffect(() => {
     if (validate) {
@@ -100,22 +117,26 @@ function ScannedScreen(props) {
       setLoading(true);
       setError(null);
 
+      // Always reset to first page if it's the initial load
+      const currentPage = pageNumber.current === 0 ? 1 : pageNumber.current + 1;
+
       const payload = {
         warehouseId: dropoffWarehouse.value,
         pickupWarehouseId: pickupWarehouse.value,
         status: 3,
-        pageNumber: pageNumber.current + 1,
+        pageNumber: currentPage,
         pageSize: pageSize,
       };
 
+      console.log('Scanned payload:', payload);
+
+      // Reset list only for the first page
+      if (currentPage === 1) {
+        setProductList([]);
+      }
+
       const response = await dispatch(
-        getAllScannedProductWarehouseApi({
-          warehouseId: dropoffWarehouse.value,
-          pickupWarehouseId: pickupWarehouse.value,
-          status: 3,
-          pageNumber: pageNumber.current + 1,
-          pageSize: pageSize,
-        }),
+        getAllScannedProductWarehouseApi(payload),
       ).unwrap();
 
       if (response?.code === SAL.codeEnum.code200) {
@@ -124,19 +145,15 @@ function ScannedScreen(props) {
           isSelected: false,
         }));
 
-        console.log('scanned payload');
-
-        const existingIds = new Set(
-          productList.map(item => item.qrCodeFileNamePath),
-        );
-
-        const newItems = updatedArray.filter(
-          item => !existingIds.has(item.qrCodeFileNamePath),
-        );
-
-        if (newItems.length > 0) {
-          pageNumber.current += 1;
-          setProductList(prevArray => [...prevArray, ...newItems]);
+        // If data is received, update page number and list
+        if (updatedArray.length > 0) {
+          pageNumber.current = currentPage;
+          setProductList(prevArray =>
+            currentPage === 1 ? updatedArray : [...prevArray, ...updatedArray],
+          );
+        } else if (currentPage === 1) {
+          // If no data on first page, set empty list
+          setProductList([]);
         }
       } else {
         setError(response?.message || 'Failed to load data');
@@ -270,11 +287,15 @@ function ScannedScreen(props) {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         onEndReached={({distanceFromEnd}) => {
+          console.log('End Reached', {
+            distanceFromEnd,
+            loading,
+            listLength: productList.length,
+            expectedNextPageItems: pageNumber.current * pageSize,
+          });
+
           if (distanceFromEnd < 0) return;
-          if (
-            !loading &&
-            productList.length === pageNumber.current * pageSize
-          ) {
+          if (!loading && productList.length >= pageNumber.current * pageSize) {
             getWarehouseMovedData();
           }
         }}
@@ -284,7 +305,15 @@ function ScannedScreen(props) {
         <Pressable
           style={styles.createBoxButton}
           onPress={onPressCreateBoxButton}>
-          <Image source={SAL.image.createBox} />
+          <Image
+            source={SAL.image.createBox}
+            style={{
+              tintColor:
+                colorScheme === 'dark'
+                  ? SAL.darkModeColors.orangeFFC8A3
+                  : '#FF6D09',
+            }}
+          />
           <Text style={styles.createBoxText}>Create Box</Text>
         </Pressable>
         <SALGradientButton
@@ -301,7 +330,10 @@ function ScannedScreen(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
   },
   emptyListContainer: {
     height: 200,
@@ -309,8 +341,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   noDataFoundText: {
-    color: SAL.colors.black,
-    fontSize: 16,
+    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
+    fontSize: scaleFactor(16),
     fontFamily: 'Rubik-Medium',
   },
   buttonContainer: {
@@ -322,7 +354,8 @@ const styles = StyleSheet.create({
   createBoxButton: {
     width: 160,
     height: 44,
-    borderColor: '#FF6D09',
+    borderColor:
+      colorScheme === 'dark' ? SAL.darkModeColors.orangeFFC8A3 : '#FF6D09',
     borderWidth: 0.5,
     borderRadius: 22,
     alignSelf: 'center',
@@ -332,7 +365,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   createBoxText: {
-    color: '#FF6D09',
+    color: colorScheme === 'dark' ? SAL.darkModeColors.orangeFFC8A3 : '#FF6D09',
     fontSize: 12,
     fontFamily: 'Rubik-Medium',
     marginLeft: 10,
@@ -350,7 +383,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selectedText: {
-    color: SAL.colors.black,
+    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
     fontSize: 14,
     fontFamily: 'Rubik-Medium',
     marginLeft: 5,

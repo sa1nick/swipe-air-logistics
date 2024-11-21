@@ -10,6 +10,7 @@ import {
   RefreshControl,
   SafeAreaView,
   ScrollView,
+  Appearance,
 } from 'react-native';
 
 import {useDispatch, useSelector} from 'react-redux';
@@ -26,6 +27,7 @@ import {getPalletListApi} from '../../../api/slice/warehouseSlice/warehouseApiSl
 import {useFocusEffect} from '@react-navigation/native';
 import {scaleFactor} from '../../../utils/ViewScaleUtil';
 
+const colorScheme = Appearance.getColorScheme();
 function PalletCreatedScreen(props) {
   const [palletCreatedList, setPalletCreatedList] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -269,7 +271,15 @@ function PalletCreatedScreen(props) {
       />
       <View style={[styles.createContainer, {width: '50%'}]}>
         <Pressable style={styles.createButton} onPress={createContainerButton}>
-          <Image source={SAL.image.createContainerIcon} />
+          <Image
+            source={SAL.image.createContainerIcon}
+            style={{
+              tintColor:
+                colorScheme === 'dark'
+                  ? SAL.darkModeColors.orangeFFC8A3
+                  : '#FF6D09',
+            }}
+          />
           <Text style={styles.createButtonText}>Move To Container</Text>
         </Pressable>
       </View>
@@ -287,7 +297,10 @@ function PalletCreatedScreen(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
   },
   emptyListContainer: {
     height: 200,
@@ -295,13 +308,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   noDataFoundText: {
-    color: SAL.colors.black,
+    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
     fontSize: 16,
     fontFamily: 'Rubik-Medium',
   },
   createContainer: {
     height: 45,
-    borderColor: SAL.colors.orange,
+    borderColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.orangeFFC8A3
+        : SAL.colors.orange,
     borderWidth: 1,
     borderRadius: 30,
     flexDirection: 'row',
@@ -315,7 +331,10 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   createButtonText: {
-    color: SAL.colors.orange,
+    color:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.orangeFFC8A3
+        : SAL.colors.orange,
     fontSize: 12,
     fontFamily: 'Rubik-Medium',
     marginLeft: 10,

@@ -7,12 +7,15 @@ import {
   ImageBackground,
   Image,
   Platform,
+  Appearance,
 } from 'react-native';
 
 import moment from 'moment';
 
 import SAL from '../../SAL';
 import {scaleFactor} from '../../utils/ViewScaleUtil';
+
+const colorScheme = Appearance.getColorScheme();
 
 const BoxCell = props => {
   const downloadPdf = () => {
@@ -175,14 +178,34 @@ const BoxCell = props => {
             <View style={styles.nameContainer}>
               <Image source={SAL.image.truckDriver} />
               <View style={styles.driverNameSubContainer}>
-                <Text style={[styles.itemInsideText, {marginLeft: 0}]}>
+                <Text
+                  style={[
+                    styles.itemInsideText,
+                    {
+                      marginLeft: 0,
+                      color:
+                        colorScheme === 'dark'
+                          ? SAL.darkModeColors.seperator242424
+                          : SAL.colors.grey,
+                    },
+                  ]}>
                   Driver Name
                 </Text>
                 <Text style={styles.nameText}>{props.item.driverName}</Text>
               </View>
             </View>
             <View style={styles.vehicleContainer}>
-              <Text style={[styles.itemInsideText, {marginLeft: 0}]}>
+              <Text
+                style={[
+                  styles.itemInsideText,
+                  {
+                    marginLeft: 0,
+                    color:
+                      colorScheme === 'dark'
+                        ? SAL.darkModeColors.seperator242424
+                        : SAL.colors.grey,
+                  },
+                ]}>
                 Vehicle
               </Text>
               <Text style={styles.nameText}>{props.item.vehicleNo}</Text>
@@ -226,7 +249,10 @@ const styles = StyleSheet.create({
     marginTop: 4,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'light'
+        ? SAL.colors.white
+        : SAL.darkModeColors.black22262A,
   },
   dot: {
     width: 8,
@@ -254,7 +280,10 @@ const styles = StyleSheet.create({
   itemsInsideView: {
     marginHorizontal: 13,
     height: 32,
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
     borderRadius: 8,
     marginTop: 3,
     flexDirection: 'row',
@@ -264,13 +293,14 @@ const styles = StyleSheet.create({
   itemInsideText: {
     fontSize: 12,
     fontFamily: 'Rubik-Regular',
-    color: SAL.colors.grey,
+    color:
+      colorScheme === 'dark' ? SAL.darkModeColors.tabInActive : SAL.colors.grey,
     marginLeft: 20,
   },
   quantityText: {
     fontSize: 12,
     fontFamily: 'Rubik-Medium',
-    color: '#131313',
+    color: colorScheme === 'dark' ? SAL.darkModeColors.tabInActive : '#131313',
     marginRight: 13,
   },
   pdfContainer: {

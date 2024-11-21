@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
-import {View, Text, Image, Pressable} from 'react-native';
+import {View, Text, Image, Pressable, Appearance} from 'react-native';
 
-import { useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 
 import styles from './SealBoxSuccessfullyStyle';
 import SAL from '../../../SAL';
@@ -9,6 +9,7 @@ import NavigationBar from '../../../components/NavigationBar';
 import SALGradientButton from '../../../components/SALGradientButton';
 import {downloadFile} from '../../../utils/Utils';
 import ActivityIndicator from '../../../components/ActivityIndicator';
+const colorScheme = Appearance.getColorScheme();
 
 function SealBoxSuccessfullyScreen(props) {
   const {boxData, data} = props.route.params;

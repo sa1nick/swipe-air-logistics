@@ -1,11 +1,16 @@
-import {StyleSheet} from 'react-native';
+import {Appearance, StyleSheet} from 'react-native';
 
 import SAL from '../../../SAL';
+
+const colorScheme = Appearance.getColorScheme();
 
 export default styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
   },
   topGradientContainer: {
     position: 'absolute',
@@ -37,7 +42,10 @@ export default styles = StyleSheet.create({
     borderTopLeftRadius: 35,
     borderTopRightRadius: 35,
     marginTop: 30,
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
   },
   dimensionContainer: {
     marginHorizontal: 16,
@@ -46,7 +54,7 @@ export default styles = StyleSheet.create({
     marginTop: 22,
   },
   boxDimensionText: {
-    color: SAL.colors.black,
+    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
     fontSize: 18,
     fontFamily: 'Rubik-Medium',
     marginLeft: 15,
@@ -54,7 +62,7 @@ export default styles = StyleSheet.create({
     marginBottom: 4,
   },
   itemSelectedText: {
-    color: SAL.colors.black,
+    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
     fontSize: 16,
     fontFamily: 'Rubik-Regular',
     marginLeft: 15,

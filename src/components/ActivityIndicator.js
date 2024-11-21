@@ -1,8 +1,9 @@
 import React from 'react';
-import {View} from 'react-native';
+import {Appearance, View} from 'react-native';
 import {BallIndicator} from 'react-native-indicators';
 
 import SAL from '../SAL';
+const colorScheme = Appearance.getColorScheme();
 
 const ActivityIndicator = props => (
   <View
@@ -29,11 +30,15 @@ const ActivityIndicator = props => (
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'black',
+        backgroundColor:
+          colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
         opacity: 0.2,
       }}></View>
 
-    <BallIndicator color={SAL.colors.purple} size={50} />
+    <BallIndicator
+      color={colorScheme === 'dark' ? SAL.colors.purple : SAL.colors.purple}
+      size={50}
+    />
   </View>
 );
 

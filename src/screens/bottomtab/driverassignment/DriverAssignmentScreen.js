@@ -1,5 +1,15 @@
-import React, {useState, useRef, useEffect} from 'react';
-import {View, Text, Image, RefreshControl, FlatList, Modal} from 'react-native';
+import React, {useState, useRef, useEffect, useCallback} from 'react';
+import {
+  View,
+  Text,
+  Image,
+  RefreshControl,
+  FlatList,
+  Modal,
+  useColorScheme,
+  Appearance,
+} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native'; // Add this import
 
 import {useDispatch, useSelector} from 'react-redux';
 import RNPickerSelect from 'react-native-picker-select';
@@ -28,6 +38,8 @@ function DriverAssignmentScreen(props) {
 
   const pickerWidth = SAL.constant.screenWidth - 32 - 100;
 
+  const colorScheme = Appearance.getColorScheme();
+
   const pickerItems = [
     {label: 'Yet to Freeze', value: '1'},
     {label: 'Pending Acceptance', value: '2'},
@@ -39,11 +51,12 @@ function DriverAssignmentScreen(props) {
 
   const statusColor = [
     '#000000',
-    '#0DBC93',
-    '#15AEF2',
-    '#0DBC93',
+    colorScheme === 'dark' ? SAL.darkModeColors.green082B24 : '#0DBC93',
+    colorScheme === 'dark' ? SAL.darkModeColors.green082B24 : '#0DBC93',
+    colorScheme === 'dark' ? '#03293A' : '#15AEF2',
+    colorScheme === 'dark' ? SAL.darkModeColors.green082B24 : '#0DBC93',
     '#9E8F05',
-    '#0DBC93',
+    colorScheme === 'dark' ? SAL.darkModeColors.green082B24 : '#0DBC93',
     '#FF3333',
   ];
 
@@ -56,10 +69,14 @@ function DriverAssignmentScreen(props) {
     state => state.warehouse.driverAssignmentError,
   );
 
-  useEffect(() => {
-    getAssignmentData();
-  }, [selectedValue]);
+  // Add useFocusEffect to refresh data when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      getAssignmentData();
+    }, [selectedValue]),
+  );
 
+  // Remove the existing useEffect for initial data fetch
   useEffect(() => {
     if (driverAssignmentListData) {
       console.log('driverAssignmentListData: ', driverAssignmentListData);
@@ -106,7 +123,10 @@ function DriverAssignmentScreen(props) {
 
   const arrowDownIcon = () => (
     <View style={{marginRight: 20, height: 50, justifyContent: 'center'}}>
-      <Image source={SAL.image.downArrow} />
+      <Image
+        source={SAL.image.downArrow}
+        style={{tintColor: colorScheme === 'dark' ? '#F0C3F4' : ''}}
+      />
     </View>
   );
 
@@ -177,6 +197,7 @@ function DriverAssignmentScreen(props) {
             useNativeAndroidPickerStyle={false}
             Icon={arrowDownIcon}
             style={pickerSelectStyles}
+            darkTheme={colorScheme === 'dark'}
           />
         </View>
       </View>

@@ -1,14 +1,19 @@
-import {StyleSheet, Platform} from 'react-native';
+import {StyleSheet, Platform, Appearance} from 'react-native';
 
 import SAL from '../../../SAL';
 import {scaleFactor} from '../../../utils/ViewScaleUtil';
+
+const colorScheme = Appearance.getColorScheme();
 
 export default styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingBottom: 10,
     justifyContent: 'space-between',
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
     // opacity: 0.7,
   },
 
@@ -20,18 +25,25 @@ export default styles = StyleSheet.create({
   dropdownContainer: {
     marginHorizontal: 16,
     height: 50,
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
     borderRadius: 8,
     marginTop: 40,
     flexDirection: 'row',
     alignItems: 'center',
   },
   warehouseStaticText: {
-    color: SAL.colors.purple,
-    fontSize: 14,
+    color:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.purpleF0C3F4
+        : SAL.colors.purple,
+    fontSize: scaleFactor(14),
     fontFamily: 'Rubik-Medium',
     marginLeft: 25,
-    width: scaleFactor(75),
+    // width: SAL.constant.screenWidth - 500,
+    width: 77,
   },
   subDDContainer: {
     width: SAL.constant.screenWidth - 32 - 100,
@@ -40,9 +52,9 @@ export default styles = StyleSheet.create({
 
   searchContainer: {
     height: 50,
-    width: SAL.constant.screenWidth - 32,
-    marginLeft: 15,
     fontSize: 14,
+    paddingLeft: scaleFactor(10),
+    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
     fontFamily: 'Rubik-Regular',
   },
 
@@ -56,7 +68,10 @@ export default styles = StyleSheet.create({
     borderTopLeftRadius: 35,
     borderTopRightRadius: 35,
     marginTop: 37,
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
     justifyContent: 'center',
     flex: 1,
   },
@@ -66,12 +81,12 @@ export default styles = StyleSheet.create({
     justifyContent: 'center',
   },
   noDataFoundText: {
-    color: SAL.colors.black,
+    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
     fontSize: 16,
     fontFamily: 'Rubik-Medium',
   },
   countText: {
-    color: SAL.colors.black,
+    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
     fontSize: 14,
     fontFamily: 'Rubik-Medium',
   },

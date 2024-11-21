@@ -6,11 +6,13 @@ import {
   View,
   Image,
   ScrollView,
+  Appearance,
 } from 'react-native';
 
 import RNPickerSelect from 'react-native-picker-select';
 
 import SAL from '../SAL';
+const colorScheme = Appearance.getColorScheme();
 
 const Dimensions = props => {
   const arrowDownIcon = () => (
@@ -41,7 +43,11 @@ const Dimensions = props => {
         style={styles.inputField}
         placeholder={'Enter value here'}
         value={props.value}
-        placeholderTextColor={'#9A9A9A'}
+        placeholderTextColor={
+          colorScheme === 'dark'
+            ? SAL.darkModeColors.tabInActive
+            : SAL.colors.grey
+        }
         keyboardType={props.keyboardType}
         onChangeText={props.onChangeText}
         editable={props.enabled ? true : false}
@@ -55,7 +61,10 @@ const styles = StyleSheet.create({
     // flex:1,
     width: SAL.constant.screenWidth - 32,
     height: 50,
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
     borderRadius: 12,
     marginLeft: 16,
     marginBottom: 22,
@@ -65,13 +74,17 @@ const styles = StyleSheet.create({
   },
   titleText: {
     marginLeft: 15,
-    color: '#9A9A9A',
+    color:
+      colorScheme === 'dark' ? SAL.darkModeColors.tabInActive : SAL.colors.grey,
     fontFamily: 'Rubik-Regular',
     fontSize: 14,
   },
   unitText: {
     marginLeft: 15,
-    color: SAL.colors.purple,
+    color:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.purpleF0C3F4
+        : SAL.colors.purple,
     fontFamily: 'Rubik-Medium',
     fontSize: 14,
   },
@@ -84,7 +97,8 @@ const styles = StyleSheet.create({
     width: 1,
     height: 50,
     marginLeft: 15,
-    backgroundColor: '#B5B5B5',
+    backgroundColor:
+      colorScheme === 'dark' ? SAL.darkModeColors.tabInActive : SAL.colors.grey,
   },
   inputField: {
     width: 200,

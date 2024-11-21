@@ -11,6 +11,7 @@ import {
   RefreshControl,
   SafeAreaView,
   ScrollView,
+  Appearance,
 } from 'react-native';
 
 import {useDispatch, useSelector} from 'react-redux';
@@ -27,6 +28,7 @@ import {getAllContainerListApi} from '../../../api/slice/warehouseSlice/warehous
 import {opacity} from 'react-native-reanimated/lib/typescript/Colors';
 import {useFocusEffect} from '@react-navigation/native';
 
+const colorScheme = Appearance.getColorScheme();
 function ContainerCreatedScreen(props) {
   const [containerCreatedList, setContainerCreatedList] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -255,7 +257,10 @@ function ContainerCreatedScreen(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
   },
   emptyListContainer: {
     height: 200,
@@ -263,13 +268,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   noDataFoundText: {
-    color: SAL.colors.black,
+    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
     fontSize: 16,
     fontFamily: 'Rubik-Medium',
   },
   createContainer: {
     height: 45,
-    borderColor: SAL.colors.orange,
+    borderColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.orangeFFC8A3
+        : SAL.colors.orange,
+
     borderWidth: 1,
     borderRadius: 30,
     flexDirection: 'row',
@@ -283,7 +292,11 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   createButtonText: {
-    color: SAL.colors.orange,
+    color:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.orangeFFC8A3
+        : SAL.colors.orange,
+
     fontSize: 12,
     fontFamily: 'Rubik-Medium',
     marginLeft: 10,
@@ -291,7 +304,10 @@ const styles = StyleSheet.create({
   buttonSeparator: {
     width: 1,
     marginVertical: 12,
-    backgroundColor: SAL.colors.orange,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.orangeFFC8A3
+        : SAL.colors.orange,
   },
 });
 

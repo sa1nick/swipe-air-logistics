@@ -1,5 +1,13 @@
 /* eslint-disable react/react-in-jsx-scope */
-import {Image, StyleSheet, Platform, Text} from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  Platform,
+  Text,
+  useColorScheme,
+  Appearance,
+  Keyboard,
+} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 import SAL from '../SAL';
@@ -10,20 +18,54 @@ import {scaleFactor} from '../utils/ViewScaleUtil';
 
 const Tab = createBottomTabNavigator();
 
-const TabLabel = ({focused, label}) => (
-  <Text
-    style={styles.tabBarLabel}
-    adjustsFontSizeToFit={true}
-    numberOfLines={1}>
-    {label}
-  </Text>
-);
+const TabLabel = ({focused, label}) => {
+  const colorScheme = useColorScheme();
+
+  return (
+    <Text
+      style={[
+        styles.tabBarLabel,
+        {
+          color: focused
+            ? colorScheme === 'dark'
+              ? SAL.darkModeColors.purpleF0C3F4
+              : '#7A2783'
+            : colorScheme === 'dark'
+            ? SAL.darkModeColors.tabInActive
+            : '#8A8A8A',
+        },
+      ]}
+      adjustsFontSizeToFit={true}
+      numberOfLines={1}>
+      {label}
+    </Text>
+  );
+};
 
 function BottomTabBar(props) {
+  const colorScheme = useColorScheme();
+
+  const tabBarStyleWithBackground = {
+    ...styles.tabBarStyle,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
+  };
+
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
+        headerStyle: {
+          alignSelf: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderWidth: 1,
+        },
         header: () => null,
+        tabBarHideOnKeyboard: true,
+        keyboardHidesTabBar: true,
+        tabBarStyle: {display: Keyboard.isVisible ? 'none' : 'flex'},
         tabBarIcon: ({focused}) => {
           let iconName;
 
@@ -35,11 +77,26 @@ function BottomTabBar(props) {
             iconName = focused ? SAL.image.daSelectedTab : SAL.image.daTab;
           }
 
-          return <Image source={iconName} />;
+          return (
+            <Image
+              source={iconName}
+              style={[
+                styles.tabBarIcon,
+                {
+                  tintColor:
+                    focused && colorScheme === 'dark'
+                      ? SAL.darkModeColors.purpleF0C3F4
+                      : undefined,
+                },
+              ]}
+            />
+          );
         },
-        tabBarActiveTintColor: SAL.colors.purple,
-        tabBarInactiveTintColor: '#8A8A8A',
-        tabBarStyle: styles.tabBarStyle,
+        tabBarActiveTintColor:
+          colorScheme === 'dark' ? SAL.darkModeColors.purpleF0C3F4 : '#7A2783',
+        tabBarInactiveTintColor:
+          colorScheme === 'dark' ? SAL.darkModeColors.tabInActive : '#8A8A8A',
+        tabBarStyle: tabBarStyleWithBackground,
         tabBarLabel: ({focused}) => (
           <TabLabel focused={focused} label={route.name} />
         ),
@@ -55,17 +112,29 @@ function BottomTabBar(props) {
 }
 
 const styles = StyleSheet.create({
+  tabBarIcon: {
+    flexDirection: 'row',
+    // justifyContent: 'center',
+    // alignSelf: 'center',
+  },
+
   tabBarLabel: {
     fontSize: scaleFactor(11),
-    marginTop: -10,
+    // borderWidth: 1,
+    // flexDirection: 'row',
+    // alignSelf: 'center',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // marginTop: 100,
+    // height: scaleFactor(100),
+    // marginLeft: -10,
   },
   tabBarStyle: {
-    height: scaleFactor(81),
+    height: scaleFactor(75),
     paddingBottom: 10,
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 0,
-    backgroundColor: 'white', // Set the background color of the tab bar
     ...Platform.select({
       ios: {
         shadowColor: '#E5E5E5',

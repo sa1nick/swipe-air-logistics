@@ -1,9 +1,16 @@
 import React, {useState} from 'react';
-import {TextInput, View, Text, StyleSheet, useColorScheme} from 'react-native';
+import {
+  TextInput,
+  View,
+  Text,
+  StyleSheet,
+  useColorScheme,
+  Appearance,
+} from 'react-native';
 import SAL from '../SAL';
+const colorScheme = Appearance.getColorScheme();
 
 const SALInputField = (props, {placeholderTextColor = SAL.colors.black}) => {
-  const colorScheme = useColorScheme();
   return (
     <View style={[styles.container, props.style]}>
       <Text style={styles.titleText}>{props.title}</Text>
@@ -30,7 +37,11 @@ const SALInputField = (props, {placeholderTextColor = SAL.colors.black}) => {
           // }
           // underlineColorAndroid={colorScheme === 'dark' ? '#1111' : null}
 
-          selectionColor={SAL.colors.purple}
+          selectionColor={
+            colorScheme === 'dark'
+              ? SAL.darkModeColors.purpleF0C3F4
+              : SAL.colors.purple
+          }
         />
       </View>
     </View>
@@ -49,8 +60,12 @@ const styles = StyleSheet.create({
     marginHorizontal: '6%',
     borderRadius: 10,
     borderWidth: 0.5,
-    borderColor: '#B5B5B5',
-    backgroundColor: '#FFFFFF',
+    borderColor:
+      colorScheme === 'dark' ? SAL.darkModeColors.black22262A : '#B5B5B5',
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
   },
   titleText: {
     color: '#9A9A9A',

@@ -10,6 +10,7 @@ import {
   RefreshControl,
   SafeAreaView,
   ScrollView,
+  Appearance,
 } from 'react-native';
 
 import {useDispatch, useSelector} from 'react-redux';
@@ -25,6 +26,7 @@ import BSSuccessfullyAssigned from '../../../components/BSSuccessfullyAssigned';
 import {getBoxListApi} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
 import {useFocusEffect} from '@react-navigation/native';
 import {scaleFactor} from '../../../utils/ViewScaleUtil';
+const colorScheme = Appearance.getColorScheme();
 
 function BoxCreatedScreen(props) {
   const [boxCreatedList, setBoxCreatedList] = useState(null);
@@ -282,7 +284,15 @@ function BoxCreatedScreen(props) {
       <View style={[styles.createContainer, {width: '80%'}]}>
         <>
           <Pressable style={styles.createButton} onPress={createPalletButton}>
-            <Image source={SAL.image.createPalletIcon} />
+            <Image
+              source={SAL.image.createPalletIcon}
+              style={{
+                tintColor:
+                  colorScheme === 'dark'
+                    ? SAL.darkModeColors.orangeFFC8A3
+                    : '#FF6D09',
+              }}
+            />
             <Text
               style={styles.createButtonText}
               adjustsFontSizeToFit={true}
@@ -295,7 +305,15 @@ function BoxCreatedScreen(props) {
         <Pressable
           style={[styles.createButton, {width: '50%'}]}
           onPress={createContainerButton}>
-          <Image source={SAL.image.createContainerIcon} />
+          <Image
+            source={SAL.image.createContainerIcon}
+            style={{
+              tintColor:
+                colorScheme === 'dark'
+                  ? SAL.darkModeColors.orangeFFC8A3
+                  : '#FF6D09',
+            }}
+          />
           <Text
             style={styles.createButtonText}
             adjustsFontSizeToFit={true}
@@ -319,7 +337,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     // height: SAL.constant.screenHeight * 1.5,
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
   },
   emptyListContainer: {
     height: 200,
@@ -327,13 +348,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   noDataFoundText: {
-    color: SAL.colors.black,
+    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
     fontSize: 16,
     fontFamily: 'Rubik-Medium',
   },
   createContainer: {
     height: 45,
-    borderColor: SAL.colors.orange,
+    borderColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.orangeFFC8A3
+        : SAL.colors.orange,
     borderWidth: 1,
     borderRadius: 30,
     flexDirection: 'row',
@@ -347,7 +371,10 @@ const styles = StyleSheet.create({
     width: '48%',
   },
   createButtonText: {
-    color: SAL.colors.orange,
+    color:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.orangeFFC8A3
+        : SAL.colors.orange,
     fontSize: 12,
     fontFamily: 'Rubik-Medium',
     marginLeft: 10,
@@ -355,7 +382,10 @@ const styles = StyleSheet.create({
   buttonSeparator: {
     width: 1,
     marginVertical: 12,
-    backgroundColor: SAL.colors.orange,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.orangeFFC8A3
+        : SAL.colors.orange,
   },
 });
 

@@ -8,6 +8,8 @@ import {
   StyleSheet,
   Platform,
   RefreshControl,
+  useColorScheme,
+  Appearance,
 } from 'react-native';
 
 import {useSelector, useDispatch} from 'react-redux';
@@ -22,6 +24,9 @@ import {showAlert, getData, downloadFile} from '../../../utils/Utils';
 import SALGradientButton from '../../../components/SALGradientButton';
 
 import {getAllPendingProductWarehouseApi} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
+import {scaleFactor} from '../../../utils/ViewScaleUtil';
+import {check, PERMISSIONS, request, RESULTS} from 'react-native-permissions';
+const colorScheme = Appearance.getColorScheme();
 
 function PendingScreen(props) {
   const [loading, setLoading] = useState(false);
@@ -66,19 +71,31 @@ function PendingScreen(props) {
     getUserData();
   }, []);
 
-  const refreshData = async () => {
-    if (loadingRef.current) return; // Prevent concurrent refreshes
+  // const refreshData = async () => {
+  //   if (loadingRef.current) return; // Prevent concurrent refreshes
 
-    // setProductList([]);
-    pageNumber.current = 0;
+  //   // setProductList([]);
+  //   pageNumber.current = 0;
+  //   await getWarehouseMovedData();
+  // };
+
+  const refreshData = async () => {
+    console.log('Refresh Data Called');
+    console.log('Current Loading State:', loadingRef.current);
+
+    if (loadingRef.current) return;
+
+    // setRefreshing(true);
+    pageNumber.current = 0; // Always reset to first page
     await getWarehouseMovedData();
+    setRefreshing(false);
   };
 
   useEffect(() => {
-    if (isFocused) {
+    if (isFocused && pickupWarehouse && dropoffWarehouse) {
       refreshData();
     }
-  }, [isFocused]);
+  }, [pickupWarehouse, dropoffWarehouse, isFocused]);
 
   useEffect(() => {
     if (validate) {
@@ -100,6 +117,7 @@ function PendingScreen(props) {
       loadingRef.current = true;
       setLoading(true);
       setError(null);
+
       const payload = {
         warehouseId: dropoffWarehouse.value,
         pickupWarehouseId: pickupWarehouse.value,
@@ -109,6 +127,10 @@ function PendingScreen(props) {
       };
 
       console.log('pending payload', payload);
+
+      if (pageNumber.current === 0) {
+        setProductList([]);
+      }
 
       const response = await dispatch(
         getAllPendingProductWarehouseApi({
@@ -121,26 +143,38 @@ function PendingScreen(props) {
       ).unwrap();
 
       if (response?.code === SAL.codeEnum.code200) {
-        const existingIds = new Set(
-          productList.map(item => item.qrCodeFileNamePath),
-        );
+        const newItems = response.data || [];
 
-        const newItems = (response.data || []).filter(
-          item => !existingIds.has(item.qrCodeFileNamePath),
-        );
+        if (pageNumber.current === 0) {
+          // First page, replace entire list
+          setProductList(newItems);
+        } else {
+          // Subsequent pages, append new items
+          const existingIds = new Set(
+            productList.map(item => item.qrCodeFileNamePath),
+          );
 
+          const filteredNewItems = newItems.filter(
+            item => !existingIds.has(item.qrCodeFileNamePath),
+          );
+
+          setProductList(prevArray => [...prevArray, ...filteredNewItems]);
+        }
+
+        // Increment page number only if new items were received
         if (newItems.length > 0) {
           pageNumber.current += 1;
-          setProductList(prevArray => [...prevArray, ...newItems]);
         }
       } else {
         setError(response?.message || 'Failed to load data');
         showAlert(response?.message);
+        setProductList([]); // Clear list on error
       }
     } catch (error) {
       console.error('API Error:', error);
       setError('Failed to load data. Please try again.');
       showAlert('Failed to load data. Please try again.');
+      setProductList([]); // Clear list on error
     } finally {
       setLoading(false);
       loadingRef.current = false;
@@ -198,17 +232,35 @@ function PendingScreen(props) {
     setRefreshing(false);
   };
 
-  const onPressScanButton = () => {
-    if (hasPermission) {
-      props.navigation.navigate('ScanScreen');
-    } else {
-      if (Camera.getCameraPermissionStatus() === 'denied') {
+  const onPressScanButton = async () => {
+    const permission =
+      Platform.OS === 'ios'
+        ? PERMISSIONS.IOS.CAMERA
+        : PERMISSIONS.ANDROID.CAMERA;
+
+    try {
+      const result = await check(permission);
+      if (result === RESULTS.GRANTED) {
+        // Permission already granted
+        props.navigation.navigate('ScanScreen');
+      } else if (result === RESULTS.DENIED) {
+        // Request permission
+        const requestResult = await request(permission);
+        if (requestResult === RESULTS.GRANTED) {
+          props.navigation.navigate('ScanScreen');
+        } else {
+          showAlert(
+            "Camera access is required to scan.\n\nPlease enable permission in your device settings under 'Privacy & Security' > 'Camera'.",
+          );
+        }
+      } else if (result === RESULTS.BLOCKED) {
+        // Permission blocked
         showAlert(
-          'Please grant permission in your device settings under "Privacy & Security" > "Camera"',
+          'Camera access is blocked. Please enable it in your device settings under "Privacy & Security" > "Camera".',
         );
-      } else {
-        requestPermission();
       }
+    } catch (error) {
+      console.error('Error requesting camera permission', error);
     }
   };
 
@@ -252,7 +304,15 @@ function PendingScreen(props) {
       />
       <View style={styles.buttonContainer}>
         <Pressable style={styles.createBoxButton} onPress={onPressScanButton}>
-          <Image source={SAL.image.createBox} />
+          <Image
+            source={SAL.image.createBox}
+            style={{
+              tintColor:
+                colorScheme === 'dark'
+                  ? SAL.darkModeColors.orangeFFC8A3
+                  : '#FF6D09',
+            }}
+          />
           <Text style={styles.createBoxText}>Scan</Text>
         </Pressable>
         <SALGradientButton
@@ -269,7 +329,10 @@ function PendingScreen(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
   },
   emptyListContainer: {
     height: 200,
@@ -277,8 +340,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   noDataFoundText: {
-    color: SAL.colors.black,
-    fontSize: 14,
+    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
+    fontSize: scaleFactor(16),
     fontFamily: 'Rubik-Medium',
   },
   buttonContainer: {
@@ -290,7 +353,8 @@ const styles = StyleSheet.create({
   createBoxButton: {
     width: 160,
     height: 44,
-    borderColor: '#FF6D09',
+    borderColor:
+      colorScheme === 'dark' ? SAL.darkModeColors.orangeFFC8A3 : '#FF6D09',
     borderWidth: 0.5,
     borderRadius: 22,
     alignSelf: 'center',
@@ -300,7 +364,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   createBoxText: {
-    color: '#FF6D09',
+    color: colorScheme === 'dark' ? SAL.darkModeColors.orangeFFC8A3 : '#FF6D09',
     fontSize: 12,
     fontFamily: 'Rubik-Medium',
     marginLeft: 10,

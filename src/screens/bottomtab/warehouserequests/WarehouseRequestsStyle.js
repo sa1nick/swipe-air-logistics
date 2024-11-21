@@ -1,6 +1,8 @@
-import {StyleSheet, Platform} from 'react-native';
+import {StyleSheet, Platform, useColorScheme, Appearance} from 'react-native';
 
 import SAL from '../../../SAL';
+
+const colorScheme = Appearance.getColorScheme();
 
 export default styles = StyleSheet.create({
   container: {
@@ -23,7 +25,11 @@ export default styles = StyleSheet.create({
   subDDContainer: {
     width: '47%',
     height: 50,
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
+
     borderRadius: 8,
   },
   flatlistContainer: {
@@ -31,8 +37,10 @@ export default styles = StyleSheet.create({
     borderTopLeftRadius: 35,
     borderTopRightRadius: 35,
     marginTop: 37,
-    backgroundColor: SAL.colors.white,
-    // justifyContent: 'space-between',
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
   },
   noteText: {
     marginHorizontal: 30,
@@ -45,7 +53,9 @@ export default styles = StyleSheet.create({
   createBoxButton: {
     width: 160,
     height: 44,
-    borderColor: '#FF6D09',
+    // borderColor: '#FF6D09',
+    borderColor:
+      colorScheme === 'dark' ? SAL.darkModeColors.orangeFFC8A3 : '#FF6D09',
     borderWidth: 0.5,
     borderRadius: 22,
     alignSelf: 'center',
@@ -55,7 +65,7 @@ export default styles = StyleSheet.create({
     flexDirection: 'row',
   },
   createBoxText: {
-    color: '#FF6D09',
+    color: colorScheme === 'dark' ? SAL.darkModeColors.orangeFFC8A3 : '#FF6D09',
     fontSize: 12,
     fontFamily: 'Rubik-Medium',
     marginLeft: 10,

@@ -1,5 +1,13 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {View, Text, Image, FlatList, Pressable, Modal} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  FlatList,
+  Pressable,
+  Modal,
+  useColorScheme,
+} from 'react-native';
 
 import {useDispatch, useSelector} from 'react-redux';
 import LinearGradient from 'react-native-linear-gradient';
@@ -23,25 +31,32 @@ import ContainerCreatedScreen from '../warehouserequests/ContainerCreatedScreen'
 import AssignToDriverLoosePackingScreen from '../warehouserequests/AssignToDriverLoosePackingScreen';
 
 import {clearBPCList} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
+import {scaleFactor} from '../../../utils/ViewScaleUtil';
 
 const CreatedTabBar = createMaterialTopTabNavigator();
 
 const CreatedTabStack = ({onChange}) => {
+  const colorScheme = useColorScheme();
   return (
     <CreatedTabBar.Navigator
       screenOptions={({route}) => ({
         lazy: true,
         tabBarScrollEnabled: true,
         swipeEnabled: false,
-        tabBarActiveTintColor: '#7A2783',
-        tabBarInactiveTintColor: '#8A8A8A',
+        tabBarActiveTintColor:
+          colorScheme === 'dark' ? SAL.darkModeColors.purpleF0C3F4 : '#7A2783',
+        tabBarInactiveTintColor:
+          colorScheme === 'dark' ? SAL.darkModeColors.tabInActive : '#8A8A8A',
         tabBarLabelStyle: {
           fontSize: 14,
           fontFamily: 'Rubik-Medium',
           marginHorizontal: 0,
         },
         tabBarIndicatorStyle: {
-          borderBottomColor: '#7A2783',
+          borderBottomColor:
+            colorScheme === 'dark'
+              ? SAL.darkModeColors.purpleF0C3F4
+              : '#7A2783',
           borderBottomWidth: 2,
         },
         tabBarStyle: {
@@ -57,9 +72,15 @@ const CreatedTabStack = ({onChange}) => {
             adjustsFontSizeToFit={true}
             numberOfLines={1}
             style={{
-              fontSize: 14,
+              fontSize: scaleFactor(15),
               fontFamily: 'Rubik-Medium',
-              color: focused ? '#7A2783' : '#8A8A8A',
+              color: focused
+                ? colorScheme === 'dark'
+                  ? SAL.darkModeColors.purpleF0C3F4
+                  : '#7A2783'
+                : colorScheme === 'dark'
+                ? SAL.darkModeColors.tabInActive
+                : '#8A8A8A',
             }}>
             {route.name}
           </Text>

@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Platform,
   ScrollView,
+  Appearance,
 } from 'react-native';
 
 import {useDispatch, useSelector} from 'react-redux';
@@ -32,6 +33,8 @@ import {
   getContainerTypeDimensionByIdApi,
   addContainerDetailApi,
 } from '../../../api/slice/warehouseSlice/warehouseApiSlice';
+
+const colorScheme = Appearance.getColorScheme();
 
 function BoxDimensionScreen(props) {
   const {data, item, isExist, from} = props.route.params;

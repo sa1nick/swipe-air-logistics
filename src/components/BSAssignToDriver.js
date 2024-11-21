@@ -36,6 +36,8 @@ const BSAssignToDriver = props => {
   const [selectedTime, setSelectedTime] = useState('');
   const [selectedValue, setSelectedValue] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null); // State to store the selected driver's data (name, etc.)
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [selectedCompanyDriver, setSelectedCompanyDriver] = useState(null);
 
   const [isDCSelected, setIsDCSelected] = useState(true);
   const [driverInfo, setDriverInfo] = useState(null);
@@ -57,6 +59,40 @@ const BSAssignToDriver = props => {
 
   const assignDriverData = useSelector(state => state.warehouse.assignDriver);
   const warehouseApiError = useSelector(state => state.warehouse.error);
+  const companyList = [
+    {label: 'Company A', value: 'company_a'},
+    {label: 'Company B', value: 'company_b'},
+    {label: 'Company C', value: 'company_c'},
+  ];
+
+  const companyDriversList = [
+    {
+      company: {label: 'Company A', value: 'company_a'},
+      drivers: [
+        {label: 'John Doe', value: 'john_doe'},
+        {label: 'Alice Cooper', value: 'alice_cooper'},
+      ],
+    },
+    {
+      company: {label: 'Company B', value: 'company_b'},
+      drivers: [
+        {label: 'Jane Smith', value: 'jane_smith'},
+        {label: 'Bob Johnson', value: 'bob_johnson'},
+      ],
+    },
+    {
+      company: {label: 'Company C', value: 'company_c'},
+      drivers: [
+        {label: 'Robert Brown', value: 'robert_brown'},
+        {label: 'Emily Davis', value: 'emily_davis'},
+      ],
+    },
+  ];
+
+  const driversForSelectedCompany =
+    selectedCompany &&
+    companyDriversList.find(item => item.company.value === selectedCompany)
+      ?.drivers;
 
   // const handleValueChange = (value, index) => {
   //   setSelectedValue(value); // Update selected value (driver ID)
@@ -307,14 +343,44 @@ const BSAssignToDriver = props => {
             placeholder={'Select Pickup Time'}
           />
           <AssignToContainer title={'Assign to'} />
-          {/* <TimeDriverContainer title={'Driver'} placeholder={'Select Driver'} /> */}
-          {isDCSelected == false && (
+          {isDCSelected === false ? (
+            <>
+              <View style={styles.commonContainer}>
+                <Text style={styles.commonText}>Company</Text>
+                <View style={styles.separator} />
+                <RNPickerSelect
+                  placeholder={{label: 'Select Company', value: null}}
+                  items={companyList}
+                  onValueChange={value => {
+                    setSelectedCompany(value);
+                    setSelectedCompanyDriver(null); // Reset driver when company changes
+                  }}
+                  useNativeAndroidPickerStyle={false}
+                  Icon={ArrowDownIcon}
+                  style={pickerSelectStyles}
+                />
+              </View>
+
+              <View style={styles.commonContainer}>
+                <Text style={styles.commonText}>Driver</Text>
+                <View style={styles.separator} />
+                <RNPickerSelect
+                  placeholder={{label: 'Select Driver', value: null}}
+                  items={driversForSelectedCompany || []}
+                  onValueChange={value => setSelectedCompanyDriver(value)}
+                  useNativeAndroidPickerStyle={false}
+                  Icon={ArrowDownIcon}
+                  style={pickerSelectStyles}
+                />
+              </View>
+            </>
+          ) : (
             <View style={styles.commonContainer}>
-              <Text style={styles.commonText}>Company</Text>
+              <Text style={styles.commonText}>Driver</Text>
               <View style={styles.separator} />
 
               <RNPickerSelect
-                placeholder={{label: 'Select Company', value: null}}
+                placeholder={{label: 'Select Driver', value: null}}
                 items={driverList == null ? [] : driverList}
                 onValueChange={selectedDriver}
                 useNativeAndroidPickerStyle={false}
@@ -332,28 +398,6 @@ const BSAssignToDriver = props => {
               }}></Pressable> */}
             </View>
           )}
-          <View style={styles.commonContainer}>
-            <Text style={styles.commonText}>Driver</Text>
-            <View style={styles.separator} />
-
-            <RNPickerSelect
-              placeholder={{label: 'Select Driver', value: null}}
-              items={driverList == null ? [] : driverList}
-              onValueChange={selectedDriver}
-              useNativeAndroidPickerStyle={false}
-              Icon={ArrowDownIcon}
-              style={pickerSelectStyles}
-            />
-            {/* <Pressable
-              style={styles.button}
-              onPress={() => {
-                navigation.push('BSChooseDriver', {
-                  selectedDriver: selectedDriver,
-                  pickUpDate: selectedDate,
-                  pickUpTime: selectedTime,
-                });
-              }}></Pressable> */}
-          </View>
 
           <Pressable onPress={assignButton}>
             <LinearGradient

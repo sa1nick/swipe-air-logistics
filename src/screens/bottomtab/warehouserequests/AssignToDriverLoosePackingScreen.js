@@ -9,6 +9,7 @@ import {
   Modal,
   RefreshControl,
   SafeAreaView,
+  Appearance,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useFocusEffect} from '@react-navigation/native';
@@ -19,6 +20,8 @@ import BoxCell from '../../cells/BoxCell';
 
 import {getAssignedItemToDriver} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
 import {showAlert} from '../../../utils/Utils';
+
+const colorScheme = Appearance.getColorScheme();
 
 function AssignToDriverLoosePackingScreen(props) {
   const [assignedList, setAssignedList] = useState(null);
@@ -45,16 +48,22 @@ function AssignToDriverLoosePackingScreen(props) {
   // Reset and refresh data on screen focus
   useFocusEffect(
     React.useCallback(() => {
-      if (pickupWarehouse && dropoffWarehouse) {
-        setLoading(true);
-        setAssignedList([]); // Clear existing data
-        pageNumber.current = 0; // Reset page number
-        getAssignedParcel(); // Fetch new data
-      }
+      // Always fetch fresh data when screen is focused
+      const fetchData = () => {
+        if (pickupWarehouse && dropoffWarehouse) {
+          setLoading(true);
+          setAssignedList([]); // Clear existing data
+          pageNumber.current = 1; // Reset to first page
+          getAssignedParcel(); // Fetch new data
+        }
+      };
 
-      // Optional cleanup function
+      // Fetch data immediately when screen is focused
+      fetchData();
+
+      // Return a cleanup function
       return () => {
-        // Clean up any subscriptions or pending operations
+        // Any cleanup if needed
         setLoading(false);
       };
     }, [pickupWarehouse?.value, dropoffWarehouse?.value]),
@@ -73,18 +82,22 @@ function AssignToDriverLoosePackingScreen(props) {
   useEffect(() => {
     if (assignedDriverData) {
       if (assignedDriverData.code === SAL.codeEnum.code200) {
-        if (assignedList) {
+        // If it's the first page, replace the list entirely
+        if (pageNumber.current === 1) {
+          setAssignedList(assignedDriverData.data.allList);
+        }
+        // If it's a subsequent page, append to existing list
+        else {
           setAssignedList(prevArray => [
             ...prevArray,
             ...assignedDriverData.data.allList,
           ]);
-        } else {
-          setAssignedList(assignedDriverData.data.allList);
         }
       } else {
         showAlert(assignedDriverData.message);
+        // Reset the list if there's an error
+        setAssignedList([]);
       }
-      // Remove the setTimeout and directly set loading to false
       setLoading(false);
     }
   }, [assignedDriverData]);
@@ -99,7 +112,8 @@ function AssignToDriverLoosePackingScreen(props) {
   const getAssignedParcel = () => {
     if (!pickupWarehouse?.value || !dropoffWarehouse?.value) {
       setLoading(false);
-      return; // Don't fetch if warehouse values are missing
+      setAssignedList([]); // Ensure list is cleared
+      return;
     }
 
     const params = {
@@ -108,6 +122,8 @@ function AssignToDriverLoosePackingScreen(props) {
       pageNumber: pageNumber.current + 1,
       pageSize: pageSize,
     };
+
+    console.log('assignToDriver payload', params);
 
     pageNumber.current = params.pageNumber;
     dispatch(getAssignedItemToDriver(params));
@@ -182,7 +198,10 @@ function AssignToDriverLoosePackingScreen(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
   },
   emptyListContainer: {
     height: 200,
@@ -190,7 +209,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   noDataFoundText: {
-    color: SAL.colors.black,
+    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
     fontSize: 16,
     fontFamily: 'Rubik-Medium',
   },

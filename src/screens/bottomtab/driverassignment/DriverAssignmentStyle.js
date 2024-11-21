@@ -1,11 +1,16 @@
-import {StyleSheet} from 'react-native';
+import {Appearance, StyleSheet} from 'react-native';
 
 import SAL from '../../../SAL';
+
+const colorScheme = Appearance.getColorScheme();
 
 export default styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
   },
   topGradientContainer: {
     position: 'absolute',
@@ -15,14 +20,20 @@ export default styles = StyleSheet.create({
   dropdownContainer: {
     marginHorizontal: 16,
     height: 50,
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
     borderRadius: 8,
     marginTop: 40,
     flexDirection: 'row',
     alignItems: 'center',
   },
   warehouseStaticText: {
-    color: SAL.colors.purple,
+    color:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.purpleF0C3F4
+        : SAL.colors.purple,
     fontSize: 14,
     fontFamily: 'Rubik-Medium',
     marginLeft: 25,
@@ -37,11 +48,14 @@ export default styles = StyleSheet.create({
     borderTopLeftRadius: 35,
     borderTopRightRadius: 35,
     marginTop: 37,
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
     justifyContent: 'space-between',
   },
   selectStatus: {
-    color: SAL.colors.black,
+    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
     fontSize: 16,
     fontFamily: 'Rubik-Medium',
   },
@@ -51,7 +65,7 @@ export default styles = StyleSheet.create({
     justifyContent: 'center',
   },
   noDataFoundText: {
-    color: SAL.colors.black,
+    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
     fontSize: 16,
     fontFamily: 'Rubik-Medium',
   },
@@ -63,7 +77,7 @@ export const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
     width: pickerWidth,
     height: 50,
-    color: '#9A9A9A',
+    color: colorScheme === 'dark' ? SAL.darkModeColors.tabInActive : '#9A9A9A',
     fontSize: 14,
     fontFamily: 'Rubik-Regular',
     paddingLeft: 20,
@@ -71,7 +85,7 @@ export const pickerSelectStyles = StyleSheet.create({
   inputAndroid: {
     width: pickerWidth,
     height: 50,
-    color: '#9A9A9A',
+    color: colorScheme === 'dark' ? SAL.darkModeColors.tabInActive : '#9A9A9A',
     fontSize: 14,
     fontFamily: 'Rubik-Regular',
     paddingLeft: 20,

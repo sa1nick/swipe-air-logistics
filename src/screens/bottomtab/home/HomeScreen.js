@@ -9,6 +9,8 @@ import {
   Platform,
   Alert,
   SafeAreaView,
+  useColorScheme,
+  KeyboardAvoidingView,
 } from 'react-native';
 
 import RNPickerSelect from 'react-native-picker-select';
@@ -36,6 +38,7 @@ import {
 } from '../../../api/slice/warehouseSlice/warehouseApiSlice';
 import {useFocusEffect} from '@react-navigation/native';
 import SALInputField from '../../../components/SALInputField';
+import {scaleFactor} from '../../../utils/ViewScaleUtil';
 
 function HomeScreen(props) {
   const [selectedValue, setSelectedValue] = useState('default');
@@ -398,117 +401,127 @@ function HomeScreen(props) {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['bottom']}>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={showBS}
-        onRequestClose={closeModalButton}>
-        <BSPickupDropoffOrder
-          close={closeModalButton}
-          moveToWareHouse={modalMoveToWareHouseButton}
-          order={selectedOrder}
-          pickupWarehoue={pickupWarehoue}
-          dropOffList={dropOffList}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{flex: 1}}>
+      <SafeAreaView style={styles.container} edges={['bottom']}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={showBS}
+          onRequestClose={closeModalButton}>
+          <BSPickupDropoffOrder
+            close={closeModalButton}
+            moveToWareHouse={modalMoveToWareHouseButton}
+            order={selectedOrder}
+            pickupWarehoue={pickupWarehoue}
+            dropOffList={dropOffList}
+          />
+        </Modal>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={showMovedWarehouseBS}
+          onRequestClose={closeModalButton}>
+          <BSMoveToWarehouseSuccess
+            close={closeModalButton}
+            scanProduct={scanProductButton}
+            data={moveToWarehouseResponse}
+            order={selectedOrder}
+            orderData={orderData}
+          />
+        </Modal>
+        <Image
+          style={styles.topGradientContainer}
+          source={SAL.image.gradientBg}></Image>
+        <NavigationBar navigationLeftButton={navigationLeftButton} />
+        <View style={styles.dropdownContainer}>
+          <Text style={styles.warehouseStaticText} numberOfLines={1}>
+            Warehouse
+          </Text>
+          <View style={styles.subDDContainer}>
+            <RNPickerSelect
+              placeholder={{label: 'Select warehouse', value: 'default'}}
+              items={pickerWarehouseList}
+              onValueChange={handleValueChange}
+              onClose={onClosePicker}
+              itemKey={selectedValue}
+              useNativeAndroidPickerStyle={false}
+              Icon={ArrowDownIcon}
+              style={pickerSelectStyles}
+              darkTheme={useColorScheme() === 'dark'}
+            />
+          </View>
+        </View>
+
+        <SALInputField
+          style={{
+            width: SAL.constant.screenWidth * 1.05,
+            marginLeft: scaleFactor(-10),
+          }}
+          inputStyle={styles.searchContainer}
+          placeholderText={'Search Products'}
+          placeholderTextColor={'#9A9A9A'}
+          keyboardType={'default'}
+          secureTextEntry={false}
+          onChangeText={handleSearch}
+          value={searchTerm}
         />
-      </Modal>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={showMovedWarehouseBS}
-        onRequestClose={closeModalButton}>
-        <BSMoveToWarehouseSuccess
-          close={closeModalButton}
-          scanProduct={scanProductButton}
-          data={moveToWarehouseResponse}
-          order={selectedOrder}
-          orderData={orderData}
-        />
-      </Modal>
-      <Image
-        style={styles.topGradientContainer}
-        source={SAL.image.gradientBg}></Image>
-      <NavigationBar navigationLeftButton={navigationLeftButton} />
-      <View style={styles.dropdownContainer}>
-        <Text
-          style={styles.warehouseStaticText}
-          adjustsFontSizeToFit={true}
-          numberOfLines={1}>
-          Warehouse
-        </Text>
-        <View style={styles.subDDContainer}>
-          <RNPickerSelect
-            placeholder={{label: 'Select warehouse', value: 'default'}}
-            items={pickerWarehouseList}
-            onValueChange={handleValueChange}
-            onClose={onClosePicker}
-            itemKey={selectedValue}
-            useNativeAndroidPickerStyle={false}
-            Icon={ArrowDownIcon}
-            style={pickerSelectStyles}
+        <View style={styles.flatlistContainer}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              height: 30,
+              marginHorizontal: 16,
+              marginTop: 15,
+            }}>
+            {!loading && warehouseProductList?.length ? (
+              <Text style={styles.countText}>Total product: {totalCount}</Text>
+            ) : null}
+            {!loading && warehouseProductList?.length && searchTerm ? (
+              <Text style={styles.countText}>
+                Search results: {filteredCount}
+              </Text>
+            ) : null}
+          </View>
+          <FlatList
+            keyExtractor={(item, index) => index.toString()}
+            data={searchTerm ? filteredProductList : warehouseProductList}
+            extraData={[
+              searchTerm ? filteredProductList : warehouseProductList,
+            ]}
+            renderItem={renderItem}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            ListEmptyComponent={renderListEmptyComponent}
+            onEndReached={({distanceFromEnd}) => {
+              if (distanceFromEnd < 0) return;
+              if (
+                warehouseProductList?.length ===
+                pageNumber.current * pageSize
+              ) {
+                fetchProductList(selectedValue);
+              }
+            }}
           />
         </View>
-      </View>
-
-      <SALInputField
-        inputStyle={styles.searchContainer}
-        placeholderText={'Search Products'}
-        placeholderTextColor={'#9A9A9A'}
-        keyboardType={'default'}
-        secureTextEntry={false}
-        onChangeText={handleSearch}
-        value={searchTerm}
-      />
-      <View style={styles.flatlistContainer}>
-        <View
+        <SALGradientButton
+          buttonTitle={'Move to Warehouse'}
+          image={SAL.image.warehouseButton}
+          buttonPressed={moveToWarehouseButton}
           style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            height: 30,
-            // marginLeft: 16,
-            marginHorizontal: 16,
-            marginTop: 15,
-          }}>
-          {!loading && warehouseProductList?.length ? (
-            <Text style={styles.countText}>Total product: {totalCount}</Text>
-          ) : null}
-          {!loading && warehouseProductList?.length && searchTerm ? (
-            <Text style={styles.countText}>
-              Search results: {filteredCount}
-            </Text>
-          ) : null}
-        </View>
-        <FlatList
-          keyExtractor={(item, index) => index.toString()}
-          data={searchTerm ? filteredProductList : warehouseProductList}
-          extraData={[searchTerm ? filteredProductList : warehouseProductList]}
-          renderItem={renderItem}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          ListEmptyComponent={renderListEmptyComponent}
-          onEndReached={({distanceFromEnd}) => {
-            if (distanceFromEnd < 0) return;
-            if (
-              warehouseProductList?.length ===
-              pageNumber.current * pageSize
-            ) {
-              fetchProductList(selectedValue);
-            }
+            backgroundColor:
+              useColorScheme() === 'dark'
+                ? SAL.darkModeColors.black22262A
+                : SAL.colors.white,
           }}
         />
-      </View>
-      <SALGradientButton
-        buttonTitle={'Move to Warehouse'}
-        image={SAL.image.warehouseButton}
-        buttonPressed={moveToWarehouseButton}
-        style={{
-          backgroundColor: SAL.colors.white,
-        }}
-      />
 
-      {loading && <ActivityIndicator />}
-    </SafeAreaView>
+        {loading && <ActivityIndicator />}
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }
 

@@ -1,12 +1,16 @@
-import {StyleSheet} from 'react-native';
+import {Appearance, StyleSheet} from 'react-native';
 
 import SAL from '../../../SAL';
 import {scaleFactor} from '../../../utils/ViewScaleUtil';
+const colorScheme = Appearance.getColorScheme();
 
 export default styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
   },
   topGradientContainer: {
     position: 'absolute',

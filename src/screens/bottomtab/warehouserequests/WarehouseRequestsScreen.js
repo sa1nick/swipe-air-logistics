@@ -1,5 +1,13 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {View, Image, StyleSheet, Platform, Text} from 'react-native';
+import {
+  View,
+  Image,
+  StyleSheet,
+  Platform,
+  Text,
+  useColorScheme,
+  Appearance,
+} from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import {useDispatch, useSelector} from 'react-redux';
 import {Camera, useCameraPermission} from 'react-native-vision-camera';
@@ -23,22 +31,31 @@ import {
 import {scaleFactor} from '../../../utils/ViewScaleUtil';
 
 const TopTabBar = createMaterialTopTabNavigator();
+const colorScheme = Appearance.getColorScheme();
 
 const TopTabStack = ({screenProps}) => {
   return (
     <TopTabBar.Navigator
       screenOptions={({route}) => ({
+        tabBarPressColor:
+          // colorScheme === 'dark' ? 'rgba(240, 195, 244, 0.2)' : '',
+          'rgba(240, 195, 244, 0.2)',
         lazy: true,
         tabBarScrollEnabled: true,
         swipeEnabled: false,
-        tabBarActiveTintColor: '#7A2783',
-        tabBarInactiveTintColor: '#8A8A8A',
+        tabBarActiveTintColor:
+          colorScheme == 'dark' ? SAL.darkModeColors.purpleF0C3F4 : '#7A2783',
+        tabBarInactiveTintColor:
+          colorScheme === 'dark' ? SAL.darkModeColors.tabInActive : '#8A8A8A',
         tabBarLabelStyle: {
           fontSize: scaleFactor(14),
           fontFamily: 'Rubik-Medium',
         },
         tabBarIndicatorStyle: {
-          borderBottomColor: '#7A2783',
+          borderBottomColor:
+            colorScheme === 'dark'
+              ? SAL.darkModeColors.purpleF0C3F4
+              : '#7A2783',
           borderBottomWidth: 2,
           width: '18%',
           marginLeft: '5.5%',
@@ -221,6 +238,7 @@ function WarehouseRequestsScreen(props) {
             useNativeAndroidPickerStyle={false}
             Icon={ArrowDownIcon}
             style={pickerSelectStyles}
+            darkTheme={useColorScheme() === 'dark'}
           />
         </View>
       </View>
@@ -236,7 +254,10 @@ const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
     width: '100%',
     height: 50,
-    color: SAL.colors.purple,
+    color:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.purpleF0C3F4
+        : SAL.colors.purple,
     fontSize: 14,
     fontFamily: 'Rubik-Medium',
     paddingLeft: 20,
@@ -244,7 +265,10 @@ const pickerSelectStyles = StyleSheet.create({
   inputAndroid: {
     width: '100%',
     height: 50,
-    color: SAL.colors.purple,
+    color:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.purpleF0C3F4
+        : SAL.colors.purple,
     fontSize: scaleFactor(14),
     fontFamily: 'Rubik-Medium',
     paddingLeft: 20,

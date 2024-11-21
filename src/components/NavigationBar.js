@@ -12,8 +12,14 @@ const NavigationBar = props => {
     <View style={styles.mainContainer}>
       <View style={styles.container}>
         <Image style={styles.logo} source={SAL.image.saLogo}></Image>
-        <Pressable style={styles.profileButton} onPress={props.navigationLeftButton}>
-          {props.isBackButton ? <Image style={{marginBottom: 6}} source={SAL.image.backIconWhite}></Image> : (
+        <Pressable
+          style={styles.profileButton}
+          onPress={props.navigationLeftButton}>
+          {props.isBackButton ? (
+            <Image
+              style={{marginBottom: 6}}
+              source={SAL.image.backIconWhite}></Image>
+          ) : (
             <>
               <Image
                 style={styles.defaultProfile}

@@ -1,12 +1,15 @@
 import React from 'react';
-import {View, Image, StyleSheet} from 'react-native';
+import {View, Image, StyleSheet, useColorScheme} from 'react-native';
 
 import SAL from '../SAL';
 
 const ArrowDownIcon = () => {
   return (
     <View style={styles.container}>
-      <Image source={SAL.image.downArrow} />
+      <Image
+        source={SAL.image.downArrow}
+        style={{tintColor: useColorScheme() === 'dark' ? '#F0C3F4' : ''}}
+      />
     </View>
   );
 };

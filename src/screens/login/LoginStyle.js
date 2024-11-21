@@ -1,11 +1,14 @@
-import {StyleSheet, Platform} from 'react-native';
+import {StyleSheet, Platform, Appearance} from 'react-native';
 
 import SAL from '../../SAL';
-
+const colorScheme = Appearance.getColorScheme();
 export default styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
     alignItems: 'center',
   },
   topBackgroundContainer: {
@@ -21,13 +24,16 @@ export default styles = StyleSheet.create({
   },
   scrollView: {
     alignItems: 'center',
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
   },
   saLogo: {
     marginTop: Platform.OS === 'ios' ? 60 : 30,
   },
   headingText: {
-    color: SAL.colors.white,
+    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
     marginTop: 30,
     marginBottom: 16,
     fontSize: 18,
@@ -91,7 +97,7 @@ export const pickerSelectStyles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Rubik-Medium',
     paddingLeft: 20,
-    paddingRight: 40
+    paddingRight: 40,
   },
   inputAndroid: {
     height: 35,

@@ -1,11 +1,14 @@
-import {StyleSheet} from 'react-native';
+import {Appearance, StyleSheet} from 'react-native';
 
 import SAL from '../../../SAL';
-
+const colorScheme = Appearance.getColorScheme();
 export default styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
   },
   topGradientContainer: {
     position: 'absolute',
@@ -36,17 +39,17 @@ export default styles = StyleSheet.create({
     marginTop: 50,
   },
   headingText: {
-    color: SAL.colors.black,
+    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
     fontSize: 18,
     fontFamily: 'Rubik-SemiBold',
     marginTop: 13,
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   infoBarContainer: {
     marginHorizontal: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 21
+    marginTop: 21,
   },
   boxContainer: {
     width: '60%',
@@ -54,10 +57,10 @@ export default styles = StyleSheet.create({
     marginLeft: 11,
   },
   itemSelectedText: {
-    color: SAL.colors.black,
+    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
     fontSize: 16,
     fontFamily: 'Rubik-Regular',
-    marginTop: 5
+    marginTop: 5,
   },
   pdfContainer: {
     width: '90%',
@@ -70,7 +73,7 @@ export default styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderColor: '#FFBC8E',
     borderWidth: 0.5,
-    marginLeft: '5%'
+    marginLeft: '5%',
   },
   pdfNameContainer: {
     marginLeft: 10,
@@ -84,12 +87,12 @@ export default styles = StyleSheet.create({
     marginLeft: 5,
   },
   printTex: {
-    color: '#878787',
+    color: colorScheme === 'dark' ? SAL.darkModeColors.tabInActive : '#878787',
     fontSize: 13,
     fontFamily: 'Rubik-Italic',
     marginTop: 20,
     textAlign: 'center',
     marginHorizontal: 27,
-    marginBottom: 50
-  }
+    marginBottom: 50,
+  },
 });
