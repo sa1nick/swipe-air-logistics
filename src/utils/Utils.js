@@ -2,6 +2,8 @@ import {Alert, Platform, Share} from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ReactNativeBlobUtil from 'react-native-blob-util';
+import {StorageKey} from './Enum';
+import RNRestart from 'react-native-restart';
 
 // import Share from 'react-native-share';
 
@@ -73,4 +75,26 @@ export const downloadFile = async (fileName, filePath) => {
   //   await fs.createFile(filePath, binaryData, 'base64');
   // }
   // Share.share({url: filePath});
+};
+
+export const navigationLeftButton = () => {
+  Alert.alert(
+    'Logout',
+    'Are you sure you want to logout?',
+    [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      {
+        text: 'Logout',
+        onPress: () => {
+          removeValueAsyncStorage(StorageKey.userData);
+          RNRestart.restart();
+        },
+      },
+    ],
+    {cancelable: true},
+  );
 };

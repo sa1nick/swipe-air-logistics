@@ -11,13 +11,13 @@ import {
   SafeAreaView,
   useColorScheme,
   KeyboardAvoidingView,
+  Appearance,
 } from 'react-native';
 
 import RNPickerSelect from 'react-native-picker-select';
 import {useDispatch, useSelector} from 'react-redux';
 
-import styles from './HomeStyle';
-import {pickerSelectStyles} from './HomeStyle';
+import {createStyles, createPickerSelectStyles} from './HomeStyle';
 import SAL from '../../../SAL';
 import NavigationBar from '../../../components/NavigationBar';
 import ActivityIndicator from '../../../components/ActivityIndicator';
@@ -25,7 +25,11 @@ import WarehouseOrderCell from '../../cells/WarehouseOrderCell';
 import BSPickupDropoffOrder from '../../../components/BSPickupDropoffOrder';
 import BSMoveToWarehouseSuccess from '../../../components/BSMoveToWarehouseSuccess';
 import SALGradientButton from '../../../components/SALGradientButton';
-import {showAlert, removeValueAsyncStorage} from '../../../utils/Utils';
+import {
+  showAlert,
+  removeValueAsyncStorage,
+  navigationLeftButton,
+} from '../../../utils/Utils';
 import ArrowDownIcon from '../../../components/ArrowDownIcon';
 import {StorageKey} from '../../../utils/Enum';
 import RNRestart from 'react-native-restart';
@@ -39,8 +43,11 @@ import {
 import {useFocusEffect} from '@react-navigation/native';
 import SALInputField from '../../../components/SALInputField';
 import {scaleFactor} from '../../../utils/ViewScaleUtil';
+import useCustomTheme from '../../../hook/useCustomTheme';
 
 function HomeScreen(props) {
+  const theme = useCustomTheme();
+  const isDark = theme === 'dark';
   const [selectedValue, setSelectedValue] = useState('default');
   const [pickupWarehoue, setPickupWarehoue] = useState('');
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -58,6 +65,9 @@ function HomeScreen(props) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredProductList, setFilteredProductList] = useState([]);
   const [filteredCount, setFilteredCount] = useState(0);
+
+  const styles = createStyles(theme);
+  const pickerSelectStyles = createPickerSelectStyles(theme);
 
   const pageNumber = useRef(0);
   const pageSize = 15;
@@ -378,28 +388,6 @@ function HomeScreen(props) {
     return null;
   };
 
-  const navigationLeftButton = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-        {
-          text: 'Logout',
-          onPress: () => {
-            removeValueAsyncStorage(StorageKey.userData);
-            RNRestart.restart();
-          },
-        },
-      ],
-      {cancelable: true},
-    );
-  };
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -449,7 +437,7 @@ function HomeScreen(props) {
               useNativeAndroidPickerStyle={false}
               Icon={ArrowDownIcon}
               style={pickerSelectStyles}
-              darkTheme={useColorScheme() === 'dark'}
+              // darkTheme={isDark}
             />
           </View>
         </View>
@@ -458,24 +446,20 @@ function HomeScreen(props) {
           style={{
             width: SAL.constant.screenWidth * 1.05,
             marginLeft: scaleFactor(-10),
+            borderColor: 'transparent',
           }}
           inputStyle={styles.searchContainer}
           placeholderText={'Search Products'}
-          placeholderTextColor={'#9A9A9A'}
+          placeholderTextColor={
+            isDark ? SAL.darkModeColors.tabInActive : SAL.colors.grey
+          }
           keyboardType={'default'}
           secureTextEntry={false}
           onChangeText={handleSearch}
           value={searchTerm}
         />
-        <View style={styles.flatlistContainer}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              height: 30,
-              marginHorizontal: 16,
-              marginTop: 15,
-            }}>
+        <View style={styles.flatListContainer}>
+          <View style={styles.flatListSubContainer}>
             {!loading && warehouseProductList?.length ? (
               <Text style={styles.countText}>Total product: {totalCount}</Text>
             ) : null}
@@ -512,10 +496,9 @@ function HomeScreen(props) {
           image={SAL.image.warehouseButton}
           buttonPressed={moveToWarehouseButton}
           style={{
-            backgroundColor:
-              useColorScheme() === 'dark'
-                ? SAL.darkModeColors.black22262A
-                : SAL.colors.white,
+            backgroundColor: isDark
+              ? SAL.darkModeColors.black22262A
+              : SAL.colors.white,
           }}
         />
 

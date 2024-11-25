@@ -1,19 +1,26 @@
 import React, {useState} from 'react';
-import {Pressable, StyleSheet, Text, View, Image } from 'react-native';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Appearance,
+} from 'react-native';
 
 import LinearGradient from 'react-native-linear-gradient';
 
 import SAL from '../SAL';
-import { downloadFile } from '../utils/Utils';
+import {downloadFile} from '../utils/Utils';
 import ActivityIndicator from './ActivityIndicator';
-
+import {scaleFactor} from '../utils/ViewScaleUtil';
+const colorScheme = Appearance.getColorScheme();
 const BSMoveToWarehouseSuccess = props => {
-
   const [loading, setLoading] = useState(false);
 
   const downloadPdf = async () => {
     setLoading(true);
-    await downloadFile(props.data.data.fileName, props.data.data.outPdfBuffer)
+    await downloadFile(props.data.data.fileName, props.data.data.outPdfBuffer);
     setLoading(false);
   };
 
@@ -56,8 +63,8 @@ const BSMoveToWarehouseSuccess = props => {
           </Text>
           <Text style={styles.messageText}>
             Successfully moved to {props.orderData.toWarehouseName} Warehouse
-            You can scan product or you can move more
-            products to different warehouse.
+            You can scan product or you can move more products to different
+            warehouse.
           </Text>
           <View style={styles.createContainer}>
             <Pressable style={styles.createButton} onPress={props.close}>
@@ -116,7 +123,7 @@ const styles = StyleSheet.create({
   },
   orderText: {
     color: SAL.colors.black,
-    fontSize: 18,
+    fontSize: scaleFactor(17),
     fontFamily: 'Rubik-Medium',
     marginTop: 60,
   },

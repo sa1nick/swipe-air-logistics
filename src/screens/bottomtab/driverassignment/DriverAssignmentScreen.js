@@ -14,19 +14,28 @@ import {useFocusEffect} from '@react-navigation/native'; // Add this import
 import {useDispatch, useSelector} from 'react-redux';
 import RNPickerSelect from 'react-native-picker-select';
 
-import styles, {pickerSelectStyles} from './DriverAssignmentStyle';
+import {
+  DriverAssignmentStyle,
+  pickerSelectStyles,
+} from './DriverAssignmentStyle';
 import SAL from '../../../SAL';
 import NavigationBar from '../../../components/NavigationBar';
 import DriverAssignmentCell from '../../cells/DriverAssignmentCell';
 import BSRemindDriver from '../../../components/BSRemindDriver';
 import BSAssignmentRejected from '../../../components/BSAssignmentRejected';
 import ActivityIndicator from '../../../components/ActivityIndicator';
-import {showAlert} from '../../../utils/Utils';
+import {navigationLeftButton, showAlert} from '../../../utils/Utils';
 
 import {getDriverAssignmentListApi} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
 import {scaleFactor} from '../../../utils/ViewScaleUtil';
+import useCustomTheme from '../../../hook/useCustomTheme';
 
 function DriverAssignmentScreen(props) {
+  const theme = useCustomTheme();
+  const isDark = theme === 'dark';
+  const styles = DriverAssignmentStyle(isDark);
+  const pickerSelectStyle = pickerSelectStyles(isDark);
+
   const [loading, setLoading] = useState(false);
   const [showBS, setShowBS] = useState(false);
   const [showRemindDriver, setShowRemindDriver] = useState(false);
@@ -51,12 +60,12 @@ function DriverAssignmentScreen(props) {
 
   const statusColor = [
     '#000000',
-    colorScheme === 'dark' ? SAL.darkModeColors.green082B24 : '#0DBC93',
-    colorScheme === 'dark' ? SAL.darkModeColors.green082B24 : '#0DBC93',
-    colorScheme === 'dark' ? '#03293A' : '#15AEF2',
-    colorScheme === 'dark' ? SAL.darkModeColors.green082B24 : '#0DBC93',
+    isDark ? SAL.darkModeColors.green082B24 : '#0DBC93',
+    isDark ? SAL.darkModeColors.green082B24 : '#0DBC93',
+    isDark ? '#03293A' : '#15AEF2',
+    isDark ? SAL.darkModeColors.green082B24 : '#0DBC93',
     '#9E8F05',
-    colorScheme === 'dark' ? SAL.darkModeColors.green082B24 : '#0DBC93',
+    isDark ? SAL.darkModeColors.green082B24 : '#0DBC93',
     '#FF3333',
   ];
 
@@ -125,7 +134,7 @@ function DriverAssignmentScreen(props) {
     <View style={{marginRight: 20, height: 50, justifyContent: 'center'}}>
       <Image
         source={SAL.image.downArrow}
-        style={{tintColor: colorScheme === 'dark' ? '#F0C3F4' : ''}}
+        style={{tintColor: isDark ? '#F0C3F4' : ''}}
       />
     </View>
   );
@@ -184,7 +193,7 @@ function DriverAssignmentScreen(props) {
       <Image
         style={styles.topGradientContainer}
         source={SAL.image.gradientBg}></Image>
-      <NavigationBar />
+      <NavigationBar navigationLeftButton={navigationLeftButton} />
       <View style={styles.dropdownContainer}>
         <Text style={styles.warehouseStaticText}>Status</Text>
         <View style={styles.subDDContainer}>
@@ -196,8 +205,8 @@ function DriverAssignmentScreen(props) {
             value={selectedValue}
             useNativeAndroidPickerStyle={false}
             Icon={arrowDownIcon}
-            style={pickerSelectStyles}
-            darkTheme={colorScheme === 'dark'}
+            style={pickerSelectStyle}
+            darkTheme={isDark}
           />
         </View>
       </View>

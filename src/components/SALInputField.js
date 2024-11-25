@@ -1,29 +1,56 @@
-import React, {useState} from 'react';
-import {
-  TextInput,
-  View,
-  Text,
-  StyleSheet,
-  useColorScheme,
-  Appearance,
-} from 'react-native';
+import React from 'react';
+import {StyleSheet, Text, TextInput, View} from 'react-native';
 import SAL from '../SAL';
-const colorScheme = Appearance.getColorScheme();
+import useCustomTheme from '../hook/useCustomTheme';
 
-const SALInputField = (props, {placeholderTextColor = SAL.colors.black}) => {
+const SALInputField = props => {
+  const theme = useCustomTheme(); // Get current theme
+  const isDark = theme === 'dark'; // Check if the theme is dark or light
+
+  // Dynamically define styles based on theme
+  const styles = StyleSheet.create({
+    container: {
+      width: '100%',
+      height: 70,
+      marginTop: 10,
+    },
+    subContainer: {
+      height: 42,
+      paddingLeft: 10,
+      marginHorizontal: '6%',
+      borderRadius: 10,
+      borderWidth: 0.5,
+      borderColor: isDark ? SAL.darkModeColors.tabInActive : '#B5B5B5',
+      backgroundColor: isDark
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
+    },
+    titleText: {
+      color: isDark ? SAL.colors.white : SAL.colors.grey,
+      fontSize: 14,
+      fontFamily: 'Rubik-Regular',
+      marginBottom: 5,
+      marginHorizontal: '6%',
+    },
+    inputField: {
+      color: isDark ? SAL.colors.white : SAL.colors.black,
+      fontFamily: 'Rubik-Regular',
+      fontSize: 14,
+      height: 42,
+    },
+  });
+
   return (
     <View style={[styles.container, props.style]}>
       <Text style={styles.titleText}>{props.title}</Text>
       <View style={[styles.subContainer, props.inputStyle]}>
         <TextInput
           ref={props.inputRef}
-          style={[
-            styles.inputField,
-            {borderBottomWidth: 0, borderBottomColor: '#1212', padding: 0},
-            props.inputStyle,
-          ]}
+          style={[styles.inputField, props.inputStyle]}
           placeholder={props.placeholderText}
-          placeholderTextColor={props.placeholderTextColor}
+          placeholderTextColor={
+            isDark ? SAL.darkModeColors.tabInActive : SAL.colors.grey
+          }
           keyboardType={props.keyboardType}
           secureTextEntry={props.secureTextEntry}
           onChangeText={props.onChangeText}
@@ -32,54 +59,13 @@ const SALInputField = (props, {placeholderTextColor = SAL.colors.black}) => {
           value={props.value}
           tintColor={SAL.colors.black}
           autoCapitalize="none"
-          // underlineColorAndroid={
-          //   colorScheme === 'dark' ? '#1111' : 'transparent'
-          // }
-          // underlineColorAndroid={colorScheme === 'dark' ? '#1111' : null}
-
           selectionColor={
-            colorScheme === 'dark'
-              ? SAL.darkModeColors.purpleF0C3F4
-              : SAL.colors.purple
+            isDark ? SAL.darkModeColors.purpleF0C3F4 : SAL.colors.purple
           }
         />
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    height: 70,
-    marginTop: 10,
-  },
-  subContainer: {
-    height: 42,
-    paddingLeft: 10,
-    marginHorizontal: '6%',
-    borderRadius: 10,
-    borderWidth: 0.5,
-    borderColor:
-      colorScheme === 'dark' ? SAL.darkModeColors.black22262A : '#B5B5B5',
-    backgroundColor:
-      colorScheme === 'dark'
-        ? SAL.darkModeColors.black22262A
-        : SAL.colors.white,
-  },
-  titleText: {
-    color: '#9A9A9A',
-    fontSize: 14,
-    fontFamily: 'Rubik-Regular',
-    marginBottom: 5,
-    marginHorizontal: '6%',
-  },
-  inputField: {
-    color: SAL.colors.black,
-    fontFamily: 'Rubik-Regular',
-    fontSize: 14,
-    height: 42,
-  },
-});
 
 export default SALInputField;

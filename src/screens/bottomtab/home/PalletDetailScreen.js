@@ -3,7 +3,7 @@ import {View, Text, Image, FlatList} from 'react-native';
 
 import {useDispatch, useSelector} from 'react-redux';
 
-import styles from './PalletDetailStyle';
+import PalletDetailStyle from './PalletDetailStyle';
 import SAL from '../../../SAL';
 import NavigationBar from '../../../components/NavigationBar';
 import {downloadFile, getData} from '../../../utils/Utils';
@@ -16,9 +16,15 @@ import {
   getPalletDetailListApi,
   clearDetailPalletList,
 } from '../../../api/slice/warehouseSlice/warehouseApiSlice';
+import {scaleFactor} from '../../../utils/ViewScaleUtil';
+import useCustomTheme from '../../../hook/useCustomTheme';
 
 function PalletDetailScreen(props) {
   const {data, item, isFromConsignment} = props.route.params;
+
+  const theme = useCustomTheme();
+  const isDark = theme === 'dark';
+  const styles = PalletDetailStyle(isDark);
 
   const [loading, setLoading] = useState(false);
   const [productList, setProductList] = useState(null);
@@ -89,9 +95,12 @@ function PalletDetailScreen(props) {
   const onPressOrderCell = () => {};
 
   const onPressDetailCell = index => {
-    props.navigation.navigate(isFromConsignment ? 'BoxDetailScreenConsignment' : 'BoxDetailScreen', {
-      item: productList[index],
-    });
+    props.navigation.navigate(
+      isFromConsignment ? 'BoxDetailScreenConsignment' : 'BoxDetailScreen',
+      {
+        item: productList[index],
+      },
+    );
   };
 
   const renderItem = ({item, index}) => {
@@ -121,7 +130,7 @@ function PalletDetailScreen(props) {
     return (
       <View style={styles.headerContainer}>
         <View style={styles.childContainer}>
-          <View style={{flexDirection: 'row', height: 50}}>
+          <View style={{flexDirection: 'row', height: scaleFactor(120)}}>
             <Image style={styles.boxIcon} source={SAL.image.boxDimension} />
             <View style={{marginLeft: 10}}>
               <Text style={styles.boxTitle}>Pallet ID</Text>
@@ -168,10 +177,7 @@ function PalletDetailScreen(props) {
             style={{height: 50}}
             onEndReached={({distanceFromEnd}) => {
               if (distanceFromEnd < 0) return;
-              if (
-                productList?.length ===
-                pageNumber.current * pageSize
-              ) {
+              if (productList?.length === pageNumber.current * pageSize) {
                 getPalletItemList();
               }
             }}

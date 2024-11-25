@@ -26,9 +26,12 @@ import SALGradientButton from '../../../components/SALGradientButton';
 import {getAllPendingProductWarehouseApi} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
 import {scaleFactor} from '../../../utils/ViewScaleUtil';
 import {check, PERMISSIONS, request, RESULTS} from 'react-native-permissions';
+import useCustomTheme from '../../../hook/useCustomTheme';
 const colorScheme = Appearance.getColorScheme();
 
 function PendingScreen(props) {
+  const theme = useCustomTheme();
+  const isDark = theme === 'dark';
   const [loading, setLoading] = useState(false);
   const [movedBy, setMovedBy] = useState('');
   const [productList, setProductList] = useState([]);
@@ -278,6 +281,50 @@ function PendingScreen(props) {
     props.navigation.navigate('BoxListScreen');
   };
 
+  // Styles remain unchanged
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: isDark
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
+    },
+    emptyListContainer: {
+      height: 200,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    noDataFoundText: {
+      color: isDark ? SAL.colors.white : SAL.colors.black,
+      fontSize: scaleFactor(16),
+      fontFamily: 'Rubik-Medium',
+    },
+    buttonContainer: {
+      marginHorizontal: 16,
+      marginBottom: 10,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    createBoxButton: {
+      width: 160,
+      height: 44,
+      borderColor: isDark ? SAL.darkModeColors.orangeFFC8A3 : '#FF6D09',
+      borderWidth: 0.5,
+      borderRadius: 22,
+      alignSelf: 'center',
+      marginTop: 22,
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'row',
+    },
+    createBoxText: {
+      color: isDark ? SAL.darkModeColors.orangeFFC8A3 : '#FF6D09',
+      fontSize: 12,
+      fontFamily: 'Rubik-Medium',
+      marginLeft: 10,
+    },
+  });
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -307,10 +354,7 @@ function PendingScreen(props) {
           <Image
             source={SAL.image.createBox}
             style={{
-              tintColor:
-                colorScheme === 'dark'
-                  ? SAL.darkModeColors.orangeFFC8A3
-                  : '#FF6D09',
+              tintColor: isDark ? SAL.darkModeColors.orangeFFC8A3 : '#FF6D09',
             }}
           />
           <Text style={styles.createBoxText}>Scan</Text>
@@ -324,51 +368,5 @@ function PendingScreen(props) {
     </View>
   );
 }
-
-// Styles remain unchanged
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor:
-      colorScheme === 'dark'
-        ? SAL.darkModeColors.black22262A
-        : SAL.colors.white,
-  },
-  emptyListContainer: {
-    height: 200,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  noDataFoundText: {
-    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
-    fontSize: scaleFactor(16),
-    fontFamily: 'Rubik-Medium',
-  },
-  buttonContainer: {
-    marginHorizontal: 16,
-    marginBottom: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  createBoxButton: {
-    width: 160,
-    height: 44,
-    borderColor:
-      colorScheme === 'dark' ? SAL.darkModeColors.orangeFFC8A3 : '#FF6D09',
-    borderWidth: 0.5,
-    borderRadius: 22,
-    alignSelf: 'center',
-    marginTop: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  createBoxText: {
-    color: colorScheme === 'dark' ? SAL.darkModeColors.orangeFFC8A3 : '#FF6D09',
-    fontSize: 12,
-    fontFamily: 'Rubik-Medium',
-    marginLeft: 10,
-  },
-});
 
 export default PendingScreen;

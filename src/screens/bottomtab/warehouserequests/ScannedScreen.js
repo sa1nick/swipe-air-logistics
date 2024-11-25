@@ -1,32 +1,32 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
-  View,
-  Text,
-  Image,
-  Pressable,
   FlatList,
-  StyleSheet,
-  RefreshControl,
+  Image,
   ImageBackground,
-  Appearance,
+  Pressable,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 
-import {useSelector, useDispatch} from 'react-redux';
 import {useIsFocused} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
 
 import SAL from '../../../SAL';
 import ActivityIndicator from '../../../components/ActivityIndicator';
-import {StorageKey} from '../../../utils/Enum';
-import WarehouseOrderCell from '../../cells/WarehouseOrderCell';
-import {showAlert, getData, downloadFile} from '../../../utils/Utils';
 import SALGradientButton from '../../../components/SALGradientButton';
+import {StorageKey} from '../../../utils/Enum';
+import {downloadFile, getData, showAlert} from '../../../utils/Utils';
+import WarehouseOrderCell from '../../cells/WarehouseOrderCell';
 
 import {getAllScannedProductWarehouseApi} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
+import useCustomTheme from '../../../hook/useCustomTheme';
 import {scaleFactor} from '../../../utils/ViewScaleUtil';
 
-const colorScheme = Appearance.getColorScheme();
-
 function ScannedScreen(props) {
+  const theme = useCustomTheme();
+  const isDark = theme === 'dark';
   const [loading, setLoading] = useState(false);
   const [movedBy, setMovedBy] = useState('');
   const [productList, setProductList] = useState([]);
@@ -263,6 +263,68 @@ function ScannedScreen(props) {
     props.navigation.navigate('BoxListScreen');
   };
 
+  // Styles remain unchanged
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: isDark
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
+    },
+    emptyListContainer: {
+      height: 200,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    noDataFoundText: {
+      color: isDark ? SAL.colors.white : SAL.colors.black,
+      fontSize: scaleFactor(16),
+      fontFamily: 'Rubik-Medium',
+    },
+    buttonContainer: {
+      marginHorizontal: 16,
+      marginBottom: 10,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    createBoxButton: {
+      width: 160,
+      height: 44,
+      borderColor: isDark ? SAL.darkModeColors.orangeFFC8A3 : '#FF6D09',
+      borderWidth: 0.5,
+      borderRadius: 22,
+      alignSelf: 'center',
+      marginTop: 22,
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'row',
+    },
+    createBoxText: {
+      color: isDark ? SAL.darkModeColors.orangeFFC8A3 : '#FF6D09',
+      fontSize: 12,
+      fontFamily: 'Rubik-Medium',
+      marginLeft: 10,
+    },
+    countContainer: {
+      height: 40,
+      flexDirection: 'row',
+      marginLeft: 16,
+      alignItems: 'center',
+    },
+    checkbox: {
+      width: 14,
+      height: 14,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    selectedText: {
+      color: isDark ? SAL.colors.white : SAL.colors.black,
+      fontSize: 14,
+      fontFamily: 'Rubik-Medium',
+      marginLeft: 5,
+    },
+  });
+
   return (
     <View style={styles.container}>
       {itemCount > 0 && (
@@ -308,10 +370,7 @@ function ScannedScreen(props) {
           <Image
             source={SAL.image.createBox}
             style={{
-              tintColor:
-                colorScheme === 'dark'
-                  ? SAL.darkModeColors.orangeFFC8A3
-                  : '#FF6D09',
+              tintColor: isDark ? SAL.darkModeColors.orangeFFC8A3 : '#FF6D09',
             }}
           />
           <Text style={styles.createBoxText}>Create Box</Text>
@@ -325,69 +384,5 @@ function ScannedScreen(props) {
     </View>
   );
 }
-
-// Styles remain unchanged
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor:
-      colorScheme === 'dark'
-        ? SAL.darkModeColors.black22262A
-        : SAL.colors.white,
-  },
-  emptyListContainer: {
-    height: 200,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  noDataFoundText: {
-    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
-    fontSize: scaleFactor(16),
-    fontFamily: 'Rubik-Medium',
-  },
-  buttonContainer: {
-    marginHorizontal: 16,
-    marginBottom: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  createBoxButton: {
-    width: 160,
-    height: 44,
-    borderColor:
-      colorScheme === 'dark' ? SAL.darkModeColors.orangeFFC8A3 : '#FF6D09',
-    borderWidth: 0.5,
-    borderRadius: 22,
-    alignSelf: 'center',
-    marginTop: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  createBoxText: {
-    color: colorScheme === 'dark' ? SAL.darkModeColors.orangeFFC8A3 : '#FF6D09',
-    fontSize: 12,
-    fontFamily: 'Rubik-Medium',
-    marginLeft: 10,
-  },
-  countContainer: {
-    height: 40,
-    flexDirection: 'row',
-    marginLeft: 16,
-    alignItems: 'center',
-  },
-  checkbox: {
-    width: 14,
-    height: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  selectedText: {
-    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
-    fontSize: 14,
-    fontFamily: 'Rubik-Medium',
-    marginLeft: 5,
-  },
-});
 
 export default ScannedScreen;

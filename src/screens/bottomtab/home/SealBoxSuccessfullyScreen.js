@@ -1,17 +1,20 @@
 import React, {useState} from 'react';
-import {View, Text, Image, Pressable, Appearance} from 'react-native';
+import {Image, Pressable, Text, View} from 'react-native';
 
 import {useSelector} from 'react-redux';
 
-import styles from './SealBoxSuccessfullyStyle';
 import SAL from '../../../SAL';
+import ActivityIndicator from '../../../components/ActivityIndicator';
 import NavigationBar from '../../../components/NavigationBar';
 import SALGradientButton from '../../../components/SALGradientButton';
+import useCustomTheme from '../../../hook/useCustomTheme';
 import {downloadFile} from '../../../utils/Utils';
-import ActivityIndicator from '../../../components/ActivityIndicator';
-const colorScheme = Appearance.getColorScheme();
+import SealBoxSuccessfullyStyle from './SealBoxSuccessfullyStyle';
 
 function SealBoxSuccessfullyScreen(props) {
+  const theme = useCustomTheme();
+  const isDark = theme === 'dark';
+  const styles = SealBoxSuccessfullyStyle(isDark);
   const {boxData, data} = props.route.params;
   const [loading, setLoading] = useState(false);
 

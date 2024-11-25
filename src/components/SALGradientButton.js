@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, Text, StyleSheet, Pressable} from 'react-native';
+import {Image, Text, StyleSheet, Pressable, Appearance} from 'react-native';
 
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -12,6 +12,7 @@ const SALGradientButton = props => {
       <LinearGradient
         start={{x: 0, y: 0}}
         end={{x: 1, y: 0}}
+        // colors={SAL.darkModeColors.buttonPurpleGradient}
         colors={SAL.colors.buttonPurpleGradient}
         style={[styles.button, props.buttonStyle]}>
         {props.image ? (

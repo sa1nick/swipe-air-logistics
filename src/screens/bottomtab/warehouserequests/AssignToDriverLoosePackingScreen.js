@@ -1,18 +1,14 @@
-import React, {useState, useRef, useEffect} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
+import React, {useEffect, useRef, useState} from 'react';
 import {
-  View,
-  Text,
-  Image,
-  Pressable,
-  FlatList,
-  StyleSheet,
-  Modal,
-  RefreshControl,
-  SafeAreaView,
   Appearance,
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {useFocusEffect} from '@react-navigation/native';
 
 import SAL from '../../../SAL';
 import ActivityIndicator from '../../../components/ActivityIndicator';
@@ -20,10 +16,12 @@ import BoxCell from '../../cells/BoxCell';
 
 import {getAssignedItemToDriver} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
 import {showAlert} from '../../../utils/Utils';
-
-const colorScheme = Appearance.getColorScheme();
+import {scaleFactor} from '../../../utils/ViewScaleUtil';
+import useCustomTheme from '../../../hook/useCustomTheme';
 
 function AssignToDriverLoosePackingScreen(props) {
+  const theme = useCustomTheme();
+  const isDark = theme === 'dark';
   const [assignedList, setAssignedList] = useState(null);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -131,14 +129,7 @@ function AssignToDriverLoosePackingScreen(props) {
 
   const RenderListEmptyComponent = () => (
     <View style={styles.emptyListContainer}>
-      {!loading ? (
-        <Text
-          style={styles.noDataFoundText}
-          adjustsFontSizeToFit={true}
-          numberOfLines={1}>
-          No data found
-        </Text>
-      ) : null}
+      {!loading && <Text style={styles.noDataFoundText}> No data found</Text>}
     </View>
   );
 
@@ -169,6 +160,25 @@ function AssignToDriverLoosePackingScreen(props) {
     );
   };
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: isDark
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
+    },
+    emptyListContainer: {
+      height: 200,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    noDataFoundText: {
+      color: isDark ? SAL.colors.white : SAL.colors.black,
+      fontSize: scaleFactor(16),
+      fontFamily: 'Rubik-Medium',
+    },
+  });
+
   return (
     <View style={styles.container}>
       {assignedList?.length ? null : <RenderListEmptyComponent />}
@@ -194,25 +204,5 @@ function AssignToDriverLoosePackingScreen(props) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor:
-      colorScheme === 'dark'
-        ? SAL.darkModeColors.black22262A
-        : SAL.colors.white,
-  },
-  emptyListContainer: {
-    height: 200,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  noDataFoundText: {
-    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
-    fontSize: 16,
-    fontFamily: 'Rubik-Medium',
-  },
-});
 
 export default AssignToDriverLoosePackingScreen;

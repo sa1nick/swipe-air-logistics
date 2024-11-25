@@ -3,7 +3,6 @@ import {View, Text, Image, FlatList, Pressable} from 'react-native';
 
 import {useDispatch, useSelector} from 'react-redux';
 
-import styles from './MoveToContainerStyle';
 import SAL from '../../../SAL';
 import NavigationBar from '../../../components/NavigationBar';
 import ActivityIndicator from '../../../components/ActivityIndicator';
@@ -11,8 +10,13 @@ import {showAlert} from '../../../utils/Utils';
 import BoxCell from '../../cells/BoxCell';
 
 import {getAllContainerListApi} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
+import moveToContainerStyle from './MoveToContainerStyle';
+import useCustomTheme from '../../../hook/useCustomTheme';
 
 function MoveToContainerScreen(props) {
+  const styles = moveToContainerStyle();
+  const theme = useCustomTheme();
+  const isDark = theme === 'dark';
   const {data, from} = props.route.params;
 
   const [loading, setLoading] = useState(true);
@@ -66,13 +70,15 @@ function MoveToContainerScreen(props) {
       data: data,
       item: containerList[index],
       isExist: true,
-      from: from
+      from: from,
     });
   };
 
   const onPressDetailCell = () => {
     console.log('onPressDetailCell');
   };
+
+  console.log('theme', theme);
 
   const renderItem = ({item, index}) => {
     return (
@@ -94,7 +100,7 @@ function MoveToContainerScreen(props) {
   const createContainerButton = () => {
     props.navigation.navigate('BoxDimensionScreen', {
       data: data,
-      from: from
+      from: from,
     });
   };
 
@@ -131,7 +137,10 @@ function MoveToContainerScreen(props) {
       {containerList?.length ? null : <RenderListEmptyComponent />}
       <FlatList
         style={{
-          backgroundColor: 'white',
+          backgroundColor:
+            theme === 'dark'
+              ? SAL.darkModeColors.black22262A
+              : SAL.colors.white,
           marginTop: 30,
           borderTopLeftRadius: 35,
           borderTopRightRadius: 35,
@@ -143,7 +152,12 @@ function MoveToContainerScreen(props) {
       />
 
       <Pressable style={styles.createButton} onPress={createContainerButton}>
-        <Image source={SAL.image.createContainerIcon} />
+        <Image
+          source={SAL.image.createContainerIcon}
+          style={{
+            tintColor: SAL.darkModeColors.orangeFFC8A3,
+          }}
+        />
         <Text style={styles.createButtonText}>Create Container</Text>
       </Pressable>
 

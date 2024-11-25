@@ -1,42 +1,44 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
-  View,
-  Text,
   Image,
   Keyboard,
-  StyleSheet,
   Platform,
   ScrollView,
-  Appearance,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 
-import {useDispatch, useSelector} from 'react-redux';
 import RNPickerSelect from 'react-native-picker-select';
+import {useDispatch, useSelector} from 'react-redux';
 
-import styles from './BoxDimensionStyle';
 import SAL from '../../../SAL';
-import NavigationBar from '../../../components/NavigationBar';
-import Dimensions from '../../../components/Dimensions';
-import SALGradientButton from '../../../components/SALGradientButton';
-import {showAlert} from '../../../utils/Utils';
 import ActivityIndicator from '../../../components/ActivityIndicator';
 import ArrowDownIcon from '../../../components/ArrowDownIcon';
+import Dimensions from '../../../components/Dimensions';
+import NavigationBar from '../../../components/NavigationBar';
+import SALGradientButton from '../../../components/SALGradientButton';
+import {showAlert} from '../../../utils/Utils';
+import BoxDimensionStyle from './BoxDimensionStyle';
 
 import {
-  createBoxApi,
-  createPalletApi,
-  createBoxToContainerApi,
-  createPalletToContainerApi,
-  clearCreateBPC,
-  getContainerTypeApi,
-  clearContainerType,
-  getContainerTypeDimensionByIdApi,
   addContainerDetailApi,
+  clearContainerType,
+  clearCreateBPC,
+  createBoxApi,
+  createBoxToContainerApi,
+  createPalletApi,
+  createPalletToContainerApi,
+  getContainerTypeApi,
+  getContainerTypeDimensionByIdApi,
 } from '../../../api/slice/warehouseSlice/warehouseApiSlice';
-
-const colorScheme = Appearance.getColorScheme();
+import useCustomTheme from '../../../hook/useCustomTheme';
 
 function BoxDimensionScreen(props) {
+  const theme = useCustomTheme();
+  const isDark = theme === 'dark';
+  const styles = BoxDimensionStyle(isDark);
+
   const {data, item, isExist, from} = props.route.params;
 
   const [containerTypeList, setContainerTypeList] = useState([]);
@@ -348,6 +350,37 @@ function BoxDimensionScreen(props) {
     }
   };
 
+  const pickerWidth = SAL.constant.screenWidth - 32 - 100;
+
+  const pickerSelectStyles = StyleSheet.create({
+    inputIOS: {
+      width: pickerWidth,
+      height: 50,
+      color: isDark ? SAL.colors.white : '#9A9A9A',
+      fontSize: 14,
+      fontFamily: 'Rubik-Regular',
+      paddingLeft: 20,
+    },
+    inputAndroid: {
+      width: pickerWidth,
+      height: 50,
+      color: isDark ? SAL.colors.white : '#9A9A9A',
+      fontSize: 14,
+      fontFamily: 'Rubik-Regular',
+      paddingLeft: 20,
+      paddingVertical: 5,
+    },
+    chevronDown: {
+      display: 'none',
+    },
+    chevronUp: {
+      display: 'none',
+    },
+    placeholder: {
+      color: isDark ? SAL.darkModeColors.tabInActive : '',
+    },
+  });
+
   return (
     <View style={styles.container}>
       <Image
@@ -442,33 +475,5 @@ function BoxDimensionScreen(props) {
     </View>
   );
 }
-
-const pickerWidth = SAL.constant.screenWidth - 32 - 100;
-
-export const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    width: pickerWidth,
-    height: 50,
-    color: '#9A9A9A',
-    fontSize: 14,
-    fontFamily: 'Rubik-Regular',
-    paddingLeft: 20,
-  },
-  inputAndroid: {
-    width: pickerWidth,
-    height: 50,
-    color: '#9A9A9A',
-    fontSize: 14,
-    fontFamily: 'Rubik-Regular',
-    paddingLeft: 20,
-    paddingVertical: 5,
-  },
-  chevronDown: {
-    display: 'none',
-  },
-  chevronUp: {
-    display: 'none',
-  },
-});
 
 export default BoxDimensionScreen;

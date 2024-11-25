@@ -1,25 +1,19 @@
 /* eslint-disable react/react-in-jsx-scope */
-import {
-  Image,
-  StyleSheet,
-  Platform,
-  Text,
-  useColorScheme,
-  Appearance,
-  Keyboard,
-} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {Image, Keyboard, Platform, StyleSheet, Text} from 'react-native';
 
+import useCustomTheme from '../hook/useCustomTheme';
 import SAL from '../SAL';
+import DriverAssignmentScreen from '../screens/bottomtab/driverassignment/DriverAssignmentScreen';
 import HomeScreen from '../screens/bottomtab/home/HomeScreen';
 import WarehouseRequestsScreen from '../screens/bottomtab/warehouserequests/WarehouseRequestsScreen';
-import DriverAssignmentScreen from '../screens/bottomtab/driverassignment/DriverAssignmentScreen';
 import {scaleFactor} from '../utils/ViewScaleUtil';
 
 const Tab = createBottomTabNavigator();
 
 const TabLabel = ({focused, label}) => {
-  const colorScheme = useColorScheme();
+  const theme = useCustomTheme();
+  const isDark = theme === 'dark';
 
   return (
     <Text
@@ -27,10 +21,10 @@ const TabLabel = ({focused, label}) => {
         styles.tabBarLabel,
         {
           color: focused
-            ? colorScheme === 'dark'
+            ? isDark
               ? SAL.darkModeColors.purpleF0C3F4
               : '#7A2783'
-            : colorScheme === 'dark'
+            : isDark
             ? SAL.darkModeColors.tabInActive
             : '#8A8A8A',
         },
@@ -43,14 +37,12 @@ const TabLabel = ({focused, label}) => {
 };
 
 function BottomTabBar(props) {
-  const colorScheme = useColorScheme();
+  const theme = useCustomTheme();
+  const isDark = theme === 'dark';
 
   const tabBarStyleWithBackground = {
     ...styles.tabBarStyle,
-    backgroundColor:
-      colorScheme === 'dark'
-        ? SAL.darkModeColors.black22262A
-        : SAL.colors.white,
+    backgroundColor: isDark ? SAL.darkModeColors.black22262A : SAL.colors.white,
   };
 
   return (
@@ -84,7 +76,7 @@ function BottomTabBar(props) {
                 styles.tabBarIcon,
                 {
                   tintColor:
-                    focused && colorScheme === 'dark'
+                    focused && isDark
                       ? SAL.darkModeColors.purpleF0C3F4
                       : undefined,
                 },
@@ -92,10 +84,12 @@ function BottomTabBar(props) {
             />
           );
         },
-        tabBarActiveTintColor:
-          colorScheme === 'dark' ? SAL.darkModeColors.purpleF0C3F4 : '#7A2783',
-        tabBarInactiveTintColor:
-          colorScheme === 'dark' ? SAL.darkModeColors.tabInActive : '#8A8A8A',
+        tabBarActiveTintColor: isDark
+          ? SAL.darkModeColors.purpleF0C3F4
+          : '#7A2783',
+        tabBarInactiveTintColor: isDark
+          ? SAL.darkModeColors.tabInActive
+          : '#8A8A8A',
         tabBarStyle: tabBarStyleWithBackground,
         tabBarLabel: ({focused}) => (
           <TabLabel focused={focused} label={route.name} />

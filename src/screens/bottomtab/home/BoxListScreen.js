@@ -1,62 +1,51 @@
-import React, {useState, useRef, useEffect} from 'react';
-import {
-  View,
-  Text,
-  Image,
-  FlatList,
-  Pressable,
-  Modal,
-  useColorScheme,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Image, Text, View} from 'react-native';
 
-import {useDispatch, useSelector} from 'react-redux';
-import LinearGradient from 'react-native-linear-gradient';
-import {useIsFocused} from '@react-navigation/native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import {useIsFocused} from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
+import {useDispatch, useSelector} from 'react-redux';
 
-import styles from './BoxListStyle';
 import SAL from '../../../SAL';
-import NavigationBar from '../../../components/NavigationBar';
-import BoxCell from '../../cells/BoxCell';
-import SALGradientButton from '../../../components/SALGradientButton';
-import TopTabBar from '../../../components/TopTabBar';
-import BSConsignmentList from '../../../components/BSConsignmentList';
-import {showAlert, downloadFile} from '../../../utils/Utils';
 import ActivityIndicator from '../../../components/ActivityIndicator';
-import BSAssignToDriver from '../../../components/BSAssignToDriver';
-import BSSuccessfullyAssigned from '../../../components/BSSuccessfullyAssigned';
-import BoxCreatedScreen from '../warehouserequests/BoxCreatedScreen';
-import PalletCreatedScreen from '../warehouserequests/PalletCreatedScreen';
-import ContainerCreatedScreen from '../warehouserequests/ContainerCreatedScreen';
+import NavigationBar from '../../../components/NavigationBar';
 import AssignToDriverLoosePackingScreen from '../warehouserequests/AssignToDriverLoosePackingScreen';
+import BoxCreatedScreen from '../warehouserequests/BoxCreatedScreen';
+import ContainerCreatedScreen from '../warehouserequests/ContainerCreatedScreen';
+import PalletCreatedScreen from '../warehouserequests/PalletCreatedScreen';
+import boxListStyle from './BoxListStyle';
 
 import {clearBPCList} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
+import useCustomTheme from '../../../hook/useCustomTheme';
 import {scaleFactor} from '../../../utils/ViewScaleUtil';
 
 const CreatedTabBar = createMaterialTopTabNavigator();
 
 const CreatedTabStack = ({onChange}) => {
-  const colorScheme = useColorScheme();
+  const theme = useCustomTheme();
+  const isDark = theme === 'dark';
+  const styles = boxListStyle(isDark);
   return (
     <CreatedTabBar.Navigator
       screenOptions={({route}) => ({
         lazy: true,
         tabBarScrollEnabled: true,
         swipeEnabled: false,
-        tabBarActiveTintColor:
-          colorScheme === 'dark' ? SAL.darkModeColors.purpleF0C3F4 : '#7A2783',
-        tabBarInactiveTintColor:
-          colorScheme === 'dark' ? SAL.darkModeColors.tabInActive : '#8A8A8A',
+        tabBarActiveTintColor: isDark
+          ? SAL.darkModeColors.purpleF0C3F4
+          : '#7A2783',
+        tabBarInactiveTintColor: isDark
+          ? SAL.darkModeColors.tabInActive
+          : '#8A8A8A',
         tabBarLabelStyle: {
           fontSize: 14,
           fontFamily: 'Rubik-Medium',
           marginHorizontal: 0,
         },
         tabBarIndicatorStyle: {
-          borderBottomColor:
-            colorScheme === 'dark'
-              ? SAL.darkModeColors.purpleF0C3F4
-              : '#7A2783',
+          borderBottomColor: isDark
+            ? SAL.darkModeColors.purpleF0C3F4
+            : '#7A2783',
           borderBottomWidth: 2,
         },
         tabBarStyle: {
@@ -65,20 +54,20 @@ const CreatedTabStack = ({onChange}) => {
         },
         tabBarItemStyle: {
           width: 'auto',
-          paddingHorizontal: 8, // Adjust padding for spacing
+          // paddingHorizontal: 8, // Adjust padding for spacing
         },
         tabBarLabel: ({focused}) => (
           <Text
             adjustsFontSizeToFit={true}
             numberOfLines={1}
             style={{
-              fontSize: scaleFactor(15),
+              fontSize: scaleFactor(16),
               fontFamily: 'Rubik-Medium',
               color: focused
-                ? colorScheme === 'dark'
+                ? isDark
                   ? SAL.darkModeColors.purpleF0C3F4
                   : '#7A2783'
-                : colorScheme === 'dark'
+                : isDark
                 ? SAL.darkModeColors.tabInActive
                 : '#8A8A8A',
             }}>
@@ -108,17 +97,20 @@ const CreatedTabStack = ({onChange}) => {
   );
 };
 
-const TotalBoxQuantityView = props => {
+const TotalBoxQuantityView = ({styles, icon, label, quantity}) => {
   return (
     <View style={styles.totalQuantityContainer}>
-      <Image source={props.icon} />
-      <Text style={styles.labelText}>{props.label}</Text>
-      <Text style={[styles.fromText, {marginTop: 3}]}>{props.quantity}</Text>
+      <Image source={icon} />
+      <Text style={styles.labelText}>{label}</Text>
+      <Text style={[styles.fromText, {marginTop: 3}]}>{quantity}</Text>
     </View>
   );
 };
 
 function BoxListScreen(props) {
+  const theme = useCustomTheme();
+  const isDark = theme === 'dark';
+  const styles = boxListStyle(isDark);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [boxList, setBoxList] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -258,6 +250,7 @@ function BoxListScreen(props) {
         colors={SAL.colors.totalBoxWeightGradient}
         style={styles.totalBoxWeigthContainer}>
         <TotalBoxQuantityView
+          styles={styles}
           label={`Total ${titleArray[selectedIndex]}`}
           quantity={
             selectedIndex === 0
@@ -272,6 +265,7 @@ function BoxListScreen(props) {
         />
         <View style={styles.separator} />
         <TotalBoxQuantityView
+          styles={styles}
           label={'Total Weight'}
           quantity={
             selectedIndex === 0

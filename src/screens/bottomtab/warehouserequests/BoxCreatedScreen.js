@@ -1,34 +1,35 @@
-import React, {useState, useRef, useEffect, useCallback} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
-  View,
-  Text,
-  Image,
-  Pressable,
   FlatList,
-  StyleSheet,
+  Image,
   Modal,
+  Pressable,
   RefreshControl,
   SafeAreaView,
   ScrollView,
-  Appearance,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 
 import {useDispatch, useSelector} from 'react-redux';
 
 import SAL from '../../../SAL';
 import ActivityIndicator from '../../../components/ActivityIndicator';
-import BoxCell from '../../cells/BoxCell';
-import SALGradientButton from '../../../components/SALGradientButton';
-import {showAlert, downloadFile} from '../../../utils/Utils';
 import BSAssignToDriver from '../../../components/BSAssignToDriver';
 import BSSuccessfullyAssigned from '../../../components/BSSuccessfullyAssigned';
+import SALGradientButton from '../../../components/SALGradientButton';
+import {downloadFile, showAlert} from '../../../utils/Utils';
+import BoxCell from '../../cells/BoxCell';
 
-import {getBoxListApi} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
 import {useFocusEffect} from '@react-navigation/native';
+import {getBoxListApi} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
+import useCustomTheme from '../../../hook/useCustomTheme';
 import {scaleFactor} from '../../../utils/ViewScaleUtil';
-const colorScheme = Appearance.getColorScheme();
 
 function BoxCreatedScreen(props) {
+  const theme = useCustomTheme();
+  const isDark = theme === 'dark';
   const [boxCreatedList, setBoxCreatedList] = useState(null);
   const [loading, setLoading] = useState(false);
   const [itemCount, setItemCount] = useState(0);
@@ -234,6 +235,54 @@ function BoxCreatedScreen(props) {
     setShowSuccessDriverAssign(true);
   };
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      // height: SAL.constant.screenHeight * 1.5,
+      backgroundColor: isDark
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
+    },
+    emptyListContainer: {
+      height: 200,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    noDataFoundText: {
+      color: isDark ? SAL.colors.white : SAL.colors.black,
+      fontSize: 16,
+      fontFamily: 'Rubik-Medium',
+    },
+    createContainer: {
+      height: 45,
+      borderColor: isDark ? SAL.darkModeColors.orangeFFC8A3 : SAL.colors.orange,
+      borderWidth: 1,
+      borderRadius: 30,
+      flexDirection: 'row',
+      marginTop: 20,
+      alignSelf: 'center',
+    },
+    createButton: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'row',
+      width: '48%',
+    },
+    createButtonText: {
+      color: isDark ? SAL.darkModeColors.orangeFFC8A3 : SAL.colors.orange,
+      fontSize: 12,
+      fontFamily: 'Rubik-Medium',
+      marginLeft: 10,
+    },
+    buttonSeparator: {
+      width: 1,
+      marginVertical: 12,
+      backgroundColor: isDark
+        ? SAL.darkModeColors.orangeFFC8A3
+        : SAL.colors.orange,
+    },
+  });
+
   return (
     <SafeAreaView style={styles.container}>
       {showAssignToDriver ? (
@@ -287,10 +336,7 @@ function BoxCreatedScreen(props) {
             <Image
               source={SAL.image.createPalletIcon}
               style={{
-                tintColor:
-                  colorScheme === 'dark'
-                    ? SAL.darkModeColors.orangeFFC8A3
-                    : '#FF6D09',
+                tintColor: isDark ? SAL.darkModeColors.orangeFFC8A3 : '#FF6D09',
               }}
             />
             <Text
@@ -308,10 +354,7 @@ function BoxCreatedScreen(props) {
           <Image
             source={SAL.image.createContainerIcon}
             style={{
-              tintColor:
-                colorScheme === 'dark'
-                  ? SAL.darkModeColors.orangeFFC8A3
-                  : '#FF6D09',
+              tintColor: isDark ? SAL.darkModeColors.orangeFFC8A3 : '#FF6D09',
             }}
           />
           <Text
@@ -332,61 +375,5 @@ function BoxCreatedScreen(props) {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // height: SAL.constant.screenHeight * 1.5,
-    backgroundColor:
-      colorScheme === 'dark'
-        ? SAL.darkModeColors.black22262A
-        : SAL.colors.white,
-  },
-  emptyListContainer: {
-    height: 200,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  noDataFoundText: {
-    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
-    fontSize: 16,
-    fontFamily: 'Rubik-Medium',
-  },
-  createContainer: {
-    height: 45,
-    borderColor:
-      colorScheme === 'dark'
-        ? SAL.darkModeColors.orangeFFC8A3
-        : SAL.colors.orange,
-    borderWidth: 1,
-    borderRadius: 30,
-    flexDirection: 'row',
-    marginTop: 20,
-    alignSelf: 'center',
-  },
-  createButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-    width: '48%',
-  },
-  createButtonText: {
-    color:
-      colorScheme === 'dark'
-        ? SAL.darkModeColors.orangeFFC8A3
-        : SAL.colors.orange,
-    fontSize: 12,
-    fontFamily: 'Rubik-Medium',
-    marginLeft: 10,
-  },
-  buttonSeparator: {
-    width: 1,
-    marginVertical: 12,
-    backgroundColor:
-      colorScheme === 'dark'
-        ? SAL.darkModeColors.orangeFFC8A3
-        : SAL.colors.orange,
-  },
-});
 
 export default BoxCreatedScreen;

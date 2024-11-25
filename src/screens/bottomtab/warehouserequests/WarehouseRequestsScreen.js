@@ -1,61 +1,56 @@
-import React, {useState, useRef, useEffect} from 'react';
-import {
-  View,
-  Image,
-  StyleSheet,
-  Platform,
-  Text,
-  useColorScheme,
-  Appearance,
-} from 'react-native';
-import RNPickerSelect from 'react-native-picker-select';
-import {useDispatch, useSelector} from 'react-redux';
-import {Camera, useCameraPermission} from 'react-native-vision-camera';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import React, {useEffect, useRef, useState} from 'react';
+import {Image, Platform, StyleSheet, useColorScheme, View} from 'react-native';
+import RNPickerSelect from 'react-native-picker-select';
+import {Camera} from 'react-native-vision-camera';
+import {useDispatch, useSelector} from 'react-redux';
 
-import styles from './WarehouseRequestsStyle';
 import SAL from '../../../SAL';
-import NavigationBar from '../../../components/NavigationBar';
-import ArrowDownIcon from '../../../components/ArrowDownIcon';
-import {showAlert} from '../../../utils/Utils';
 import ActivityIndicator from '../../../components/ActivityIndicator';
+import ArrowDownIcon from '../../../components/ArrowDownIcon';
+import NavigationBar from '../../../components/NavigationBar';
+import {navigationLeftButton, showAlert} from '../../../utils/Utils';
+import AssignToDriverLoosePackingScreen from './AssignToDriverLoosePackingScreen';
 import PendingScreen from './PendingScreen';
 import ScannedScreen from './ScannedScreen';
-import AssignToDriverLoosePackingScreen from './AssignToDriverLoosePackingScreen';
+import warehouseRequestsStyle from './WarehouseRequestsStyle';
 
 import {
-  pickupWarehouse,
   dropoffWarehouse,
+  pickupWarehouse,
   validate,
 } from '../../../api/slice/storeDataGloballySlice/storeDataGloballySlice';
+import useCustomTheme from '../../../hook/useCustomTheme';
 import {scaleFactor} from '../../../utils/ViewScaleUtil';
 
 const TopTabBar = createMaterialTopTabNavigator();
-const colorScheme = Appearance.getColorScheme();
 
 const TopTabStack = ({screenProps}) => {
+  const theme = useCustomTheme();
+  const isDark = theme === 'dark';
   return (
     <TopTabBar.Navigator
       screenOptions={({route}) => ({
         tabBarPressColor:
-          // colorScheme === 'dark' ? 'rgba(240, 195, 244, 0.2)' : '',
+          // isDark ? 'rgba(240, 195, 244, 0.2)' : '',
           'rgba(240, 195, 244, 0.2)',
         lazy: true,
         tabBarScrollEnabled: true,
         swipeEnabled: false,
-        tabBarActiveTintColor:
-          colorScheme == 'dark' ? SAL.darkModeColors.purpleF0C3F4 : '#7A2783',
-        tabBarInactiveTintColor:
-          colorScheme === 'dark' ? SAL.darkModeColors.tabInActive : '#8A8A8A',
+        tabBarActiveTintColor: isDark
+          ? SAL.darkModeColors.purpleF0C3F4
+          : '#7A2783',
+        tabBarInactiveTintColor: isDark
+          ? SAL.darkModeColors.tabInActive
+          : '#8A8A8A',
         tabBarLabelStyle: {
           fontSize: scaleFactor(14),
           fontFamily: 'Rubik-Medium',
         },
         tabBarIndicatorStyle: {
-          borderBottomColor:
-            colorScheme === 'dark'
-              ? SAL.darkModeColors.purpleF0C3F4
-              : '#7A2783',
+          borderBottomColor: isDark
+            ? SAL.darkModeColors.purpleF0C3F4
+            : '#7A2783',
           borderBottomWidth: 2,
           width: '18%',
           marginLeft: '5.5%',
@@ -79,6 +74,9 @@ const TopTabStack = ({screenProps}) => {
 };
 
 function WarehouseRequestsScreen(props) {
+  const theme = useCustomTheme();
+  const isDark = theme === 'dark';
+  const styles = warehouseRequestsStyle(isDark);
   const [selectFrom, setSelectFrom] = useState(null);
   const [selectTo, setSelectTo] = useState(null);
   const [selectedTab, setSelectedTab] = useState(1);
@@ -93,6 +91,35 @@ function WarehouseRequestsScreen(props) {
   const dispatch = useDispatch();
 
   const warehouseListData = useSelector(state => state.warehouse.warehouseList);
+
+  const pickerSelectStyles = StyleSheet.create({
+    inputIOS: {
+      width: '100%',
+      height: 50,
+      color: isDark ? SAL.darkModeColors.purpleF0C3F4 : SAL.colors.purple,
+      fontSize: 14,
+      fontFamily: 'Rubik-Medium',
+      paddingLeft: 20,
+    },
+    inputAndroid: {
+      width: '100%',
+      height: 50,
+      color: isDark ? SAL.darkModeColors.purpleF0C3F4 : SAL.colors.purple,
+      fontSize: scaleFactor(14),
+      fontFamily: 'Rubik-Medium',
+      paddingLeft: 20,
+      paddingVertical: 5,
+    },
+    chevronDown: {
+      display: 'none',
+    },
+    chevronUp: {
+      display: 'none',
+    },
+    placeholder: {
+      color: isDark ? SAL.darkModeColors.tabInActive : '#9A9A9A',
+    },
+  });
 
   useEffect(() => {
     if (warehouseListData) {
@@ -214,7 +241,7 @@ function WarehouseRequestsScreen(props) {
           source={SAL.image.gradientBg}
         />
       </View>
-      <NavigationBar />
+      <NavigationBar navigationLeftButton={navigationLeftButton} />
       <View style={styles.dropdownContainer}>
         <View style={styles.subDDContainer}>
           <RNPickerSelect
@@ -226,6 +253,7 @@ function WarehouseRequestsScreen(props) {
             useNativeAndroidPickerStyle={false}
             Icon={ArrowDownIcon}
             style={pickerSelectStyles}
+            // darkTheme={isDark}
           />
         </View>
         <View style={styles.subDDContainer}>
@@ -238,7 +266,7 @@ function WarehouseRequestsScreen(props) {
             useNativeAndroidPickerStyle={false}
             Icon={ArrowDownIcon}
             style={pickerSelectStyles}
-            darkTheme={useColorScheme() === 'dark'}
+            // darkTheme={isDark}
           />
         </View>
       </View>
@@ -249,37 +277,5 @@ function WarehouseRequestsScreen(props) {
     </View>
   );
 }
-
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    width: '100%',
-    height: 50,
-    color:
-      colorScheme === 'dark'
-        ? SAL.darkModeColors.purpleF0C3F4
-        : SAL.colors.purple,
-    fontSize: 14,
-    fontFamily: 'Rubik-Medium',
-    paddingLeft: 20,
-  },
-  inputAndroid: {
-    width: '100%',
-    height: 50,
-    color:
-      colorScheme === 'dark'
-        ? SAL.darkModeColors.purpleF0C3F4
-        : SAL.colors.purple,
-    fontSize: scaleFactor(14),
-    fontFamily: 'Rubik-Medium',
-    paddingLeft: 20,
-    paddingVertical: 5,
-  },
-  chevronDown: {
-    display: 'none',
-  },
-  chevronUp: {
-    display: 'none',
-  },
-});
 
 export default WarehouseRequestsScreen;

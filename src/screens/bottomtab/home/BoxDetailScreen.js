@@ -1,9 +1,9 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {View, Text, Image, FlatList} from 'react-native';
+import {View, Text, Image, FlatList, Appearance} from 'react-native';
 
 import {useDispatch, useSelector} from 'react-redux';
 
-import styles from './BoxDetailStyle';
+import BoxDetailStyle from './BoxDetailStyle';
 import SAL from '../../../SAL';
 import NavigationBar from '../../../components/NavigationBar';
 import {downloadFile, getData} from '../../../utils/Utils';
@@ -16,8 +16,14 @@ import {
   getBoxDetailListApi,
   clearDetailBoxList,
 } from '../../../api/slice/warehouseSlice/warehouseApiSlice';
+import {scaleFactor} from '../../../utils/ViewScaleUtil';
+import useCustomTheme from '../../../hook/useCustomTheme';
+const colorScheme = Appearance.getColorScheme();
 
 function BoxDetailScreen(props) {
+  const theme = useCustomTheme();
+  const isDark = theme === 'dark';
+  const styles = BoxDetailStyle(isDark);
   const {item} = props.route.params;
 
   const [movedBy, setMovedBy] = useState('');
@@ -121,7 +127,7 @@ function BoxDetailScreen(props) {
     return (
       <View style={styles.headerContainer}>
         <View style={styles.childContainer}>
-          <View style={{flexDirection: 'row', height: 50}}>
+          <View style={{flexDirection: 'row', height: scaleFactor(120)}}>
             <Image style={styles.boxIcon} source={SAL.image.boxDimension} />
             <View style={{marginLeft: 10}}>
               <Text
@@ -189,7 +195,11 @@ function BoxDetailScreen(props) {
       </View>
       <BoxHeaderRenderItem />
       <FlatList
-        contentContainerStyle={{backgroundColor: SAL.colors.white}}
+        contentContainerStyle={{
+          backgroundColor: isDark
+            ? SAL.darkModeColors.black22262A
+            : SAL.colors.white,
+        }}
         data={productList}
         renderItem={renderItem}
         // ListFooterComponent={() => <View style={{height: 10}} />}

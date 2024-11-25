@@ -6,6 +6,7 @@ import {
   View,
   Image,
   ScrollView,
+  Appearance,
 } from 'react-native';
 
 import LinearGradient from 'react-native-linear-gradient';
@@ -25,10 +26,14 @@ import {
   getAllDriverListApi,
 } from '../api/slice/warehouseSlice/warehouseApiSlice';
 import RNPickerSelect from 'react-native-picker-select';
-import {pickerSelectStyles} from '../screens/bottomtab/home/HomeStyle';
+
 import ArrowDownIcon from './ArrowDownIcon';
+import useCustomTheme from '../hook/useCustomTheme';
+const pickerWidth = SAL.constant.screenWidth - 32 - 100;
 
 const BSAssignToDriver = props => {
+  const theme = useCustomTheme();
+  const isDark = theme === 'dark';
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('');
   const [open, setOpen] = useState(false);
@@ -172,7 +177,11 @@ const BSAssignToDriver = props => {
           {selectedDate === '' ? subProps.placeholder : selectedDate}
         </Text>
         <Image
-          style={{position: 'absolute', right: 20}}
+          style={{
+            position: 'absolute',
+            right: 20,
+            tintColor: isDark ? '#F0C3F4' : '',
+          }}
           source={SAL.image.calenderIcon}></Image>
         <Pressable
           style={styles.button}
@@ -205,7 +214,11 @@ const BSAssignToDriver = props => {
         )}
 
         <Image
-          style={{position: 'absolute', right: 20}}
+          style={{
+            position: 'absolute',
+            right: 20,
+            tintColor: isDark ? '#F0C3F4' : '',
+          }}
           source={SAL.image.downArrow}></Image>
         <Pressable
           style={styles.button}
@@ -243,6 +256,7 @@ const BSAssignToDriver = props => {
           style={styles.checkboxButton}
           onPress={() => setIsDCSelected(true)}>
           <Image
+            style={{tintColor: isDark ? '#F0C3F4' : ''}}
             source={
               isDCSelected
                 ? SAL.image.checkboxSelected
@@ -254,6 +268,7 @@ const BSAssignToDriver = props => {
           style={styles.checkboxButton}
           onPress={() => setIsDCSelected(false)}>
           <Image
+            style={{tintColor: isDark ? '#F0C3F4' : ''}}
             source={
               isDCSelected
                 ? SAL.image.checkboxUnselected
@@ -319,6 +334,153 @@ const BSAssignToDriver = props => {
       ),
     );
   };
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'flex-end',
+    },
+    blackContainer: {
+      width: '100%',
+      height: '100%',
+      position: 'absolute',
+      backgroundColor: SAL.colors.black,
+      opacity: 0.8,
+    },
+    bottomContainer: {
+      width: '100%',
+      height: 650,
+      alignItems: 'center',
+    },
+    orderImage: {
+      width: 64,
+      height: 64,
+      marginTop: 80,
+      zIndex: 1,
+    },
+    gradientContainer: {
+      width: '100%',
+      // height: 470,
+      flex: 1,
+      borderTopLeftRadius: 30,
+      borderTopRightRadius: 30,
+      marginTop: -32,
+      alignItems: 'center',
+    },
+    orderText: {
+      color: SAL.colors.black,
+      fontSize: 18,
+      fontFamily: 'Rubik-Medium',
+      marginTop: 45,
+    },
+    quantityText: {
+      color: SAL.colors.black,
+      fontSize: 16,
+      fontFamily: 'Rubik-Regular',
+      marginTop: 7,
+      marginBottom: 17,
+    },
+    commonContainer: {
+      width: SAL.constant.screenWidth - 32,
+      height: 50,
+      backgroundColor: isDark
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
+      borderRadius: 12,
+      marginBottom: 11,
+      borderWidth: 0.5,
+      borderColor: isDark ? SAL.darkModeColors.tabInActive : '#B5B5B5',
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    commonText: {
+      width: 65,
+      color: isDark ? SAL.darkModeColors.purpleF0C3F4 : SAL.colors.purple,
+      fontSize: 14,
+      fontFamily: 'Rubik-Medium',
+      marginLeft: 15,
+    },
+    separator: {
+      width: 0.5,
+      height: 50,
+      marginLeft: 15,
+      backgroundColor: isDark ? SAL.darkModeColors.tabInActive : '#B5B5B5',
+    },
+    inputField: {
+      width: 150,
+      height: 50,
+      marginLeft: 15,
+      fontSize: 14,
+      fontFamily: 'Rubik-Regular',
+      color: '#9A9A9A',
+    },
+    dropdownText: {
+      fontSize: 14,
+      fontFamily: 'Rubik-Regular',
+      marginLeft: 15,
+      color: isDark ? SAL.colors.white : '#9A9A9A',
+    },
+    assignButton: {
+      width: 150,
+      height: 45,
+      borderRadius: 22,
+      marginTop: 11,
+      alignSelf: 'center',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    assignText: {
+      color: SAL.colors.white,
+      fontSize: 12,
+      fontFamily: 'Rubik-Medium',
+    },
+    button: {
+      width: '100%',
+      height: '100%',
+      position: 'absolute',
+    },
+    checkboxButton: {
+      flexDirection: 'row',
+      height: '100%',
+      alignItems: 'center',
+      marginLeft: 30,
+    },
+    driverCompanyText: {
+      color: isDark ? SAL.colors.white : SAL.colors.black,
+      fontSize: 14,
+      fontFamily: 'Rubik-Regular',
+      marginLeft: 15,
+    },
+  });
+
+  const pickerSelectStyles = StyleSheet.create({
+    inputIOS: {
+      width: pickerWidth,
+      height: 50,
+      color: isDark ? SAL.colors.white : '#9A9A9A',
+      fontSize: 14,
+      fontFamily: 'Rubik-Regular',
+      paddingLeft: 20,
+    },
+    inputAndroid: {
+      width: pickerWidth,
+      height: 50,
+      color: isDark ? SAL.colors.white : '#9A9A9A',
+      fontSize: 14,
+      fontFamily: 'Rubik-Regular',
+      paddingLeft: 20,
+      paddingVertical: 5,
+    },
+    chevronDown: {
+      display: 'none',
+    },
+    chevronUp: {
+      display: 'none',
+    },
+    placeholder: {
+      color: isDark ? SAL.darkModeColors.tabInActive : '#9A9A9A',
+    },
+  });
 
   return (
     <View style={styles.container}>
@@ -432,121 +594,5 @@ const BSAssignToDriver = props => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  blackContainer: {
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
-    backgroundColor: SAL.colors.black,
-    opacity: 0.8,
-  },
-  bottomContainer: {
-    width: '100%',
-    height: 650,
-    alignItems: 'center',
-  },
-  orderImage: {
-    width: 64,
-    height: 64,
-    marginTop: 80,
-    zIndex: 1,
-  },
-  gradientContainer: {
-    width: '100%',
-    // height: 470,
-    flex: 1,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    marginTop: -32,
-    alignItems: 'center',
-  },
-  orderText: {
-    color: SAL.colors.black,
-    fontSize: 18,
-    fontFamily: 'Rubik-Medium',
-    marginTop: 45,
-  },
-  quantityText: {
-    color: SAL.colors.black,
-    fontSize: 16,
-    fontFamily: 'Rubik-Regular',
-    marginTop: 7,
-    marginBottom: 17,
-  },
-  commonContainer: {
-    width: SAL.constant.screenWidth - 32,
-    height: 50,
-    backgroundColor: SAL.colors.white,
-    borderRadius: 12,
-    marginBottom: 11,
-    borderWidth: 0.5,
-    borderColor: '#B5B5B5',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  commonText: {
-    width: 65,
-    color: SAL.colors.purple,
-    fontSize: 14,
-    fontFamily: 'Rubik-Medium',
-    marginLeft: 15,
-  },
-  separator: {
-    width: 0.5,
-    height: 50,
-    marginLeft: 15,
-    backgroundColor: '#B5B5B5',
-  },
-  inputField: {
-    width: 150,
-    height: 50,
-    marginLeft: 15,
-    fontSize: 14,
-    fontFamily: 'Rubik-Regular',
-    color: '#9A9A9A',
-  },
-  dropdownText: {
-    fontSize: 14,
-    fontFamily: 'Rubik-Regular',
-    marginLeft: 15,
-    color: '#9A9A9A',
-  },
-  assignButton: {
-    width: 150,
-    height: 45,
-    borderRadius: 22,
-    marginTop: 11,
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  assignText: {
-    color: SAL.colors.white,
-    fontSize: 12,
-    fontFamily: 'Rubik-Medium',
-  },
-  button: {
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
-  },
-  checkboxButton: {
-    flexDirection: 'row',
-    height: '100%',
-    alignItems: 'center',
-    marginLeft: 30,
-  },
-  driverCompanyText: {
-    color: SAL.colors.black,
-    fontSize: 14,
-    fontFamily: 'Rubik-Regular',
-    marginLeft: 15,
-  },
-});
 
 export default BSAssignToDriver;

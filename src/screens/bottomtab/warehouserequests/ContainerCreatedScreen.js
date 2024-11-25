@@ -1,35 +1,33 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
-  View,
-  Text,
-  Image,
-  Pressable,
   FlatList,
-  StyleSheet,
   Modal,
   RefreshControl,
   SafeAreaView,
   ScrollView,
-  Appearance,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 
 import {useDispatch, useSelector} from 'react-redux';
 
 import SAL from '../../../SAL';
 import ActivityIndicator from '../../../components/ActivityIndicator';
-import BoxCell from '../../cells/BoxCell';
-import SALGradientButton from '../../../components/SALGradientButton';
-import {showAlert} from '../../../utils/Utils';
 import BSAssignToDriver from '../../../components/BSAssignToDriver';
 import BSSuccessfullyAssigned from '../../../components/BSSuccessfullyAssigned';
+import SALGradientButton from '../../../components/SALGradientButton';
+import {showAlert} from '../../../utils/Utils';
+import BoxCell from '../../cells/BoxCell';
 
-import {getAllContainerListApi} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
-import {opacity} from 'react-native-reanimated/lib/typescript/Colors';
 import {useFocusEffect} from '@react-navigation/native';
+import {getAllContainerListApi} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
+import useCustomTheme from '../../../hook/useCustomTheme';
 
-const colorScheme = Appearance.getColorScheme();
 function ContainerCreatedScreen(props) {
+  const theme = useCustomTheme();
+  const isDark = theme === 'dark';
   const [containerCreatedList, setContainerCreatedList] = useState(null);
   const [loading, setLoading] = useState(false);
   const [itemCount, setItemCount] = useState(0);
@@ -185,6 +183,55 @@ function ContainerCreatedScreen(props) {
     setShowSuccessDriverAssign(true);
   };
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: isDark
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
+    },
+    emptyListContainer: {
+      height: 200,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    noDataFoundText: {
+      color: isDark ? SAL.colors.white : SAL.colors.black,
+      fontSize: 16,
+      fontFamily: 'Rubik-Medium',
+    },
+    createContainer: {
+      height: 45,
+      borderColor: isDark ? SAL.darkModeColors.orangeFFC8A3 : SAL.colors.orange,
+
+      borderWidth: 1,
+      borderRadius: 30,
+      flexDirection: 'row',
+      marginTop: 20,
+      alignSelf: 'center',
+    },
+    createButton: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'row',
+      width: '100%',
+    },
+    createButtonText: {
+      color: isDark ? SAL.darkModeColors.orangeFFC8A3 : SAL.colors.orange,
+
+      fontSize: 12,
+      fontFamily: 'Rubik-Medium',
+      marginLeft: 10,
+    },
+    buttonSeparator: {
+      width: 1,
+      marginVertical: 12,
+      backgroundColor: isDark
+        ? SAL.darkModeColors.orangeFFC8A3
+        : SAL.colors.orange,
+    },
+  });
+
   return (
     <SafeAreaView style={styles.container}>
       {showAssignToDriver ? (
@@ -253,62 +300,5 @@ function ContainerCreatedScreen(props) {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor:
-      colorScheme === 'dark'
-        ? SAL.darkModeColors.black22262A
-        : SAL.colors.white,
-  },
-  emptyListContainer: {
-    height: 200,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  noDataFoundText: {
-    color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
-    fontSize: 16,
-    fontFamily: 'Rubik-Medium',
-  },
-  createContainer: {
-    height: 45,
-    borderColor:
-      colorScheme === 'dark'
-        ? SAL.darkModeColors.orangeFFC8A3
-        : SAL.colors.orange,
-
-    borderWidth: 1,
-    borderRadius: 30,
-    flexDirection: 'row',
-    marginTop: 20,
-    alignSelf: 'center',
-  },
-  createButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-    width: '100%',
-  },
-  createButtonText: {
-    color:
-      colorScheme === 'dark'
-        ? SAL.darkModeColors.orangeFFC8A3
-        : SAL.colors.orange,
-
-    fontSize: 12,
-    fontFamily: 'Rubik-Medium',
-    marginLeft: 10,
-  },
-  buttonSeparator: {
-    width: 1,
-    marginVertical: 12,
-    backgroundColor:
-      colorScheme === 'dark'
-        ? SAL.darkModeColors.orangeFFC8A3
-        : SAL.colors.orange,
-  },
-});
 
 export default ContainerCreatedScreen;

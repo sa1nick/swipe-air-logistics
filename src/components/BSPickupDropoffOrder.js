@@ -6,6 +6,7 @@ import {
   View,
   Image,
   TextInput,
+  Appearance,
 } from 'react-native';
 
 import RNPickerSelect from 'react-native-picker-select';
@@ -14,7 +15,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import SAL from '../SAL';
 import SALGradientButton from './SALGradientButton';
 import {showAlert} from '../utils/Utils';
-
+const colorScheme = Appearance.getColorScheme();
 const BSPickupDropoffOrder = props => {
   const [quantity, setQuantity] = useState('');
   const [dropOffValue, setDropOffValue] = useState(null);
@@ -22,7 +23,10 @@ const BSPickupDropoffOrder = props => {
 
   const arrowDownIcon = () => (
     <View style={{marginRight: 20, height: 50, justifyContent: 'center'}}>
-      <Image source={SAL.image.downArrow} />
+      <Image
+        source={SAL.image.downArrow}
+        style={{tintColor: colorScheme === 'dark' ? '#F0C3F4' : ''}}
+      />
     </View>
   );
 
@@ -61,7 +65,7 @@ const BSPickupDropoffOrder = props => {
     }
 
     if (isValidForm) {
-      props.moveToWareHouse({quantity, dropOffValue, toWarehouseName})
+      props.moveToWareHouse({quantity, dropOffValue, toWarehouseName});
     } else {
       showAlert(errorMessage);
     }
@@ -95,11 +99,20 @@ const BSPickupDropoffOrder = props => {
               style={styles.inputField}
               value={quantity}
               placeholder={'Quantity to move'}
-              placeholderTextColor={'#9A9A9A'}
+              placeholderTextColor={
+                colorScheme === 'dark'
+                  ? SAL.darkModeColors.tabInActive
+                  : '#9A9A9A'
+              }
               keyboardType={'numeric'}
               onChangeText={value => {
                 setQuantity(value);
               }}
+              selectionColor={
+                colorScheme === 'dark'
+                  ? SAL.darkModeColors.purpleF0C3F4
+                  : '#7A2783'
+              }
             />
           </View>
           <PickupContainer
@@ -180,7 +193,10 @@ const styles = StyleSheet.create({
   commonContainer: {
     width: SAL.constant.screenWidth - 32,
     height: 50,
-    backgroundColor: SAL.colors.white,
+    backgroundColor:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
     borderRadius: 12,
     marginBottom: 11,
     borderWidth: 0.5,
@@ -190,7 +206,10 @@ const styles = StyleSheet.create({
   },
   commonText: {
     width: 65,
-    color: SAL.colors.purple,
+    color:
+      colorScheme === 'dark'
+        ? SAL.darkModeColors.purpleF0C3F4
+        : SAL.colors.purple,
     fontSize: 14,
     fontFamily: 'Rubik-Medium',
     marginLeft: 15,
@@ -199,7 +218,8 @@ const styles = StyleSheet.create({
     width: 0.5,
     height: 50,
     marginLeft: 15,
-    backgroundColor: '#B5B5B5',
+    backgroundColor:
+      colorScheme === 'dark' ? SAL.darkModeColors.tabInActive : '#B5B5B5',
   },
   inputField: {
     width: 150,
@@ -207,13 +227,13 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     fontSize: 14,
     fontFamily: 'Rubik-Regular',
-    color: '#9A9A9A',
+    color: colorScheme === 'dark' ? SAL.colors.white : '#9A9A9A',
   },
   dropdownText: {
     fontSize: 14,
     fontFamily: 'Rubik-Regular',
     marginLeft: 15,
-    color: '#9A9A9A',
+    color: colorScheme === 'dark' ? SAL.colors.white : '#9A9A9A',
   },
 });
 
@@ -221,7 +241,7 @@ const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
     width: SAL.constant.screenWidth - 32 - 95,
     height: 50,
-    color: '#9A9A9A',
+    color: colorScheme === 'dark' ? SAL.colors.white : '#9A9A9A',
     fontSize: 14,
     fontFamily: 'Rubik-Regular',
     paddingLeft: 15,
@@ -229,7 +249,7 @@ const pickerSelectStyles = StyleSheet.create({
   inputAndroid: {
     width: SAL.constant.screenWidth - 32 - 95,
     height: 50,
-    color: '#9A9A9A',
+    color: colorScheme === 'dark' ? SAL.colors.white : '#9A9A9A',
     fontSize: 14,
     fontFamily: 'Rubik-Regular',
     paddingLeft: 15,
@@ -240,6 +260,9 @@ const pickerSelectStyles = StyleSheet.create({
   },
   chevronUp: {
     display: 'none',
+  },
+  placeholder: {
+    color: colorScheme === 'dark' ? SAL.darkModeColors.tabInActive : '',
   },
 });
 

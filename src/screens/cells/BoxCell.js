@@ -1,23 +1,25 @@
 import React from 'react';
 import {
+  Appearance,
+  Image,
+  ImageBackground,
+  Pressable,
   StyleSheet,
   Text,
   View,
-  Pressable,
-  ImageBackground,
-  Image,
-  Platform,
-  Appearance,
 } from 'react-native';
 
 import moment from 'moment';
 
 import SAL from '../../SAL';
 import {scaleFactor} from '../../utils/ViewScaleUtil';
+import useCustomTheme from '../../hook/useCustomTheme';
 
 const colorScheme = Appearance.getColorScheme();
 
 const BoxCell = props => {
+  const theme = useCustomTheme();
+  const isDark = theme === 'dark';
   const downloadPdf = () => {
     props.downloadPdf(props.item);
   };
@@ -32,6 +34,125 @@ const BoxCell = props => {
       </View>
     );
   };
+
+  const styles = StyleSheet.create({
+    container: {
+      width: '100%',
+      // height: Platform.OS === 'ios' ? 245 : 255,
+    },
+    subContainer: {
+      marginHorizontal: 16,
+      // height: Platform.OS === 'ios' ? 235 : 245,
+    },
+    orderImage: {
+      marginTop: 13,
+      marginLeft: 15,
+    },
+    orderText: {
+      color: SAL.colors.black,
+      fontSize: scaleFactor(14),
+      fontFamily: 'Rubik-Medium',
+      marginLeft: 15,
+      marginTop: 15,
+    },
+    infoContainer: {
+      marginHorizontal: 25,
+      height: 50,
+      marginTop: 10,
+    },
+    line: {
+      width: '100%',
+      height: 1,
+      marginTop: 4,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      backgroundColor:
+        colorScheme === 'light'
+          ? SAL.colors.white
+          : SAL.darkModeColors.black22262A,
+    },
+    dot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      marginTop: -4,
+      backgroundColor: SAL.colors.orange,
+    },
+    dimensionContainer: {
+      width: 60,
+      height: 35,
+      justifyContent: 'flex-end',
+    },
+    titleText: {
+      fontSize: 8,
+      fontFamily: 'Rubik-Regular',
+      color: '#919191',
+      marginBottom: 3,
+    },
+    dimensionText: {
+      fontSize: 9,
+      fontFamily: 'Rubik-Medium',
+      color: '#1E1E1E',
+    },
+    itemsInsideView: {
+      marginHorizontal: 13,
+      height: 32,
+      backgroundColor: isDark
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
+      borderRadius: 8,
+      marginTop: 3,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    itemInsideText: {
+      fontSize: 12,
+      fontFamily: 'Rubik-Regular',
+      color: isDark ? SAL.darkModeColors.tabInActive : SAL.colors.grey,
+      marginLeft: 20,
+    },
+    quantityText: {
+      fontSize: 12,
+      fontFamily: 'Rubik-Medium',
+      color: isDark ? SAL.darkModeColors.tabInActive : '#131313',
+      marginRight: 13,
+    },
+    pdfContainer: {
+      flexDirection: 'row',
+      marginTop: 15,
+      marginLeft: 17,
+      alignItems: 'center',
+    },
+    driverInfoContainer: {
+      marginHorizontal: 16,
+      height: 40,
+      marginTop: 7,
+      flexDirection: 'row',
+    },
+    nameContainer: {
+      width: '50%',
+      height: '100%',
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    driverNameSubContainer: {
+      height: '100%',
+      marginLeft: 10,
+      justifyContent: 'center',
+    },
+    vehicleContainer: {
+      width: '50%',
+      height: '100%',
+      alignItems: 'flex-end',
+      justifyContent: 'center',
+    },
+    nameText: {
+      fontSize: 12,
+      fontFamily: 'Rubik-Medium',
+      color: SAL.colors.black,
+    },
+  });
 
   return (
     <Pressable
@@ -183,10 +304,9 @@ const BoxCell = props => {
                     styles.itemInsideText,
                     {
                       marginLeft: 0,
-                      color:
-                        colorScheme === 'dark'
-                          ? SAL.darkModeColors.seperator242424
-                          : SAL.colors.grey,
+                      color: isDark
+                        ? SAL.darkModeColors.seperator242424
+                        : SAL.colors.grey,
                     },
                   ]}>
                   Driver Name
@@ -200,10 +320,9 @@ const BoxCell = props => {
                   styles.itemInsideText,
                   {
                     marginLeft: 0,
-                    color:
-                      colorScheme === 'dark'
-                        ? SAL.darkModeColors.seperator242424
-                        : SAL.colors.grey,
+                    color: isDark
+                      ? SAL.darkModeColors.seperator242424
+                      : SAL.colors.grey,
                   },
                 ]}>
                 Vehicle
@@ -217,126 +336,5 @@ const BoxCell = props => {
     </Pressable>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    // height: Platform.OS === 'ios' ? 245 : 255,
-  },
-  subContainer: {
-    marginHorizontal: 16,
-    // height: Platform.OS === 'ios' ? 235 : 245,
-  },
-  orderImage: {
-    marginTop: 13,
-    marginLeft: 15,
-  },
-  orderText: {
-    color: SAL.colors.black,
-    fontSize: scaleFactor(14),
-    fontFamily: 'Rubik-Medium',
-    marginLeft: 15,
-    marginTop: 15,
-  },
-  infoContainer: {
-    marginHorizontal: 25,
-    height: 50,
-    marginTop: 10,
-  },
-  line: {
-    width: '100%',
-    height: 1,
-    marginTop: 4,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor:
-      colorScheme === 'light'
-        ? SAL.colors.white
-        : SAL.darkModeColors.black22262A,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginTop: -4,
-    backgroundColor: SAL.colors.orange,
-  },
-  dimensionContainer: {
-    width: 60,
-    height: 35,
-    justifyContent: 'flex-end',
-  },
-  titleText: {
-    fontSize: 8,
-    fontFamily: 'Rubik-Regular',
-    color: '#919191',
-    marginBottom: 3,
-  },
-  dimensionText: {
-    fontSize: 9,
-    fontFamily: 'Rubik-Medium',
-    color: '#1E1E1E',
-  },
-  itemsInsideView: {
-    marginHorizontal: 13,
-    height: 32,
-    backgroundColor:
-      colorScheme === 'dark'
-        ? SAL.darkModeColors.black22262A
-        : SAL.colors.white,
-    borderRadius: 8,
-    marginTop: 3,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  itemInsideText: {
-    fontSize: 12,
-    fontFamily: 'Rubik-Regular',
-    color:
-      colorScheme === 'dark' ? SAL.darkModeColors.tabInActive : SAL.colors.grey,
-    marginLeft: 20,
-  },
-  quantityText: {
-    fontSize: 12,
-    fontFamily: 'Rubik-Medium',
-    color: colorScheme === 'dark' ? SAL.darkModeColors.tabInActive : '#131313',
-    marginRight: 13,
-  },
-  pdfContainer: {
-    flexDirection: 'row',
-    marginTop: 15,
-    marginLeft: 17,
-    alignItems: 'center',
-  },
-  driverInfoContainer: {
-    marginHorizontal: 16,
-    height: 40,
-    marginTop: 7,
-    flexDirection: 'row',
-  },
-  nameContainer: {
-    width: '50%',
-    height: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  driverNameSubContainer: {
-    height: '100%',
-    marginLeft: 10,
-    justifyContent: 'center',
-  },
-  vehicleContainer: {
-    width: '50%',
-    height: '100%',
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-  },
-  nameText: {
-    fontSize: 12,
-    fontFamily: 'Rubik-Medium',
-    color: SAL.colors.black,
-  },
-});
 
 export default BoxCell;

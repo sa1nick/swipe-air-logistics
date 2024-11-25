@@ -1,35 +1,40 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
-  View,
-  Text,
   Image,
-  Pressable,
-  ScrollView,
   ImageBackground,
   Keyboard,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
 } from 'react-native';
 
 import RNPickerSelect from 'react-native-picker-select';
 import {useDispatch, useSelector} from 'react-redux';
-import * as signalR from '@microsoft/signalr';
 // import signalr from 'react-native-signalr';
 
-import styles from './LoginStyle';
-import {pickerSelectStyles} from './LoginStyle';
+import {LoginStyle, pickerSelectStyles} from './LoginStyle';
+
 import SAL from '../../SAL';
-import SALInputField from '../../components/SALInputField';
 import ActivityIndicator from '../../components/ActivityIndicator';
 import SALGradientButton from '../../components/SALGradientButton';
-import {showAlert, storeData} from '../../utils/Utils';
+import SALInputField from '../../components/SALInputField';
 import {StorageKey} from '../../utils/Enum';
+import {showAlert, storeData} from '../../utils/Utils';
 
 import {
+  clearAuthDetails,
   loginApi,
   logisticsUserTypesApi,
-  clearAuthDetails,
 } from '../../api/slice/authSlice/authApiSlice';
+import useCustomTheme from '../../hook/useCustomTheme';
 
 function LoginScreen(props) {
+  const theme = useCustomTheme();
+  const isDark = theme === 'dark';
+  const styles = LoginStyle(isDark);
+  const pickerSelectStyle = pickerSelectStyles(isDark);
+
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
 
@@ -72,6 +77,8 @@ function LoginScreen(props) {
 
   useEffect(() => {
     if (userTypeData) {
+      console.log('arrayUserTypes', userTypeData);
+
       setLoading(false);
       if (userTypeData.status) {
         const arrayUserTypes = userTypeData.data.map(item => {
@@ -105,7 +112,10 @@ function LoginScreen(props) {
   const arrowDownIcon = () => (
     <View
       style={{marginRight: 20, height: pickerHeigth, justifyContent: 'center'}}>
-      <Image source={SAL.image.downArrow} />
+      <Image
+        source={SAL.image.downArrow}
+        style={{tintColor: isDark ? '#F0C3F4' : ''}}
+      />
     </View>
   );
 
@@ -161,8 +171,21 @@ function LoginScreen(props) {
     } else if (reg.test(emailRef?.current?.value) === false) {
       errorMessage = 'Email must be a valid email';
       isValidForm = false;
-    } else if (passwordRef?.current?.value.length < 7) {
-      errorMessage = 'Minimum 7 characters required';
+    } // Check for empty password
+    else if (
+      !passwordRef?.current?.value ||
+      passwordRef.current.value.trim() === ''
+    ) {
+      errorMessage = 'Password is required';
+      isValidForm = false;
+    }
+
+    // Check password length
+    else if (
+      passwordRef?.current?.value &&
+      passwordRef.current.value.length < 7
+    ) {
+      errorMessage = 'Password must be at least 7 characters long';
       isValidForm = false;
     }
 
@@ -188,6 +211,7 @@ function LoginScreen(props) {
     <View style={styles.container}>
       <View style={styles.topBackgroundContainer}></View>
       <ScrollView
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollView}
         style={{width: '100%'}}>
         <>
@@ -209,19 +233,24 @@ function LoginScreen(props) {
               marginBottom: 20,
             }}>
             <RNPickerSelect
+              placeholderTextColor="red"
               placeholder={{label: defaultLabel, value: null}}
               items={pickerUserTypes}
               onValueChange={handleValueChange}
               itemKey={selectedValue}
               useNativeAndroidPickerStyle={false}
               Icon={arrowDownIcon}
-              style={pickerSelectStyles}
+              style={pickerSelectStyle}
             />
           </View>
 
           <SALInputField
+            inputStyle={styles.inputStyle}
             inputRef={emailRef}
             title={'Email Address'}
+            placeholderTextColor={
+              isDark ? SAL.darkModeColors.tabInActive : SAL.colors.grey
+            }
             placeholderText={'Enter Email address'}
             keyboardType={'email-address'}
             secureTextEntry={false}
@@ -232,6 +261,9 @@ function LoginScreen(props) {
           <SALInputField
             inputRef={passwordRef}
             title={'Password'}
+            placeholderTextColor={
+              isDark ? SAL.darkModeColors.tabInActive : SAL.colors.grey
+            }
             placeholderText={'Enter Password'}
             keyboardType={'default'}
             secureTextEntry={true}
@@ -250,8 +282,22 @@ function LoginScreen(props) {
           />
           <Pressable
             style={{flexDirection: 'row', marginTop: 30, marginBottom: 30}}>
-            <Text>Facing Trouble to login? </Text>
-            <Text style={{color: '#FF6D09'}}>Raise Query</Text>
+            <Text
+              style={{
+                color: isDark
+                  ? SAL.darkModeColors.tabInActive
+                  : SAL.colors.grey,
+              }}>
+              Facing Trouble to login?{' '}
+            </Text>
+            <Text
+              style={{
+                color: isDark
+                  ? SAL.darkModeColors.orangeFFC8A3
+                  : SAL.colors.orange,
+              }}>
+              Raise Query
+            </Text>
           </Pressable>
         </>
       </ScrollView>

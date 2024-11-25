@@ -31,7 +31,9 @@ const NavigationBar = props => {
         <Pressable
           style={styles.questionButton}
           onPress={props.notificationButton}>
-          <Image source={SAL.image.questionHelp}></Image>
+          <Image
+            source={SAL.image.questionHelp}
+            style={{tintColor: SAL.darkModeColors.black1C1C1C}}></Image>
         </Pressable>
       </View>
     </View>

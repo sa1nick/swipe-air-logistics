@@ -1,34 +1,37 @@
 import React, {useRef} from 'react';
 import {
-  View,
-  Text,
   Image,
   ImageBackground,
   Keyboard,
   Pressable,
+  Text,
+  View,
 } from 'react-native';
 
-import styles from './ForgotPasswordStyle';
 import SAL from '../../SAL';
-import SALInputField from '../../components/SALInputField';
-import ActivityIndicator from '../../components/ActivityIndicator';
 import SALGradientButton from '../../components/SALGradientButton';
+import SALInputField from '../../components/SALInputField';
+import useCustomTheme from '../../hook/useCustomTheme';
 import {showAlert} from '../../utils/Utils';
+import ForgotPasswordStyle from './ForgotPasswordStyle';
 
 function ForgotPasswordScreen(props) {
+  const theme = useCustomTheme();
+  const isDark = theme === 'dark';
+  const styles = ForgotPasswordStyle(isDark);
   const emailRef = useRef(null);
 
-const sendOtpButton = () => {
-    validateForm()
-}
+  const sendOtpButton = () => {
+    validateForm();
+  };
 
-const validateForm = () => {
+  const validateForm = () => {
     let errorMessage = '';
     let isValidForm = true;
     let reg =
       /^[a-zA-Z0-9+_.-]+@[_a-zA-Z0-9-]+(?:\.[_a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/i;
 
-   if (reg.test(emailRef?.current?.value) === false) {
+    if (reg.test(emailRef?.current?.value) === false) {
       errorMessage = 'Email must be a valid email';
       isValidForm = false;
     }
@@ -42,7 +45,7 @@ const validateForm = () => {
 
   const backButton = () => {
     props.navigation.pop();
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -66,10 +69,15 @@ const validateForm = () => {
               emailRef.current.value = value;
             }}
           />
-          <SALGradientButton buttonTitle={'Send OTP'} buttonPressed={sendOtpButton}/>
+          <SALGradientButton
+            buttonTitle={'Send OTP'}
+            buttonPressed={sendOtpButton}
+          />
         </View>
       </ImageBackground>
-      <Pressable style={styles.backButton} onPress={backButton}><Image source={SAL.image.backIconWhite}></Image></Pressable>
+      <Pressable style={styles.backButton} onPress={backButton}>
+        <Image source={SAL.image.backIconWhite}></Image>
+      </Pressable>
     </View>
   );
 }
