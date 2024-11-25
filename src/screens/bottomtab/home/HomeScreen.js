@@ -232,7 +232,7 @@ function HomeScreen(props) {
 
   const onClosePicker = () => {
     pageNumber.current = 0;
-    setWarehouseProductList(null);
+    setWarehouseProductList([]);
     fetchProductList(selectedValue);
   };
 

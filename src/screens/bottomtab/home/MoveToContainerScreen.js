@@ -89,6 +89,7 @@ function MoveToContainerScreen(props) {
         onPressOrderCell={onPressOrderCell}
         onPressDetailCell={onPressDetailCell}
         isRemainingWeight={true}
+        // styles={{marginBottom: 40}}
       />
     );
   };
@@ -149,13 +150,15 @@ function MoveToContainerScreen(props) {
         renderItem={renderItem}
         ListHeaderComponent={() => <View style={{height: 30}} />}
         ListFooterComponent={() => <View style={{height: 50}} />}
+        ItemSeparatorComponent={() => <View style={{height: 40}} />}
+        showsVerticalScrollIndicator={false}
       />
 
       <Pressable style={styles.createButton} onPress={createContainerButton}>
         <Image
           source={SAL.image.createContainerIcon}
           style={{
-            tintColor: SAL.darkModeColors.orangeFFC8A3,
+            tintColor: isDark ? SAL.darkModeColors.orangeFFC8A3 : undefined,
           }}
         />
         <Text style={styles.createButtonText}>Create Container</Text>

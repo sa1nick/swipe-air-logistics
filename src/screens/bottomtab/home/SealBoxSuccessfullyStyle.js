@@ -1,15 +1,14 @@
-import {Appearance, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 
 import SAL from '../../../SAL';
-const colorScheme = Appearance.getColorScheme();
+
 const SealBoxSuccessfullyStyle = isDark => {
   return StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor:
-        colorScheme === 'dark'
-          ? SAL.darkModeColors.black22262A
-          : SAL.colors.white,
+      backgroundColor: isDark
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
     },
     topGradientContainer: {
       position: 'absolute',
@@ -40,7 +39,7 @@ const SealBoxSuccessfullyStyle = isDark => {
       marginTop: 50,
     },
     headingText: {
-      color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
+      color: isDark ? SAL.colors.white : SAL.colors.black,
       fontSize: 18,
       fontFamily: 'Rubik-SemiBold',
       marginTop: 13,
@@ -58,7 +57,7 @@ const SealBoxSuccessfullyStyle = isDark => {
       marginLeft: 11,
     },
     itemSelectedText: {
-      color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
+      color: isDark ? SAL.colors.white : SAL.colors.black,
       fontSize: 16,
       fontFamily: 'Rubik-Regular',
       marginTop: 5,
@@ -88,8 +87,7 @@ const SealBoxSuccessfullyStyle = isDark => {
       marginLeft: 5,
     },
     printTex: {
-      color:
-        colorScheme === 'dark' ? SAL.darkModeColors.tabInActive : '#878787',
+      color: isDark ? SAL.darkModeColors.tabInActive : '#878787',
       fontSize: 13,
       fontFamily: 'Rubik-Italic',
       marginTop: 20,

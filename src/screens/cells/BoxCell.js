@@ -28,7 +28,12 @@ const BoxCell = props => {
 
   const DimensionView = data => {
     return (
-      <View style={[styles.dimensionContainer, {alignItems: data.position}]}>
+      <View
+        style={[
+          styles.dimensionContainer,
+          {alignItems: data.position},
+          props.styles,
+        ]}>
         <Text style={styles.titleText}>{data.title}</Text>
         <Text style={styles.dimensionText}>{data.dimension}</Text>
       </View>

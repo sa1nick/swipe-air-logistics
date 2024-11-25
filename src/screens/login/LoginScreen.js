@@ -114,7 +114,7 @@ function LoginScreen(props) {
       style={{marginRight: 20, height: pickerHeigth, justifyContent: 'center'}}>
       <Image
         source={SAL.image.downArrow}
-        style={{tintColor: isDark ? '#F0C3F4' : ''}}
+        style={{tintColor: isDark ? '#F0C3F4' : undefined}}
       />
     </View>
   );

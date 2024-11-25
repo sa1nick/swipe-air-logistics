@@ -130,7 +130,7 @@ export const pickerSelectStyles = isDark => {
       display: 'none',
     },
     placeholder: {
-      color: isDark ? SAL.darkModeColors.tabInActive : '',
+      color: isDark ? SAL.darkModeColors.tabInActive : SAL.colors.grey,
     },
   });
 };

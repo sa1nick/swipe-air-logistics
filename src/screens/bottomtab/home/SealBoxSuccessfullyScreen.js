@@ -13,8 +13,7 @@ import SealBoxSuccessfullyStyle from './SealBoxSuccessfullyStyle';
 
 function SealBoxSuccessfullyScreen(props) {
   const theme = useCustomTheme();
-  const isDark = theme === 'dark';
-  const styles = SealBoxSuccessfullyStyle(isDark);
+  const styles = SealBoxSuccessfullyStyle(theme === 'dark');
   const {boxData, data} = props.route.params;
   const [loading, setLoading] = useState(false);
 

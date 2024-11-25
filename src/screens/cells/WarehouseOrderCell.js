@@ -148,8 +148,8 @@ const WarehouseOrderCell = props => {
           </Text>
         ) : null}
         <View style={{flexDirection: 'row', flexWrap: 'wrap', marginTop: 10}}>
-          {props.categoryArray.map(categoryName => (
-            <View style={styles.categoryContainer}>
+          {props.categoryArray.map((categoryName, index) => (
+            <View style={styles.categoryContainer} key={categoryName || index}>
               <Text style={styles.orderTypeText}>{categoryName}</Text>
             </View>
           ))}

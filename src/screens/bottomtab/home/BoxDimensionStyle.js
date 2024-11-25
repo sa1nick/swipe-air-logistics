@@ -1,17 +1,14 @@
-import {Appearance, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 
 import SAL from '../../../SAL';
 
-const colorScheme = Appearance.getColorScheme();
-
-const BoxDimensionStyle = isDark => {
+export const BoxDimensionStyle = isDark => {
   return StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor:
-        colorScheme === 'dark'
-          ? SAL.darkModeColors.black22262A
-          : SAL.colors.white,
+      backgroundColor: isDark
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
     },
     topGradientContainer: {
       position: 'absolute',
@@ -43,10 +40,9 @@ const BoxDimensionStyle = isDark => {
       borderTopLeftRadius: 35,
       borderTopRightRadius: 35,
       marginTop: 30,
-      backgroundColor:
-        colorScheme === 'dark'
-          ? SAL.darkModeColors.black22262A
-          : SAL.colors.white,
+      backgroundColor: isDark
+        ? SAL.darkModeColors.black22262A
+        : SAL.colors.white,
     },
     dimensionContainer: {
       marginHorizontal: 16,
@@ -55,7 +51,7 @@ const BoxDimensionStyle = isDark => {
       marginTop: 22,
     },
     boxDimensionText: {
-      color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
+      color: isDark ? SAL.colors.white : SAL.colors.black,
       fontSize: 18,
       fontFamily: 'Rubik-Medium',
       marginLeft: 15,
@@ -63,7 +59,7 @@ const BoxDimensionStyle = isDark => {
       marginBottom: 4,
     },
     itemSelectedText: {
-      color: colorScheme === 'dark' ? SAL.colors.white : SAL.colors.black,
+      color: isDark ? SAL.colors.white : SAL.colors.black,
       fontSize: 16,
       fontFamily: 'Rubik-Regular',
       marginLeft: 15,
