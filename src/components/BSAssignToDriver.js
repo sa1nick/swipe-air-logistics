@@ -1,4 +1,4 @@
-import React, {useMemo, useRef, useEffect, useState} from 'react';
+import React, { useMemo, useRef, useEffect, useState } from 'react';
 import {
   Pressable,
   StyleSheet,
@@ -12,12 +12,12 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
 
 import SAL from '../SAL';
 import ActivityIndicator from './ActivityIndicator';
-import {showAlert} from '../utils/Utils';
+import { showAlert } from '../utils/Utils';
 
 import {
   assignToDriverApi,
@@ -65,31 +65,31 @@ const BSAssignToDriver = props => {
   const assignDriverData = useSelector(state => state.warehouse.assignDriver);
   const warehouseApiError = useSelector(state => state.warehouse.error);
   const companyList = [
-    {label: 'Company A', value: 'company_a'},
-    {label: 'Company B', value: 'company_b'},
-    {label: 'Company C', value: 'company_c'},
+    { label: 'Company A', value: 'company_a' },
+    { label: 'Company B', value: 'company_b' },
+    { label: 'Company C', value: 'company_c' },
   ];
 
   const companyDriversList = [
     {
-      company: {label: 'Company A', value: 'company_a'},
+      company: { label: 'Company A', value: 'company_a' },
       drivers: [
-        {label: 'John Doe', value: 'john_doe'},
-        {label: 'Alice Cooper', value: 'alice_cooper'},
+        { label: 'John Doe', value: 'john_doe' },
+        { label: 'Alice Cooper', value: 'alice_cooper' },
       ],
     },
     {
-      company: {label: 'Company B', value: 'company_b'},
+      company: { label: 'Company B', value: 'company_b' },
       drivers: [
-        {label: 'Jane Smith', value: 'jane_smith'},
-        {label: 'Bob Johnson', value: 'bob_johnson'},
+        { label: 'Jane Smith', value: 'jane_smith' },
+        { label: 'Bob Johnson', value: 'bob_johnson' },
       ],
     },
     {
-      company: {label: 'Company C', value: 'company_c'},
+      company: { label: 'Company C', value: 'company_c' },
       drivers: [
-        {label: 'Robert Brown', value: 'robert_brown'},
-        {label: 'Emily Davis', value: 'emily_davis'},
+        { label: 'Robert Brown', value: 'robert_brown' },
+        { label: 'Emily Davis', value: 'emily_davis' },
       ],
     },
   ];
@@ -142,7 +142,7 @@ const BSAssignToDriver = props => {
         setDriverList(
           driverListData.data.map(driver => ({
             label: driver.name,
-            value: driver.id.toString(), // Assuming IDs need to be strings
+            value: driver.userId.toString(), // Assuming IDs need to be strings
           })),
         );
       } else {
@@ -156,14 +156,15 @@ const BSAssignToDriver = props => {
   }, [driverList]);
 
   useEffect(() => {
-    dispatch(
-      getAllDriverListApi({
-        pickUpDate: props.pickUpDate,
-        pickUpTime: props.pickUpTime,
-        dropoffWarehouseId: dropoffWarehouse.value,
-        pickupWarehouseId: pickupWarehouse.value,
-      }),
-    );
+    const payload = {
+      pickUpDate: props.pickUpDate,
+      pickUpTime: props.pickUpTime,
+      dropoffWarehouseId: dropoffWarehouse.value,
+      pickupWarehouseId: pickupWarehouse.value,
+    };
+    dispatch(getAllDriverListApi(payload));
+
+    console.log('getAllDriverListApi Payload', payload);
 
     return () => dispatch(clearDriverList());
   }, []);
@@ -198,7 +199,7 @@ const BSAssignToDriver = props => {
     setDriverInfo(item);
   };
 
-  const TimeDriverContainer = ({title, placeholder}) => {
+  const TimeDriverContainer = ({ title, placeholder }) => {
     return (
       <View style={styles.commonContainer}>
         <Text style={styles.commonText}>{title}</Text>
@@ -256,7 +257,7 @@ const BSAssignToDriver = props => {
           style={styles.checkboxButton}
           onPress={() => setIsDCSelected(true)}>
           <Image
-            style={{tintColor: isDark ? '#F0C3F4' : ''}}
+            style={{ tintColor: isDark ? '#F0C3F4' : '' }}
             source={
               isDCSelected
                 ? SAL.image.checkboxSelected
@@ -268,7 +269,7 @@ const BSAssignToDriver = props => {
           style={styles.checkboxButton}
           onPress={() => setIsDCSelected(false)}>
           <Image
-            style={{tintColor: isDark ? '#F0C3F4' : ''}}
+            style={{ tintColor: isDark ? '#F0C3F4' : '' }}
             source={
               isDCSelected
                 ? SAL.image.checkboxUnselected
@@ -312,6 +313,8 @@ const BSAssignToDriver = props => {
       boxIds: props.selectedIds,
     };
 
+    console.log('boxParams', boxParams);
+
     const palletParams = {
       ...commonParams,
       palletIds: props.selectedIds,
@@ -329,11 +332,27 @@ const BSAssignToDriver = props => {
         props.selectedIndex === 1
           ? boxParams
           : props.selectedIndex === 2
-          ? palletParams
-          : containerParams,
+            ? palletParams
+            : containerParams,
       ),
     );
   };
+
+  const commonParams = {
+    assignedDriverId: driverInfo,
+    assignedCompanyId: 0,
+    pickUpDate: selectedDate,
+    pickUpTime: selectedTime,
+    dropOffWareHouseId: dropoffWarehouse.value,
+    pickUpWarehouseId: pickupWarehouse.value,
+    index: props.selectedIndex,
+  };
+
+  const boxParams = {
+    ...commonParams,
+    boxIds: props.selectedIds,
+  };
+  console.log('boxParams', boxParams);
 
   const styles = StyleSheet.create({
     container: {
@@ -511,7 +530,7 @@ const BSAssignToDriver = props => {
                 <Text style={styles.commonText}>Company</Text>
                 <View style={styles.separator} />
                 <RNPickerSelect
-                  placeholder={{label: 'Select Company', value: null}}
+                  placeholder={{ label: 'Select Company', value: null }}
                   items={companyList}
                   onValueChange={value => {
                     setSelectedCompany(value);
@@ -527,7 +546,7 @@ const BSAssignToDriver = props => {
                 <Text style={styles.commonText}>Driver</Text>
                 <View style={styles.separator} />
                 <RNPickerSelect
-                  placeholder={{label: 'Select Driver', value: null}}
+                  placeholder={{ label: 'Select Driver', value: null }}
                   items={driversForSelectedCompany || []}
                   onValueChange={value => setSelectedCompanyDriver(value)}
                   useNativeAndroidPickerStyle={false}
@@ -542,7 +561,7 @@ const BSAssignToDriver = props => {
               <View style={styles.separator} />
 
               <RNPickerSelect
-                placeholder={{label: 'Select Driver', value: null}}
+                placeholder={{ label: 'Select Driver', value: null }}
                 items={driverList == null ? [] : driverList}
                 onValueChange={selectedDriver}
                 useNativeAndroidPickerStyle={false}
@@ -563,8 +582,8 @@ const BSAssignToDriver = props => {
 
           <Pressable onPress={assignButton}>
             <LinearGradient
-              start={{x: 0, y: 0}}
-              end={{x: 1, y: 0}}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
               colors={['#6F137A', '#A881AC']}
               style={styles.assignButton}>
               <Text style={styles.assignText}>Assign</Text>

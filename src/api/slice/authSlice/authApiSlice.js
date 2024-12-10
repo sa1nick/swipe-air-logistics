@@ -1,6 +1,6 @@
-import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axiosInstance from '../../axiosInstance';
-import {Login, Logistics_User_Types} from '../../endPoints';
+import { Login, Logistics_User_Types } from '../../endPoints';
 
 // Define your async API call using Axios
 

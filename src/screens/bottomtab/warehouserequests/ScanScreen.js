@@ -1,6 +1,6 @@
-import React, {useRef, useState, useEffect} from 'react';
-import {View, Alert, Image } from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
+import React, { useRef, useState, useEffect } from 'react';
+import { View, Alert, Image } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Camera,
   useCameraDevice,
@@ -14,7 +14,7 @@ import NavigationBar from '../../../components/NavigationBar';
 import ActivityIndicator from '../../../components/ActivityIndicator';
 import { showAlert } from '../../../utils/Utils';
 
-import {updateProductStatusApi, clearScannedDetails} from '../../../api/slice/warehouseSlice/warehouseApiSlice';
+import { updateProductStatusApi, clearScannedDetails } from '../../../api/slice/warehouseSlice/warehouseApiSlice';
 
 function ScanScreen(props) {
   const [loading, setLoading] = useState(false);
@@ -32,12 +32,12 @@ function ScanScreen(props) {
     if (updateProductStatus) {
       console.log('updateProductStatus: ', updateProductStatus)
       setLoading(false);
-      
+
       Alert.alert(
         '',
         updateProductStatus.message,
-        [{text: 'OK', onPress: () => isScanned.current = false}],
-        {cancelable: false},
+        [{ text: 'OK', onPress: () => isScanned.current = false }],
+        { cancelable: false },
       );
       dispatch(clearScannedDetails());
     }
@@ -94,7 +94,7 @@ function ScanScreen(props) {
       <View style={styles.topGradientContainer}>
         <Image source={SAL.image.gradientBg} />
       </View>
-      <NavigationBar navigationLeftButton={navigationLeftButton} isBackButton={true}/>
+      <NavigationBar navigationLeftButton={navigationLeftButton} isBackButton={true} />
       {device != null && (
         <Camera
           style={styles.cameraContainer}

@@ -1,7 +1,7 @@
-import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axiosInstance from '../../axiosInstance';
 
-import {showAlert} from '../../../utils/Utils';
+import { showAlert } from '../../../utils/Utils';
 
 import {
   Get_All_Warehouse,
@@ -35,7 +35,7 @@ import {
 
 export const getAllWarehouseApi = createAsyncThunk(
   'warehouseApiSlice/getAllWarehouseApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(Get_All_Warehouse);
       return response.data;
@@ -50,7 +50,7 @@ export const getAllWarehouseApi = createAsyncThunk(
 
 export const getAllProductByWarehouseIdApi = createAsyncThunk(
   'warehouseApiSlice/getAllProductByWarehouseIdApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     console.log('params: ', params);
     try {
       const response = await axiosInstance.post(
@@ -70,7 +70,7 @@ export const getAllProductByWarehouseIdApi = createAsyncThunk(
 
 export const moveToWarehouseApi = createAsyncThunk(
   'warehouseApiSlice/moveToWarehouseApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(Move_WareHouse, params);
       return response.data;
@@ -86,7 +86,7 @@ getAllPendingProductWarehouseApi;
 
 export const getAllPendingProductWarehouseApi = createAsyncThunk(
   'warehouseApiSlice/getAllPendingProductWarehouseApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(
         Get_All_Product_By_Pickup_Dropoff_Warehouse,
@@ -105,7 +105,7 @@ export const getAllPendingProductWarehouseApi = createAsyncThunk(
 
 export const getAllScannedProductWarehouseApi = createAsyncThunk(
   'warehouseApiSlice/getAllScannedProductWarehouseApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     console.log('params sc: ', params);
     try {
       const response = await axiosInstance.post(
@@ -125,7 +125,7 @@ export const getAllScannedProductWarehouseApi = createAsyncThunk(
 
 export const updateProductStatusApi = createAsyncThunk(
   'warehouseApiSlice/updateProductStatusApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(
         Update_Product_Tracking_Details_Status,
@@ -144,7 +144,7 @@ export const updateProductStatusApi = createAsyncThunk(
 
 export const createBoxApi = createAsyncThunk(
   'warehouseApiSlice/createBoxApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(Add_Box_Detail, params);
       return response.data;
@@ -160,7 +160,7 @@ export const createBoxApi = createAsyncThunk(
 
 export const getBoxListApi = createAsyncThunk(
   'warehouseApiSlice/getBoxListApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(Get_Box_List, params);
       return response.data;
@@ -175,7 +175,7 @@ export const getBoxListApi = createAsyncThunk(
 
 export const getBoxDetailListApi = createAsyncThunk(
   'warehouseApiSlice/getBoxDetailListApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(
         `${Get_Product_List_By_BoxId}?BoxId=${params.boxId}&PageNumber=${params.pageNumber}&PageSize=${params.pageSize}`,
@@ -192,7 +192,7 @@ export const getBoxDetailListApi = createAsyncThunk(
 
 export const createPalletApi = createAsyncThunk(
   'warehouseApiSlice/createPalletApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(
         Add_Box_To_Pallet_Detail,
@@ -211,7 +211,7 @@ export const createPalletApi = createAsyncThunk(
 
 export const getPalletListApi = createAsyncThunk(
   'warehouseApiSlice/getPalletListApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(Get_Pallet_List, params);
       return response.data;
@@ -226,7 +226,7 @@ export const getPalletListApi = createAsyncThunk(
 
 export const getPalletDetailListApi = createAsyncThunk(
   'warehouseApiSlice/getPalletDetailListApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(
         `${Get_Box_List_By_PalletId}?PalletId=${params.palletId}&PageNumber=${params.pageNumber}&PageSize=${params.pageSize}`,
@@ -243,7 +243,7 @@ export const getPalletDetailListApi = createAsyncThunk(
 
 export const createBoxToContainerApi = createAsyncThunk(
   'warehouseApiSlice/createBoxToContainerApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(
         Add_Box_To_Container_Detail,
@@ -262,7 +262,7 @@ export const createBoxToContainerApi = createAsyncThunk(
 
 export const createPalletToContainerApi = createAsyncThunk(
   'warehouseApiSlice/createPalletToContainerApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(
         Add_Pallet_To_Container_Detail,
@@ -281,7 +281,7 @@ export const createPalletToContainerApi = createAsyncThunk(
 
 export const addContainerDetailApi = createAsyncThunk(
   'warehouseApiSlice/addContainerDetailApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     console.log('addparams: ', params);
     try {
       const response = await axiosInstance.post(Add_Container_Detail, params);
@@ -298,7 +298,7 @@ export const addContainerDetailApi = createAsyncThunk(
 
 export const getAllContainerListApi = createAsyncThunk(
   'warehouseApiSlice/getAllContainerListApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(Get_All_Container_List, params);
       return response.data;
@@ -313,13 +313,16 @@ export const getAllContainerListApi = createAsyncThunk(
 
 export const getAllDriverListApi = createAsyncThunk(
   'warehouseApiSlice/getAllDriverListApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     console.log('params: ', params);
     try {
       const response = await axiosInstance.post(
         Get_All_Logistic_Drivers,
         params,
       );
+
+      console.log("getAllDriverListApi data", response.data);
+
       return response.data;
     } catch (error) {
       const errorMessage = error.response
@@ -332,14 +335,14 @@ export const getAllDriverListApi = createAsyncThunk(
 
 export const assignToDriverApi = createAsyncThunk(
   'warehouseApiSlice/assignToDriverApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(
         params.index === 1
           ? Add_Assignmentof_Box
           : params.index === 2
-          ? Add_Assignmentof_Pallet
-          : Add_Assignmentof_Container,
+            ? Add_Assignmentof_Pallet
+            : Add_Assignmentof_Container,
         params,
       );
       return response.data;
@@ -355,7 +358,7 @@ export const assignToDriverApi = createAsyncThunk(
 
 export const getAssignedItemToDriver = createAsyncThunk(
   'warehouseApiSlice/getAssignedItemToDriver',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(
         Get_Assign_Driver_Item_List,
@@ -374,7 +377,7 @@ export const getAssignedItemToDriver = createAsyncThunk(
 
 export const getContainerTypeApi = createAsyncThunk(
   'warehouseApiSlice/getContainerTypeApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(`${Get_Container_Type}`);
       return response.data;
@@ -389,7 +392,7 @@ export const getContainerTypeApi = createAsyncThunk(
 
 export const getContainerTypeDimensionByIdApi = createAsyncThunk(
   'warehouseApiSlice/getContainerTypeDimensionByIdApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(
         `${Get_Container_Type_Dimension_By_Id}?ContainerTypeId=${params.containerTypeId}`,
@@ -406,7 +409,7 @@ export const getContainerTypeDimensionByIdApi = createAsyncThunk(
 
 export const getDriverAssignmentListApi = createAsyncThunk(
   'warehouseApiSlice/getDriverAssignmentListApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     console.log('params sss: ', params);
     try {
       const response = await axiosInstance.get(
@@ -424,7 +427,7 @@ export const getDriverAssignmentListApi = createAsyncThunk(
 
 export const getConsignmentListApi = createAsyncThunk(
   'warehouseApiSlice/getConsignmentListApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     console.log('params sss: ', params);
     try {
       const response = await axiosInstance.get(
@@ -442,7 +445,7 @@ export const getConsignmentListApi = createAsyncThunk(
 
 export const getAssignmentDetailApi = createAsyncThunk(
   'warehouseApiSlice/getAssignmentDetailApi',
-  async (params, {rejectWithValue}) => {
+  async (params, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(Get_Assignment_Detail, params);
       return response.data;

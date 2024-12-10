@@ -81,6 +81,10 @@ function HomeScreen(props) {
   );
   const warehouseApiError = useSelector(state => state.warehouse.error);
 
+  useEffect(() => {
+    console.log('Current theme:', theme);
+  }, [theme]);
+
   // This effect will run whenever the screen is focused
   useFocusEffect(
     useCallback(() => {
@@ -136,6 +140,32 @@ function HomeScreen(props) {
   }, [warehouseApiError]);
 
   // Modified productList effect to properly update totalCount
+  // useEffect(() => {
+  //   if (productList) {
+  //     setLoading(false);
+  //     setInitialLoad(false);
+
+  //     const updatedArray = productList.data.map(item => ({
+  //       ...item,
+  //       isSelected: false,
+  //     }));
+
+  //     if (pageNumber.current > 0) {
+  //       setWarehouseProductList(prevArray => [...prevArray, ...updatedArray]);
+  //     } else {
+  //       setWarehouseProductList(updatedArray);
+  //     }
+
+  //     // Update total count only when we get new data
+  //     if (productList.totalCount !== undefined) {
+  //       setTotalCount(productList.totalCount);
+  //     }
+
+  //     // Increment page number after successful data fetch
+  //     pageNumber.current = pageNumber.current + 1;
+  //   }
+  // }, [productList]);
+
   useEffect(() => {
     if (productList) {
       setLoading(false);
@@ -146,19 +176,18 @@ function HomeScreen(props) {
         isSelected: false,
       }));
 
-      if (pageNumber.current > 0) {
-        setWarehouseProductList(prevArray => [...prevArray, ...updatedArray]);
-      } else {
-        setWarehouseProductList(updatedArray);
-      }
+      setWarehouseProductList(prevArray => {
+        // Use a Set to remove duplicates based on a unique identifier (like id)
+        const uniqueItems = [...prevArray, ...updatedArray].filter(
+          (item, index, self) =>
+            index === self.findIndex(t => t.id === item.id),
+        );
+        return uniqueItems;
+      });
 
-      // Update total count only when we get new data
       if (productList.totalCount !== undefined) {
         setTotalCount(productList.totalCount);
       }
-
-      // Increment page number after successful data fetch
-      pageNumber.current = pageNumber.current + 1;
     }
   }, [productList]);
 
@@ -429,6 +458,7 @@ function HomeScreen(props) {
           </Text>
           <View style={styles.subDDContainer}>
             <RNPickerSelect
+              key={isDark}
               placeholder={{label: 'Select warehouse', value: 'default'}}
               items={pickerWarehouseList}
               onValueChange={handleValueChange}
@@ -437,7 +467,7 @@ function HomeScreen(props) {
               useNativeAndroidPickerStyle={false}
               Icon={ArrowDownIcon}
               style={pickerSelectStyles}
-              // darkTheme={isDark}
+              darkTheme={isDark}
             />
           </View>
         </View>
